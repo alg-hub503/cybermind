@@ -13,6 +13,7 @@ export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
+
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
@@ -25,14 +26,18 @@ export const authOptions = {
           },
         });
 
-        if (!user) return null;
+        if (!user) {
+          return null;
+        }
 
         const isValid = await bcrypt.compare(
           credentials?.password || "",
           user.password || ""
         );
 
-        if (!isValid) return null;
+        if (!isValid) {
+          return null;
+        }
 
         return user;
       },
@@ -53,10 +58,6 @@ export const authOptions = {
         token: JWT;
       }
     ) {
-      if (session.user) {
-        session.user.id = token.sub;
-      }
-
       return session;
     },
   },
