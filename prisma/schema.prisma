@@ -3,35 +3,43 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                 String @id @default(cuid())
-  email              String @unique
-  password           String
-  role               String @default("USER")
+  id                 String  @id @default(cuid())
+  name               String?
+  email              String  @unique
+  password           String?
+  role               String  @default("USER")
   schoolId           String?
-
-  subscriptionStatus String @default("FREE")
+  subscriptionStatus String  @default("TRIAL")
+  School             School? @relation(fields: [schoolId], references: [id])
 }
 
 model Client {
-  id        String @id @default(cuid())
-  name      String
-  schoolId  String
+  id       String    @id @default(cuid())
+  name     String
+  schoolId String
+  School   School    @relation(fields: [schoolId], references: [id])
+  Invoice  Invoice[]
 }
 
 model Invoice {
-  id        String @id @default(cuid())
-  amount    Float
-  status    String @default("PENDING")
-  clientId  String
-  createdAt DateTime @default(now())
+  id       String @id
+  amount   Float
+  clientId String
+  schoolId String
+  Client   Client @relation(fields: [clientId], references: [id])
+  School   School @relation(fields: [schoolId], references: [id])
 }
 
 model School {
-  id    String @id @default(cuid())
-  name  String
+  id String @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  Client    Client[]
+  Invoice   Invoice[]
+  User      User[]
 }
