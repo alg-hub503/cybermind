@@ -1,30 +1,32 @@
 import { redirect } from "next/navigation";
 
 async function getUser() {
-  try {
-    const res = await fetch("/api/me", { cache: "no-store" });
-    return res.json();
-  } catch {
-    return null;
-  }
+  const res = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/me`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  return res.json();
 }
 
 async function getInvoices() {
-  try {
-    const res = await fetch("/api/invoices", { cache: "no-store" });
-    return res.json();
-  } catch {
-    return [];
-  }
+  const res = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/invoices`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  return res.json();
 }
 
 export default async function Page() {
   const user = await getUser();
 
-  if (!user) return redirect("/login");
-
-  if (user.subscriptionStatus !== "PRO") {
-    return redirect("/upgrade");
+  if (!user || user.subscriptionStatus !== "PRO") {
+    redirect("/upgrade");
   }
 
   const invoices = await getInvoices();
@@ -33,11 +35,12 @@ export default async function Page() {
     <div style={{ padding: 30 }}>
       <h1>Invoices</h1>
 
-      {invoices?.map((invoice: any) => (
-        <div key={invoice.id}>
-          #{invoice.id} - ${invoice.amount}
-        </div>
-      ))}
+      {Array.isArray(invoices) &&
+        invoices.map((invoice: any) => (
+          <div key={invoice.id}>
+            #{invoice.id} - ${invoice.amount}
+          </div>
+        ))}
     </div>
   );
 }

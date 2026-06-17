@@ -1,10 +1,12 @@
 async function getStats() {
-  try {
-    const res = await fetch("/api/stats", { cache: "no-store" });
-    return res.json();
-  } catch {
-    return { clients: 0 };
-  }
+  const res = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/stats`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  return res.json();
 }
 
 export default async function Page() {
@@ -13,7 +15,8 @@ export default async function Page() {
   return (
     <div style={{ padding: 30 }}>
       <h1>Statistics</h1>
-      <p>Total Clients: {stats.clients}</p>
+
+      <p>Total Clients: {stats?.clients ?? 0}</p>
     </div>
   );
 }

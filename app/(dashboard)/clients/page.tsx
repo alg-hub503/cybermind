@@ -1,30 +1,32 @@
 import { redirect } from "next/navigation";
 
 async function getUser() {
-  try {
-    const res = await fetch("/api/me", { cache: "no-store" });
-    return res.json();
-  } catch {
-    return null;
-  }
+  const res = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/me`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  return res.json();
 }
 
 async function getClients() {
-  try {
-    const res = await fetch("/api/clients", { cache: "no-store" });
-    return res.json();
-  } catch {
-    return [];
-  }
+  const res = await fetch(
+    `${process.env.NEXTAUTH_URL}/api/clients`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  return res.json();
 }
 
 export default async function Page() {
   const user = await getUser();
 
-  if (!user) return redirect("/login");
-
-  if (user.subscriptionStatus !== "PRO") {
-    return redirect("/upgrade");
+  if (!user || user.subscriptionStatus !== "PRO") {
+    redirect("/upgrade");
   }
 
   const clients = await getClients();
@@ -33,9 +35,12 @@ export default async function Page() {
     <div style={{ padding: 30 }}>
       <h1>Clients</h1>
 
-      {clients?.map((client: any) => (
-        <div key={client.id}>{client.name}</div>
-      ))}
+      {Array.isArray(clients) &&
+        clients.map((client: any) => (
+          <div key={client.id}>
+            {client.name}
+          </div>
+        ))}
     </div>
   );
 }
