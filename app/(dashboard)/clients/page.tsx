@@ -1,32 +1,30 @@
 import { redirect } from "next/navigation";
 
 async function getUser() {
-  const res = await fetch(
-    "http://localhost:3000/api/me",
-    {
-      cache: "no-store",
-    }
-  );
-
-  return res.json();
+  try {
+    const res = await fetch("/api/me", { cache: "no-store" });
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 async function getClients() {
-  const res = await fetch(
-    "http://localhost:3000/api/clients",
-    {
-      cache: "no-store",
-    }
-  );
-
-  return res.json();
+  try {
+    const res = await fetch("/api/clients", { cache: "no-store" });
+    return res.json();
+  } catch {
+    return [];
+  }
 }
 
 export default async function Page() {
   const user = await getUser();
 
+  if (!user) return redirect("/login");
+
   if (user.subscriptionStatus !== "PRO") {
-    redirect("/upgrade");
+    return redirect("/upgrade");
   }
 
   const clients = await getClients();
@@ -35,10 +33,8 @@ export default async function Page() {
     <div style={{ padding: 30 }}>
       <h1>Clients</h1>
 
-      {clients.map((client: any) => (
-        <div key={client.id}>
-          {client.name}
-        </div>
+      {clients?.map((client: any) => (
+        <div key={client.id}>{client.name}</div>
       ))}
     </div>
   );

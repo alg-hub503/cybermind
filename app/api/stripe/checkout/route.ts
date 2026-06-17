@@ -3,11 +3,12 @@ import Stripe from "stripe";
 import { requireAuth } from "@/lib/require-auth";
 
 export async function POST() {
-  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+   const stripeSecretKey =
+    process.env.STRIPE_SECRET_KEY;
 
   if (!stripeSecretKey) {
     return NextResponse.json(
-      { error: "Stripe is not configured" },
+      { error: "Stripe key missing" },
       { status: 500 }
     );
   }

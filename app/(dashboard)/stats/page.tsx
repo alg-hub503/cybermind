@@ -1,12 +1,10 @@
 async function getStats() {
-  const res = await fetch(
-    "http://localhost:3000/api/stats",
-    {
-      cache: "no-store",
-    }
-  );
-
-  return res.json();
+  try {
+    const res = await fetch("/api/stats", { cache: "no-store" });
+    return res.json();
+  } catch {
+    return { clients: 0 };
+  }
 }
 
 export default async function Page() {
@@ -15,7 +13,6 @@ export default async function Page() {
   return (
     <div style={{ padding: 30 }}>
       <h1>Statistics</h1>
-
       <p>Total Clients: {stats.clients}</p>
     </div>
   );
