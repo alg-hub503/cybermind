@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   await prisma.user.updateMany({
     where: { email },
     data: {
-      subscriptionStatus: "PREMIUM",
+      subscriptionStatus: "PRO",
     },
   });
 
