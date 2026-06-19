@@ -5,7 +5,10 @@ import { requireAuth } from "@/lib/require-auth";
 export async function POST() {
    const stripeSecretKey =
     process.env.STRIPE_SECRET_KEY;
-
+console.log(
+  "STRIPE:",
+  stripeSecretKey?.substring(0, 12)
+);
   if (!stripeSecretKey) {
     return NextResponse.json(
       { error: "Stripe key missing" },
