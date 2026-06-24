@@ -1,61 +1,58 @@
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { requireAuth } from "@/lib/require-auth";
+import { stripe } from "@/lib/stripe";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST() {
-   const stripeSecretKey =
-    process.env.STRIPE_SECRET_KEY;
-console.log(
-  "STRIPE:",
-  stripeSecretKey?.substring(0, 12)
-);
-  if (!stripeSecretKey) {
-    return NextResponse.json(
-      { error: "Stripe key missing" },
-      { status: 500 }
-    );
-  }
+try {
+const session = await getServerSession(authOptions);
 
-  const stripe = new Stripe(stripeSecretKey);
+if (!session?.user?.email) {
+  return NextResponse.json(
+    { error: "Unauthorized" },
+    { status: 401 }
+  );
+}
 
-  const session = await requireAuth();
+const checkoutSession =
+  await stripe.checkout.sessions.create({
+    mode: "subscription",
 
-  if (!session) {
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
-  }
+    payment_method_types: ["card"],
 
-  const checkoutSession =
-    await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "subscription",
+    customer_email: session.user.email,
 
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "Premium School Plan",
-            },
-            unit_amount: 2000,
-            recurring: {
-              interval: "month",
-            },
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "CyberMind PRO",
           },
-          quantity: 1,
+          unit_amount: 1000,
+          recurring: {
+            interval: "month",
+          },
         },
-      ],
+        quantity: 1,
+      },
+    ],
 
-      success_url: `${process.env.NEXTAUTH_URL}/dashboard`,
-      cancel_url: `${process.env.NEXTAUTH_URL}/pricing`,
-
-      customer_email:
-        session.user?.email ?? undefined,
-    });
-
-  return NextResponse.json({
-    url: checkoutSession.url,
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/upgrade`,
   });
+
+return NextResponse.json({
+  url: checkoutSession.url,
+});
+
+} catch (error) {
+console.error(error);
+
+return NextResponse.json(
+  { error: "Checkout failed" },
+  { status: 500 }
+);
+
+}
 }

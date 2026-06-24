@@ -1,7 +1,8 @@
 export default function DashboardPage() {
   return (
     <div>
-      <h1>Dashboard Works</h1>
+      <h1>CyberMind Dashboard</h1>
+      <p>Dashboard is working successfully.</p>
     </div>
   );
 }

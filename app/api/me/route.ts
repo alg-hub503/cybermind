@@ -1,12 +1,13 @@
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
-  const user = await prisma.user.findUnique({
-    where: {
-      email: "test@test.com",
-    },
-  });
+const session = await getServerSession(authOptions);
 
-  return NextResponse.json(user);
+if (!session?.user) {
+return NextResponse.json(null);
+}
+
+return NextResponse.json(session.user);
 }

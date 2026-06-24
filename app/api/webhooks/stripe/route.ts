@@ -1,32 +1,40 @@
-import { NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
+import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-06-20",
-});
-
 export async function POST(req: Request) {
+  console.log("WEBHOOK HIT");
+
   const body = await req.text();
-  const sig = headers().get("stripe-signature") as string;
+
+  const signature = (await headers()).get("stripe-signature");
+
+  if (!signature) {
+    return NextResponse.json(
+      { error: "No signature" },
+      { status: 400 }
+    );
+  }
 
   let event: Stripe.Event;
 
   try {
     event = stripe.webhooks.constructEvent(
       body,
-      sig,
+      signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
+    console.error(err);
+
     return NextResponse.json(
-      { error: "Webhook Error" },
+      { error: "Webhook error" },
       { status: 400 }
     );
   }
 
-  // 🎯 عند نجاح الدفع
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
 
@@ -34,7 +42,9 @@ export async function POST(req: Request) {
 
     if (email) {
       await prisma.user.update({
-        where: { email },
+        where: {
+          email,
+        },
         data: {
           subscriptionStatus: "PRO",
         },
@@ -42,5 +52,7 @@ export async function POST(req: Request) {
     }
   }
 
-  return NextResponse.json({ received: true });
+  return NextResponse.json({
+    received: true,
+  });
 }

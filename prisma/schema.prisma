@@ -36,7 +36,7 @@ model Invoice {
 }
 
 model School {
-  id String @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   createdAt DateTime  @default(now())
   Client    Client[]
