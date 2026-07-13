@@ -1,11 +1,16 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import type { Session } from "next-auth";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-import Card from "@/components/cards/card";
+import RevenueChart from "@/components/dashboard/charts/revenue-chart";
+import DashboardHeader from "@/components/dashboard/widgets/dashboard-header";
+import QuickActions from "@/components/dashboard/widgets/quick-actions";
+import RecentActivity from "@/components/dashboard/widgets/recent-activity";
+import SchoolSummary from "@/components/dashboard/widgets/school-summary";
+import StatsGrid from "@/components/dashboard/widgets/stats-grid";
 
 async function getUser(session: Session | null) {
   if (!session?.user?.email) {
@@ -36,73 +41,77 @@ export default async function DashboardPage() {
     redirect("/schools");
   }
 
-  const [
-    totalClients,
-    totalInvoices,
-    totalUsers,
-  ] = await Promise.all([
-    prisma.client.count({
-      where: {
-        schoolId: user.schoolId,
-      },
-    }),
+  const [school, totalClients, totalInvoices, totalUsers, revenue] =
+    await Promise.all([
+      prisma.school.findUnique({
+        where: {
+          id: user.schoolId,
+        },
+      }),
 
-    prisma.invoice.count({
-      where: {
-        schoolId: user.schoolId,
-      },
-    }),
+      prisma.client.count({
+        where: {
+          schoolId: user.schoolId,
+        },
+      }),
 
-    prisma.user.count({
-      where: {
-        schoolId: user.schoolId,
-      },
-    }),
-  ]);
+      prisma.invoice.count({
+        where: {
+          schoolId: user.schoolId,
+        },
+      }),
+
+      prisma.user.count({
+        where: {
+          schoolId: user.schoolId,
+        },
+      }),
+
+      prisma.invoice.aggregate({
+        where: {
+          schoolId: user.schoolId,
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+    ]);
+
+  const totalRevenue = revenue._sum.amount ?? 0;
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">
-          Dashboard
-        </h1>
+      <DashboardHeader name={session.user.name} />
 
-        <p className="mt-2 text-slate-500">
-          Welcome back.
-        </p>
+      {school && (
+        <SchoolSummary
+          schoolName={school.name}
+          totalUsers={totalUsers}
+          totalClients={totalClients}
+          totalInvoices={totalInvoices}
+        />
+      )}
+
+      <StatsGrid
+        clients={totalClients}
+        users={totalUsers}
+        invoices={totalInvoices}
+        revenue={totalRevenue}
+      />
+
+      <div className="grid gap-6 xl:grid-cols-3">
+        <div className="xl:col-span-2">
+          <RevenueChart revenue={totalRevenue} invoices={totalInvoices} />
+        </div>
+
+        <QuickActions />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card>
-          <p className="text-sm text-slate-500">
-            Clients
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold">
-            {totalClients}
-          </h2>
-        </Card>
-
-        <Card>
-          <p className="text-sm text-slate-500">
-            Invoices
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold">
-            {totalInvoices}
-          </h2>
-        </Card>
-
-        <Card>
-          <p className="text-sm text-slate-500">
-            Users
-          </p>
-
-          <h2 className="mt-2 text-3xl font-bold">
-            {totalUsers}
-          </h2>
-        </Card>
-      </div>
+      <RecentActivity
+        totalClients={totalClients}
+        totalUsers={totalUsers}
+        totalInvoices={totalInvoices}
+      />
     </div>
   );
 }

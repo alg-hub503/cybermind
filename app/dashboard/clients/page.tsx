@@ -6,8 +6,23 @@ import ClientForm from "./ClientForm";
 import EditClientButton from "./EditClientButton";
 import DeleteClientButton from "./DeleteClientButton";
 
-export default async function ClientsPage() {
-  const clients = await getClients();
+interface ClientsPageProps {
+  searchParams: Promise<{
+    search?: string;
+  }>;
+}
+
+export default async function ClientsPage({
+  searchParams,
+}: ClientsPageProps) {
+  const params = await searchParams;
+
+  const search = params.search ?? "";
+
+  const clients = await getClients(
+    undefined,
+    search
+  );
 
   return (
     <div className="space-y-8">

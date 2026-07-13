@@ -1,22 +1,37 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getClients(schoolId?: string) {
+export async function getClients(
+  schoolId?: string,
+  search?: string
+) {
   return prisma.client.findMany({
-    where: schoolId
-      ? {
-          schoolId,
-        }
-      : undefined,
+    where: {
+      ...(schoolId ? { schoolId } : {}),
+
+      ...(search
+        ? {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          }
+        : {}),
+    },
+
     orderBy: {
       name: "asc",
     },
   });
 }
 
-export async function getClientById(id: string) {
-  return prisma.client.findUnique({
+export async function getClientById(
+  id: string,
+  schoolId?: string
+) {
+  return prisma.client.findFirst({
     where: {
       id,
+      ...(schoolId ? { schoolId } : {}),
     },
   });
 }
@@ -44,7 +59,21 @@ export async function updateClient(
   });
 }
 
-export async function deleteClient(id: string) {
+export async function deleteClient(
+  id: string,
+  schoolId?: string
+) {
+  const client = await prisma.client.findFirst({
+    where: {
+      id,
+      ...(schoolId ? { schoolId } : {}),
+    },
+  });
+
+  if (!client) {
+    throw new Error("Client not found");
+  }
+
   return prisma.client.delete({
     where: {
       id,

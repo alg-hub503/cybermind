@@ -83,11 +83,21 @@ export default function Sidebar() {
         )}
       </nav>
 
-      <div className="border-t border-slate-800 p-6">
-        <p className="text-xs text-slate-500">
-          CyberMind SaaS v1.0
-        </p>
-      </div>
+     <div className="border-t border-slate-800 p-6">
+  <div className="space-y-1">
+    <p className="font-semibold text-white">
+      {session?.user?.name ?? "Unknown User"}
+    </p>
+
+    <p className="text-sm text-slate-400">
+      {session?.user?.email}
+    </p>
+
+    <span className="inline-flex rounded-full bg-blue-600 px-2 py-1 text-xs font-semibold text-white">
+      {session?.user?.role}
+    </span>
+  </div>
+</div>
     </aside>
   );
 }

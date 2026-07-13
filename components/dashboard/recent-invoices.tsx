@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { ArrowRight, ReceiptText } from "lucide-react";
+
 interface Invoice {
   id: string;
   amount: number;
@@ -13,35 +16,66 @@ export default function RecentInvoices({
 }: RecentInvoicesProps) {
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-6 text-xl font-semibold text-slate-900">
-        Latest Invoices
-      </h2>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">
+            Latest Invoices
+          </h2>
+
+          <p className="mt-1 text-sm text-slate-500">
+            Recently generated invoices.
+          </p>
+        </div>
+
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+          <ReceiptText size={22} />
+        </div>
+      </div>
 
       {invoices.length === 0 ? (
-        <p className="text-slate-500">
-          No invoices found.
-        </p>
+        <div className="rounded-2xl border border-dashed border-slate-300 py-10 text-center">
+          <ReceiptText
+            size={36}
+            className="mx-auto mb-3 text-slate-300"
+          />
+
+          <p className="font-medium text-slate-600">
+            No invoices found
+          </p>
+
+          <p className="mt-1 text-sm text-slate-500">
+            This school doesn't have any invoices yet.
+          </p>
+        </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {invoices.map((invoice) => (
-            <div
+            <Link
               key={invoice.id}
-              className="flex items-center justify-between rounded-xl border border-slate-100 p-4"
+              href={`/dashboard/invoices/${invoice.id}`}
+              className="flex items-center justify-between rounded-2xl border border-slate-200 p-4 transition-all duration-200 hover:border-emerald-300 hover:bg-slate-50"
             >
               <div>
-                <p className="font-medium text-slate-900">
+                <p className="text-lg font-bold text-slate-900">
                   ${invoice.amount.toFixed(2)}
                 </p>
 
-                <p className="text-sm text-slate-500">
+                <p className="mt-1 text-sm text-slate-500">
                   {invoice.createdAt.toLocaleDateString()}
                 </p>
               </div>
 
-              <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700">
-                Paid
-              </span>
-            </div>
+              <div className="flex items-center gap-3">
+                <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  Paid
+                </span>
+
+                <ArrowRight
+                  size={18}
+                  className="text-slate-400"
+                />
+              </div>
+            </Link>
           ))}
         </div>
       )}

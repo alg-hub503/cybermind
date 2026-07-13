@@ -4,7 +4,6 @@ import { Bell } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
 import UserMenu from "@/components/dashboard/user-menu";
 
 export default function Navbar() {
@@ -12,14 +11,15 @@ export default function Navbar() {
 
   const titles: Record<string, string> = {
     "/dashboard": "Dashboard",
+    "/dashboard/users": "Users",
     "/dashboard/clients": "Clients",
     "/dashboard/invoices": "Invoices",
     "/dashboard/schools": "Schools",
+    "/dashboard/analytics": "Analytics",
     "/dashboard/stats": "Statistics",
     "/dashboard/subscription": "Subscription",
     "/dashboard/billing": "Billing",
     "/dashboard/admin": "Admin",
-    "/dashboard/users": "Users",
   };
 
   const title = titles[pathname] ?? "Dashboard";
@@ -37,10 +37,6 @@ export default function Navbar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="hidden w-72 md:block">
-          <Input placeholder="Search clients, invoices..." />
-        </div>
-
         <Button
           variant="ghost"
           aria-label="Notifications"

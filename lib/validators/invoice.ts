@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const CreateInvoiceSchema = z.object({
-  clientId: z.string().uuid("Invalid client id"),
+  clientId: z.string().cuid("Invalid client id"),
 
   amount: z
     .number()

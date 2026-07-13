@@ -9,7 +9,7 @@ export const CreateClientSchema = z.object({
 });
 
 export const UpdateClientSchema = z.object({
-  id: z.string().uuid("Invalid client id"),
+  id: z.string().cuid("Invalid client id"),
 
   name: z
     .string()

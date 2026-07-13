@@ -6,9 +6,22 @@ import { getInvoices } from "@/lib/services/invoice.service";
 import InvoiceForm from "./InvoiceForm";
 import DeleteInvoiceButton from "./DeleteInvoiceButton";
 
-export default async function InvoicesPage() {
+interface InvoicesPageProps {
+  searchParams: Promise<{
+    search?: string;
+  }>;
+}
+
+export default async function InvoicesPage({
+  searchParams,
+}: InvoicesPageProps) {
+  const params = await searchParams;
+
+  const search = params.search ?? "";
+
   const [invoices, clients] = await Promise.all([
-    getInvoices(),
+    getInvoices(undefined, search),
+
     prisma.client.findMany({
       orderBy: {
         name: "asc",
@@ -41,7 +54,7 @@ export default async function InvoicesPage() {
       <InvoiceForm clients={clients} />
 
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-        <table className="min-w-full">
+        <table className="min-full">
           <thead className="bg-slate-50">
             <tr>
               <th className="px-6 py-4 text-left text-sm font-semibold">

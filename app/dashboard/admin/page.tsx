@@ -4,10 +4,22 @@ import { getUsers } from "@/lib/services/user.service";
 import RoleButton from "@/components/RoleButton";
 import SubscriptionButton from "@/components/SubscriptionButton";
 
-export default async function AdminPage() {
+interface AdminPageProps {
+  searchParams: Promise<{
+    search?: string;
+  }>;
+}
+
+export default async function AdminPage({
+  searchParams,
+}: AdminPageProps) {
   await requireAdmin();
 
-  const users = await getUsers();
+  const params = await searchParams;
+
+  const search = params.search ?? "";
+
+  const users = await getUsers(search);
 
   return (
     <div style={{ padding: 30 }}>
@@ -33,29 +45,41 @@ export default async function AdminPage() {
         </thead>
 
         <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.email}</td>
-
-              <td>{user.role}</td>
-
-              <td>{user.subscriptionStatus}</td>
-
-              <td>
-                <RoleButton
-                  userId={user.id}
-                  role={user.role}
-                />
-              </td>
-
-              <td>
-                <SubscriptionButton
-                  userId={user.id}
-                  subscriptionStatus={user.subscriptionStatus}
-                />
+          {users.length === 0 ? (
+            <tr>
+              <td colSpan={5}>
+                No users found.
               </td>
             </tr>
-          ))}
+          ) : (
+            users.map((user) => (
+              <tr key={user.id}>
+                <td>{user.email}</td>
+
+                <td>{user.role}</td>
+
+                <td>
+                  {user.subscriptionStatus}
+                </td>
+
+                <td>
+                  <RoleButton
+                    userId={user.id}
+                    role={user.role}
+                  />
+                </td>
+
+                <td>
+                  <SubscriptionButton
+                    userId={user.id}
+                    subscriptionStatus={
+                      user.subscriptionStatus
+                    }
+                  />
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

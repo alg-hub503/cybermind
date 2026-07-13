@@ -105,9 +105,40 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
+    const user = await getCurrentUser();
+
+    if (!user?.schoolId) {
+      return NextResponse.json(
+        {
+          error: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
     const body = UpdateClientSchema.parse(
       await request.json()
     );
+
+    const existingClient = await prisma.client.findFirst({
+      where: {
+        id: body.id,
+        schoolId: user.schoolId,
+      },
+    });
+
+    if (!existingClient) {
+      return NextResponse.json(
+        {
+          error: "Client not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
 
     const client = await updateClient(body.id, {
       name: body.name,

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import PageTitle from "@/components/ui/page-title";
 import StatCard from "@/components/ui/stat-card";
 
+import AnalyticsChart from "@/components/dashboard/charts/analytics-chart";
+
 interface AnalyticsPageProps {
   params: Promise<{
     id: string;
@@ -48,6 +50,9 @@ export default async function AnalyticsPage({
     }),
   ]);
 
+  const totalRevenue =
+    revenue._sum.amount ?? 0;
+
   return (
     <div className="space-y-8">
       <PageTitle
@@ -73,9 +78,16 @@ export default async function AnalyticsPage({
 
         <StatCard
           title="Revenue"
-          value={`$${(revenue._sum.amount ?? 0).toFixed(2)}`}
+          value={`$${totalRevenue.toFixed(2)}`}
         />
       </div>
+
+      <AnalyticsChart
+        users={users}
+        clients={clients}
+        invoices={invoices}
+        revenue={totalRevenue}
+      />
     </div>
   );
 }

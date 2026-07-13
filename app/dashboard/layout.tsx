@@ -11,13 +11,13 @@ export default function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="flex min-h-screen bg-slate-100">
       <Sidebar />
 
-      <div className="ml-[110px]">
+      <div className="flex min-h-screen flex-1 flex-col lg:ml-64">
         <Navbar />
 
-        <main className="p-6">
+        <main className="flex-1 p-6">
           {children}
         </main>
       </div>
