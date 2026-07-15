@@ -2,9 +2,9 @@ import { prisma } from "@/lib/prisma";
 import { Eye, Pencil, Trash2, Users } from "lucide-react";
 import Link from "next/link";
 
-import DataTable from "@/components/ui/data-table";
-import DataTableBody from "@/components/ui/data-table-body";
-import DataTableHead from "@/components/ui/data-table-head";
+import DataTable from "@/components/legacy/data-table/data-table";
+import DataTableBody from "@/components/legacy/data-table/data-table-body";
+import DataTableHead from "@/components/legacy/data-table/data-table-head";
 import EmptyState from "@/components/ui/empty-state";
 import PageTitle from "@/components/ui/page-title";
 
@@ -178,3 +178,4 @@ export default async function UsersPage({ params }: UsersPageProps) {
     </div>
   );
 }
+

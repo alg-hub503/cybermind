@@ -44,7 +44,7 @@ export default function SchoolClients({
           </p>
 
           <p className="mt-1 text-sm text-slate-500">
-            This school doesn't have any clients yet.
+            This school doesn&apos;t have any clients yet.
           </p>
         </div>
       ) : (

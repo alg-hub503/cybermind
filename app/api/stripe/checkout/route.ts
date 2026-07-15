@@ -4,55 +4,69 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function POST() {
-try {
-const session = await getServerSession(authOptions);
+  try {
+    const session = await getServerSession(authOptions);
 
-if (!session?.user?.email) {
-  return NextResponse.json(
-    { error: "Unauthorized" },
-    { status: 401 }
-  );
-}
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
 
-const checkoutSession =
-  await stripe.checkout.sessions.create({
-    mode: "subscription",
+    const priceId = process.env.STRIPE_PRICE_ID;
 
-    payment_method_types: ["card"],
+    if (!priceId) {
+      console.error("Missing STRIPE_PRICE_ID");
 
-    customer_email: session.user.email,
+      return NextResponse.json(
+        { error: "Stripe Price ID is not configured." },
+        { status: 500 }
+      );
+    }
 
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: "CyberMind PRO",
-          },
-          unit_amount: 1000,
-          recurring: {
-            interval: "month",
-          },
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+    if (!appUrl) {
+      console.error("Missing NEXT_PUBLIC_APP_URL");
+
+      return NextResponse.json(
+        { error: "Application URL is not configured." },
+        { status: 500 }
+      );
+    }
+
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: "subscription",
+
+      payment_method_types: ["card"],
+
+      customer_email: session.user.email,
+
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
         },
-        quantity: 1,
+      ],
+
+      success_url: `${appUrl}/dashboard`,
+      cancel_url: `${appUrl}/upgrade`,
+    });
+
+    return NextResponse.json({
+      url: checkoutSession.url,
+    });
+  } catch (error) {
+    console.error("Stripe Checkout Error:", error);
+
+    return NextResponse.json(
+      {
+        error: "Checkout failed",
       },
-    ],
-
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/upgrade`,
-  });
-
-return NextResponse.json({
-  url: checkoutSession.url,
-});
-
-} catch (error) {
-console.error(error);
-
-return NextResponse.json(
-  { error: "Checkout failed" },
-  { status: 500 }
-);
-
-}
+      {
+        status: 500,
+      }
+    );
+  }
 }

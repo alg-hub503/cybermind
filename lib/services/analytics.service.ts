@@ -1,30 +1,27 @@
 import { prisma } from "@/lib/prisma";
 
+import {
+  getTotalRevenue,
+  getAverageInvoice,
+} from "@/lib/services/domain/revenue.service";
+
 export async function getDashboardAnalytics() {
   const [
     totalUsers,
     totalClients,
     totalSchools,
     totalInvoices,
-    revenueResult,
-    averageInvoiceResult,
+    totalRevenue,
+    averageInvoice,
   ] = await Promise.all([
     prisma.user.count(),
     prisma.client.count(),
     prisma.school.count(),
     prisma.invoice.count(),
 
-    prisma.invoice.aggregate({
-      _sum: {
-        amount: true,
-      },
-    }),
+    getTotalRevenue(),
 
-    prisma.invoice.aggregate({
-      _avg: {
-        amount: true,
-      },
-    }),
+    getAverageInvoice(),
   ]);
 
   return {
@@ -32,12 +29,8 @@ export async function getDashboardAnalytics() {
     totalClients,
     totalSchools,
     totalInvoices,
-
-    totalRevenue:
-      revenueResult._sum.amount ?? 0,
-
-    averageInvoice:
-      averageInvoiceResult._avg.amount ?? 0,
+    totalRevenue,
+    averageInvoice,
   };
 }
 
@@ -72,6 +65,7 @@ export async function getRevenueTrend() {
     })
   );
 }
+
 export async function getTopClients(limit = 5) {
   const clients = await prisma.client.findMany({
     include: {
@@ -92,14 +86,13 @@ export async function getTopClients(limit = 5) {
     .sort((a, b) => b.revenue - a.revenue)
     .slice(0, limit);
 }
+
 export async function getLatestInvoices(limit = 5) {
   return prisma.invoice.findMany({
     take: limit,
-
     orderBy: {
       createdAt: "desc",
     },
-
     include: {
       Client: true,
     },

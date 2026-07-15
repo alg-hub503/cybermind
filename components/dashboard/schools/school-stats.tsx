@@ -1,4 +1,4 @@
-import StatCard from "@/components/ui/stat-card";
+import StatCard from "@/components/dashboard/stat-card";
 import {
   Users,
   Building2,
@@ -27,7 +27,7 @@ export default function SchoolStats({
         </h2>
 
         <p className="text-sm text-slate-500">
-          Live overview of this school's activity.
+          Live overview of this school&apos;s activity.
         </p>
       </div>
 
@@ -62,3 +62,4 @@ export default function SchoolStats({
     </section>
   );
 }
+

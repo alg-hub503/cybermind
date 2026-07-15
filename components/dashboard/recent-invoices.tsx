@@ -44,7 +44,7 @@ export default function RecentInvoices({
           </p>
 
           <p className="mt-1 text-sm text-slate-500">
-            This school doesn't have any invoices yet.
+            This school doesn&apos;t have any invoices yet.
           </p>
         </div>
       ) : (

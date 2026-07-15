@@ -1,3 +1,5 @@
+import { requireCurrentUser } from "@/lib/require-current-user";
+import { redirect } from "next/navigation";
 import { getUsers } from "@/lib/services/user.service";
 
 import {
@@ -11,6 +13,12 @@ import {
 } from "@/components/tables/users/columns";
 
 export default async function UsersPage() {
+
+  const { user } = await requireCurrentUser();
+
+  if (!user.schoolId) {
+    redirect("/schools");
+  }
   const users = await getUsers();
 
   const data: UserRow[] = users.map((user) => ({
@@ -35,3 +43,5 @@ export default async function UsersPage() {
     </div>
   );
 }
+
+

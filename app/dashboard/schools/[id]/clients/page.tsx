@@ -2,9 +2,9 @@ import { prisma } from "@/lib/prisma";
 
 import PageTitle from "@/components/ui/page-title";
 import EmptyState from "@/components/ui/empty-state";
-import DataTable from "@/components/ui/data-table";
-import DataTableHead from "@/components/ui/data-table-head";
-import DataTableBody from "@/components/ui/data-table-body";
+import DataTable from "@/components/legacy/data-table/data-table";
+import DataTableHead from "@/components/legacy/data-table/data-table-head";
+import DataTableBody from "@/components/legacy/data-table/data-table-body";
 
 interface ClientsPageProps {
   params: Promise<{

@@ -1,3 +1,5 @@
+import { requireCurrentUser } from "@/lib/require-current-user";
+import { redirect } from "next/navigation";
 import Card from "@/components/cards/card";
 
 import RevenueCard from "@/components/analytics/revenue-card";
@@ -13,6 +15,12 @@ import {
 } from "@/lib/services/analytics.service";
 
 export default async function AnalyticsPage() {
+
+  const { user } = await requireCurrentUser();
+
+  if (!user.schoolId) {
+    redirect("/schools");
+  }
   const [
     analytics,
     revenueTrend,
@@ -107,3 +115,5 @@ export default async function AnalyticsPage() {
     </div>
   );
 }
+
+

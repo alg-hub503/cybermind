@@ -1,4 +1,6 @@
-import { getClients } from "@/lib/services/client.service";
+import { redirect } from "next/navigation";
+import { requireCurrentUser } from "@/lib/require-current-user";
+import { getClientsBySchool } from "@/lib/services/domain/client.service";
 
 import Card from "@/components/cards/card";
 
@@ -19,10 +21,13 @@ export default async function ClientsPage({
 
   const search = params.search ?? "";
 
-  const clients = await getClients(
-    undefined,
-    search
-  );
+const { user } = await requireCurrentUser();
+
+if (!user.schoolId) {
+  redirect("/schools");
+}
+
+  const clients = await getClientsBySchool(user.schoolId);
 
   return (
     <div className="space-y-8">
@@ -101,3 +106,8 @@ export default async function ClientsPage({
     </div>
   );
 }
+
+
+
+
+

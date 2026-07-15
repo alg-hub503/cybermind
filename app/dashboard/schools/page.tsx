@@ -1,11 +1,13 @@
-import { prisma } from "@/lib/prisma";
+import { requireCurrentUser } from "@/lib/require-current-user";
+import { redirect } from "next/navigation";
+import { countSchools, getSchoolsPaginated } from "@/lib/services/school.service";
 
 import PageHeader from "@/components/dashboard/schools/page-header";
 import SchoolRow from "@/components/dashboard/schools/school-row";
 
-import DataTable from "@/components/ui/data-table";
-import DataTableHead from "@/components/ui/data-table-head";
-import DataTableBody from "@/components/ui/data-table-body";
+import DataTable from "@/components/legacy/data-table/data-table";
+import DataTableHead from "@/components/legacy/data-table/data-table-head";
+import DataTableBody from "@/components/legacy/data-table/data-table-body";
 import StatCard from "@/components/ui/stat-card";
 import EmptyState from "@/components/ui/empty-state";
 import Pagination from "@/components/ui/pagination";
@@ -25,6 +27,11 @@ interface SchoolsPageProps {
 export default async function SchoolsPage({
   searchParams,
 }: SchoolsPageProps) {
+  const { user } = await requireCurrentUser();
+
+  if (!user.schoolId) {
+    redirect("/schools");
+  }
   const {
     search = "",
     sort = "asc",
@@ -51,20 +58,13 @@ export default async function SchoolsPage({
       }
     : undefined;
 
-  const totalSchools = await prisma.school.count({
-    where,
-  });
+  const totalSchools = await countSchools(where);
 
   const totalPages = Math.ceil(
     totalSchools / PAGE_SIZE
   );
 
-  const schools = await prisma.school.findMany({
-    where,
-    orderBy,
-    skip: (currentPage - 1) * PAGE_SIZE,
-    take: PAGE_SIZE,
-  });
+  const schools = await getSchoolsPaginated(where, orderBy, (currentPage - 1) * PAGE_SIZE, PAGE_SIZE);
 
   return (
     <div className="space-y-8">
@@ -124,3 +124,9 @@ export default async function SchoolsPage({
     </div>
   );
 }
+
+
+
+
+
+

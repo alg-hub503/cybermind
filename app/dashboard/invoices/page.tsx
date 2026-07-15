@@ -1,6 +1,8 @@
+import { redirect } from "next/navigation";
+import { requireCurrentUser } from "@/lib/require-current-user";
 import Card from "@/components/cards/card";
 
-import { prisma } from "@/lib/prisma";
+import { getClientsForSelect } from "@/lib/services/domain/client.service";
 import { getInvoices } from "@/lib/services/invoice.service";
 
 import InvoiceForm from "./InvoiceForm";
@@ -19,14 +21,16 @@ export default async function InvoicesPage({
 
   const search = params.search ?? "";
 
+const { user } = await requireCurrentUser();
+
+if (!user.schoolId) {
+  redirect("/schools");
+}
+
   const [invoices, clients] = await Promise.all([
     getInvoices(undefined, search),
 
-    prisma.client.findMany({
-      orderBy: {
-        name: "asc",
-      },
-    }),
+    getClientsForSelect(),
   ]);
 
   return (
@@ -127,3 +131,6 @@ export default async function InvoicesPage({
     </div>
   );
 }
+
+
+

@@ -11,11 +11,11 @@ export default function QuickActions() {
       </h2>
 
       <div className="grid gap-3">
-        <Link href="/dashboard/clients/new">
+        <Link href="/dashboard/clients">
           <Button className="w-full">New Client</Button>
         </Link>
 
-        <Link href="/dashboard/invoices/new">
+        <Link href="/dashboard/invoices">
           <Button variant="secondary" className="w-full">
             New Invoice
           </Button>

@@ -53,3 +53,35 @@ export async function deleteSchool(id: string) {
     },
   });
 }
+export async function countSchools(where?: {
+  name?: {
+    contains: string;
+    mode: "insensitive";
+  };
+}) {
+  return prisma.school.count({
+    where,
+  });
+}
+
+export async function getSchoolsPaginated(
+  where: {
+    name?: {
+      contains: string;
+      mode: "insensitive";
+    };
+  } | undefined,
+  orderBy:
+    | { name: "asc" | "desc"; createdAt?: undefined }
+    | { createdAt: "asc" | "desc"; name?: undefined },
+  skip: number,
+  take: number
+) {
+  return prisma.school.findMany({
+    where,
+    orderBy,
+    skip,
+    take,
+  });
+}
+
