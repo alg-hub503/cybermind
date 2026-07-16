@@ -5,4 +5,12 @@ export interface PaymentGateway {
   createCheckoutSession(
     input: CreateCheckoutSessionInput
   ): Promise<CreateCheckoutSessionResult>;
+
+  createCustomer(input: {
+    schoolId: string;
+    email: string;
+    name?: string | null;
+  }): Promise<{
+    stripeCustomerId: string;
+  }>;
 }
