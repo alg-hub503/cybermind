@@ -1,24 +1,19 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { requireCurrentUser } from "@/lib/require-current-user";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default async function BillingPage() {
-  const session = await getServerSession(authOptions);
+  const { user } = await requireCurrentUser();
 
-  if (!session?.user) {
-    redirect("/login");
-  }
-
-  if (session.user.subscriptionStatus !== "PRO") {
-    redirect("/upgrade");
+  if (!user.schoolId) {
+    redirect("/schools");
   }
 
   return (
     <div style={{ padding: 30 }}>
       <h1>Billing</h1>
 
-      <p>Current Plan: PRO</p>
+      <p>School ID: {user.schoolId}</p>
 
       <Link href="/dashboard">
         Back To Dashboard
