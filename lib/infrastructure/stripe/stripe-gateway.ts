@@ -1,8 +1,9 @@
 import { stripe } from "./stripe-client";
 import { CreateCheckoutSessionInput } from "@/lib/services/application/billing/dto/create-checkout-session-input";
 import { CreateCheckoutSessionResult } from "@/lib/services/application/billing/dto/create-checkout-session-result";
+import { PaymentGateway } from "@/lib/domain/billing/payment-gateway";
 
-export class StripeGateway {
+export class StripeGateway implements PaymentGateway {
   async createCustomer(input: {
     schoolId: string;
     email: string;
@@ -50,6 +51,22 @@ export class StripeGateway {
     return {
       checkoutUrl: session.url!,
       sessionId: session.id,
+    };
+  }
+
+  async createPortalSession(input: {
+    stripeCustomerId: string;
+    returnUrl: string;
+  }): Promise<{
+    portalUrl: string;
+  }> {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: input.stripeCustomerId,
+      return_url: input.returnUrl,
+    });
+
+    return {
+      portalUrl: session.url,
     };
   }
 }
