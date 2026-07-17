@@ -1,8 +1,15 @@
 import { PaymentGateway } from "@/lib/domain/billing/payment-gateway";
+import { createStripeCustomer } from "./create-stripe-customer";
 
 export async function getOrCreateStripeCustomer(
   gateway: PaymentGateway,
-  schoolId: string
+  schoolId: string,
+  email: string,
+  name?: string | null
 ): Promise<string> {
-  throw new Error("Not implemented");
+  return createStripeCustomer(gateway, {
+    schoolId,
+    email,
+    name,
+  });
 }
