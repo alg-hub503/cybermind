@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SubscriptionStatus {
+  TRIALING
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  PAUSED
+}
+
+enum SubscriptionPlan {
+  FREE
+  PRO
+}
+
+model Subscription {
+  id                   String @id @default(cuid())
+
+  userId               String @unique
+  user                 User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripeSubscriptionId String @unique
+  stripeProductId      String?
+  stripePriceId        String?
+
+  plan                 SubscriptionPlan
+  status               SubscriptionStatus
+
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+
+  cancelAtPeriodEnd    Boolean @default(false)
+
+  canceledAt           DateTime?
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([status])
+  @@index([currentPeriodEnd])
+}
+model User {
+  id                 String  @id @default(cuid())
+  name               String?
+  email              String  @unique
+  password           String?
+  role               String  @default("USER")
+  schoolId           String?
+  stripeCustomerId String? @unique
+  subscriptionStatus String  @default("TRIAL")
+
+  School             School? @relation(fields: [schoolId], references: [id])
+
+  subscription       Subscription?
+}
+
+model Client {
+  id       String    @id @default(cuid())
+  name     String
+  schoolId String
+  School   School    @relation(fields: [schoolId], references: [id])
+  Invoice  Invoice[]
+}
+
+model Invoice {
+  id        String   @id
+  amount    Float
+  clientId  String
+  schoolId  String
+  createdAt DateTime @default(now())
+
+  Client    Client @relation(fields: [clientId], references: [id])
+  School    School @relation(fields: [schoolId], references: [id])
+}
+
+model School {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  Client    Client[]
+  Invoice   Invoice[]
+  User      User[]
+}
+
+model playing_with_neon {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Float? @db.Real
+}
