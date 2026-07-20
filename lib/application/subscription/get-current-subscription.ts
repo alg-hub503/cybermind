@@ -1,7 +1,7 @@
-import { createSubscriptionService } from "@/lib/infrastructure/subscription/subscription-factory";
+import { PrismaSubscriptionRepository } from "@/lib/infrastructure/persistence/prisma/prisma-subscription-repository";
 
-export async function getCurrentSubscription(subscriptionId: string) {
-  const stripe = createSubscriptionService().client;
+export async function getCurrentSubscription(userId: string) {
+  const repository = new PrismaSubscriptionRepository();
 
-  return stripe.subscriptions.retrieve(subscriptionId);
+  return repository.findByUserId(userId);
 }

@@ -1,3 +1,3 @@
 export interface SubscriptionService {
-  create(): Promise<void>;
+  getCurrentSubscription(userId: string): Promise<unknown>;
 }

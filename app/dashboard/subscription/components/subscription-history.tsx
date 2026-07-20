@@ -1,3 +1,3 @@
-export default function SubscriptionHistory() {
+export function SubscriptionHistory() {
   return null;
 }

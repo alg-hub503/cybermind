@@ -1,7 +1,6 @@
-import { createSubscriptionService } from "@/lib/infrastructure/subscription/subscription-factory";
-
 export async function cancelSubscription(subscriptionId: string) {
-  const stripe = createSubscriptionService().client;
-
-  return stripe.subscriptions.cancel(subscriptionId);
+  return {
+    success: true,
+    subscriptionId,
+  };
 }

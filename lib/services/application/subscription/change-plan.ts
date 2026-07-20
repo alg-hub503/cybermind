@@ -1,1 +1,1 @@
-export async function changePlan() {}
+export * from "@/lib/application/subscription/change-subscription-plan";

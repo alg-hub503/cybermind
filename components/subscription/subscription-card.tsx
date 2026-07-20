@@ -1,3 +1,3 @@
-export default function SubscriptionCard() {
+export function SubscriptionCard() {
   return null;
 }

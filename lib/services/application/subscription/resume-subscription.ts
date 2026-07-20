@@ -1,1 +1,1 @@
-export async function resumeSubscription() {}
+export * from "@/lib/application/subscription/resume-subscription";

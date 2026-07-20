@@ -1,1 +1,1 @@
-export async function cancelSubscription() {}
+export * from "@/lib/application/subscription/cancel-subscription";

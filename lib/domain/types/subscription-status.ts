@@ -1,4 +1,9 @@
 export type SubscriptionStatus =
-  | "trial"
-  | "active"
-  | "canceled";
+  | "TRIALING"
+  | "ACTIVE"
+  | "PAST_DUE"
+  | "CANCELED"
+  | "UNPAID"
+  | "INCOMPLETE"
+  | "INCOMPLETE_EXPIRED"
+  | "PAUSED";

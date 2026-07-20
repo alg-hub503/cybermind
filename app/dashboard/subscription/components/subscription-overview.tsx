@@ -1,3 +1,3 @@
-export default function SubscriptionOverview() {
+export function SubscriptionOverview() {
   return null;
 }

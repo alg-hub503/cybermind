@@ -1,3 +1,3 @@
-export default function SubscriptionStatusBadge() {
+export function SubscriptionStatusBadge() {
   return null;
 }

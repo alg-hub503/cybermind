@@ -1,3 +1,3 @@
-export default function SubscriptionPlanSelector() {
+export function SubscriptionPlanSelector() {
   return null;
 }
