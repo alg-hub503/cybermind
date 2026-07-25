@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.1.0 — 2026-07-25
+
+### Frontend Billing Integration (Phase 5)
+
+- **New `/dashboard/billing`**: subscription overview (plan, status, renewal, cancel status), invoice table with PDF links, Customer Portal button, Cancel Subscription button, billing summary export
+- **New `/dashboard/subscription`**: plan details, status, period start/end, renewal/expiry date, Stripe reference for admins
+- **Fixed `/upgrade`**: now reads `School->Subscription` status before showing upgrade CTA; redirects to `/dashboard` if already active; shows current status for non-active subscriptions (e.g. incomplete, past_due)
+- **New API routes**: `POST /api/stripe/portal` (creates Customer Portal session), `POST /api/stripe/cancel-subscription` (cancels Stripe subscription)
+- Checkout `success_url` already pointed to `/dashboard` (no change needed)
+- Admin dashboard already reads `School.subscription.status` (no change needed)
+
 ## v1.0.0 — 2026-07-25
 
 ### Billing Consolidation (Phases 1–4)
