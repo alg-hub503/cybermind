@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { hasActiveAccess } from "@/lib/subscription-status";
 import { getSchoolById } from "@/lib/services/domain/school.service";
 import { getBillingStatus } from "@/lib/services/application/billing/get-billing-status";
