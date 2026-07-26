@@ -1,7 +1,9 @@
+import { requireCurrentUser } from "@/lib/require-current-user";
 import { getSchools } from "@/lib/features/schools/school-actions";
 import { School } from "@/lib/features/schools/types/school";
 
 export default async function SchoolsPage() {
+  await requireCurrentUser();
   const schools = await getSchools();
 
   return (
