@@ -14,10 +14,12 @@ type Client = {
 
 interface InvoiceFormProps {
   clients: Client[];
+  schoolId: string;
 }
 
 export default function InvoiceForm({
   clients,
+  schoolId,
 }: InvoiceFormProps) {
   const router = useRouter();
 
@@ -47,6 +49,7 @@ export default function InvoiceForm({
         body: JSON.stringify({
           clientId,
           amount: Number(amount),
+          schoolId,
         }),
       });
 

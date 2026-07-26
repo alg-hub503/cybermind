@@ -1,19 +1,46 @@
 import { NextResponse } from "next/server";
-import { getClients, createClient } from "@/lib/features/clients/client-actions";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { ADMIN_ROLE } from "@/lib/constants";
+import { getClients, getClientsBySchool, createClient } from "@/lib/features/clients/client-actions";
 import { clientSchema } from "@/lib/features/clients/schemas/client.schema";
-import { Client } from "@/lib/features/clients/types/client";
 
 export async function GET() {
-  const clients: Client[] = await getClients();
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role === ADMIN_ROLE) {
+    const clients = await getClients();
+    return NextResponse.json(clients);
+  }
+
+  if (!session.user.schoolId) {
+    return NextResponse.json({ error: "No school assigned" }, { status: 403 });
+  }
+
+  const clients = await getClientsBySchool(session.user.schoolId);
   return NextResponse.json(clients);
 }
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json();
   const parsed = clientSchema.safeParse(body);
+
   if (!parsed.success) {
     return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
   }
+
+  if (session.user.role !== ADMIN_ROLE && parsed.data.schoolId !== session.user.schoolId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const client = await createClient(parsed.data);
     return NextResponse.json(client, { status: 201 });

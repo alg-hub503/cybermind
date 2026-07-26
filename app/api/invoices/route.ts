@@ -1,19 +1,47 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { ADMIN_ROLE } from "@/lib/constants";
 import { getInvoices, createInvoice } from "@/lib/features/invoices/invoice-actions";
 import { invoiceSchema } from "@/lib/features/invoices/schemas/invoice.schema";
-import { Invoice } from "@/lib/features/invoices/types/invoice";
 
 export async function GET() {
-  const invoices: Invoice[] = await getInvoices();
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role === ADMIN_ROLE) {
+    const invoices = await getInvoices();
+    return NextResponse.json(invoices);
+  }
+
+  if (!session.user.schoolId) {
+    return NextResponse.json({ error: "No school assigned" }, { status: 403 });
+  }
+
+  const { getInvoicesBySchool } = await import("@/lib/features/invoices/invoice-actions");
+  const invoices = await getInvoicesBySchool(session.user.schoolId);
   return NextResponse.json(invoices);
 }
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json();
   const parsed = invoiceSchema.safeParse(body);
+
   if (!parsed.success) {
     return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
   }
+
+  if (session.user.role !== ADMIN_ROLE && parsed.data.schoolId !== session.user.schoolId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const invoice = await createInvoice(parsed.data);
     return NextResponse.json(invoice, { status: 201 });

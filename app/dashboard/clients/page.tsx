@@ -1,12 +1,18 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
-import { getClients } from "@/lib/features/clients/client-actions";
+import { ADMIN_ROLE } from "@/lib/constants";
+import { getClients, getClientsBySchool } from "@/lib/features/clients/client-actions";
 import ClientForm from "./ClientForm";
 import EditClientButton from "./EditClientButton";
 import DeleteClientButton from "./DeleteClientButton";
 
 export default async function ClientsPage() {
-  await requireCurrentUser();
-  const clients = await getClients();
+  const { user } = await requireCurrentUser();
+
+  const clients = user.role === ADMIN_ROLE
+    ? await getClients()
+    : user.schoolId
+      ? await getClientsBySchool(user.schoolId)
+      : [];
 
   return (
     <main className="p-6">

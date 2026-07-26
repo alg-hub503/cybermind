@@ -1,15 +1,22 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
-import { getInvoices } from "@/lib/features/invoices/invoice-actions";
-import { getClients } from "@/lib/features/clients/client-actions";
+import { ADMIN_ROLE } from "@/lib/constants";
+import { getInvoices, getInvoicesBySchool } from "@/lib/features/invoices/invoice-actions";
+import { getClientsBySchool } from "@/lib/features/clients/client-actions";
 import InvoiceForm from "./InvoiceForm";
 import DeleteInvoiceButton from "./DeleteInvoiceButton";
 
 export default async function InvoicesPage() {
-  await requireCurrentUser();
-  const [invoices, clients] = await Promise.all([
-    getInvoices(),
-    getClients(),
-  ]);
+  const { user } = await requireCurrentUser();
+
+  const invoices = user.role === ADMIN_ROLE
+    ? await getInvoices()
+    : user.schoolId
+      ? await getInvoicesBySchool(user.schoolId)
+      : [];
+
+  const clients = user.schoolId
+    ? await getClientsBySchool(user.schoolId)
+    : [];
 
   return (
     <main className="p-6">
@@ -18,7 +25,10 @@ export default async function InvoicesPage() {
         <p className="text-gray-500">Manage your invoices</p>
       </div>
 
-      <InvoiceForm clients={clients.map((c) => ({ id: c.id, name: c.name }))} />
+      <InvoiceForm
+        clients={clients.map((c) => ({ id: c.id, name: c.name }))}
+        schoolId={user.schoolId ?? ""}
+      />
 
       <div className="rounded-lg border bg-white">
         <table className="w-full">

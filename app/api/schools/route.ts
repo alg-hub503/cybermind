@@ -1,19 +1,46 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { ADMIN_ROLE } from "@/lib/constants";
 import { getSchools, createSchool } from "@/lib/features/schools/school-actions";
 import { schoolSchema } from "@/lib/features/schools/schemas/school.schema";
-import { School } from "@/lib/features/schools/types/school";
 
 export async function GET() {
-  const schools: School[] = await getSchools();
-  return NextResponse.json(schools);
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role === ADMIN_ROLE) {
+    const schools = await getSchools();
+    return NextResponse.json(schools);
+  }
+
+  if (!session.user.schoolId) {
+    return NextResponse.json({ success: true, data: [] });
+  }
+
+  const school = await (await import("@/lib/features/schools/school-actions")).getSchool(session.user.schoolId);
+  return NextResponse.json(school ? [school] : []);
 }
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role !== ADMIN_ROLE) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const body = await req.json();
   const parsed = schoolSchema.safeParse(body);
+
   if (!parsed.success) {
     return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
   }
+
   const school = await createSchool(parsed.data);
   return NextResponse.json(school, { status: 201 });
 }
