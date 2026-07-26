@@ -8,6 +8,43 @@ These rules override temporary preferences.
 
 ---
 
+# Rule 0 — Product North Star (Non-Negotiable)
+
+## Vision
+
+CyberMind is the unified operating platform for educational institutions.
+Its purpose is not to replace people or make decisions for them.
+Its purpose is to eliminate fragmentation by bringing every department,
+workflow and piece of information into one connected platform.
+
+## Product Philosophy
+
+One platform. One workflow. One source of truth.
+
+## Non-Negotiable Rule
+
+Every future feature, module or integration must answer one question
+before being accepted:
+
+> Does this reduce fragmentation and strengthen the single source of truth?
+
+If yes → it belongs in CyberMind.
+If it introduces another disconnected source of data, duplicated entities,
+or a parallel workflow → it must be rejected or redesigned.
+
+This principle has priority over convenience, speed of development, or
+marketing value.
+
+## Long-Term Vision
+
+CyberMind is not a collection of modules. It is one operating platform.
+Students, schools, employees, finance, accounting, HR, inventory, CRM,
+billing, communication, reports, AI, and future modules are all parts of
+the same platform — not separate products connected later. Every module
+must extend the same foundation instead of creating another system.
+
+---
+
 # Rule 1
 
 Protect the project architecture.
