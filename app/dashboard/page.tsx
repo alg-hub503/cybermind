@@ -15,7 +15,7 @@ export default async function DashboardPage() {
     redirect("/dashboard/schools");
   }
   const school = await getSchoolById(user.schoolId);
-  if (!school || !hasActiveAccess(school.subscription?.status ?? "TRIAL")) {
+  if (!school || !hasActiveAccess(school.subscription?.status ?? "TRIALING")) {
     redirect("/upgrade");
   }
   const {

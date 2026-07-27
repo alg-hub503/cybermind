@@ -32,7 +32,7 @@ export default async function BillingPage() {
 
   const school = await getSchoolById(session.user.schoolId!);
 
-  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? null))) {
+  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? "TRIALING"))) {
     redirect("/upgrade");
   }
 

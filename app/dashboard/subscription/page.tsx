@@ -22,7 +22,7 @@ export default async function SubscriptionPage() {
     school = await getSchoolById(session.user.schoolId);
   }
 
-  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? null))) {
+  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? "TRIALING"))) {
     redirect("/upgrade");
   }
 
