@@ -11,10 +11,8 @@ import {
   ArrowRight,
   Check,
   ChevronRight,
-  Layout,
   Key,
   Globe,
-  Cloud,
   Lock,
   Sparkles,
 } from "lucide-react";
