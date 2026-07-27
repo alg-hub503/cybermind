@@ -98,4 +98,4 @@ notepad middleware.ts
 .sonarlint/
 .vscode-shared/
 .vscode/
-
+.env.vercel
