@@ -71,6 +71,12 @@ export default function Sidebar() {
         />
 
         <NavItem
+          href="/dashboard/classes"
+          label="Classes"
+          icon={<Users size={20} />}
+        />
+
+        <NavItem
           href="/dashboard/stats"
           label="Stats"
           icon={<BarChart3 size={20} />}
