@@ -50,3 +50,7 @@ Architectural decision: Subscription owned by **School**, not User. No email-bas
 ## Unreleased
 
 - Fixed: missing authorization check on school-scoped pages (clients, invoices, users, analytics, school detail) — previously any authenticated user could access another school's data by changing the URL.
+
+## Planned / Tech Debt
+
+- **Subscription lifecycle refactor** — every School should get exactly one Subscription row automatically at creation time (plan: FREE, status: TRIAL or equivalent), removing the need for any `?? "TRIAL"` / `?? "TRIALING"` fallback anywhere in the code. This requires: (1) updating School-creation code paths (register/route.ts, school-user-actions.ts) to create a default Subscription row transactionally, (2) a one-time backfill migration for the 7+ existing schools that currently have zero Subscription rows, (3) removing all fallback logic once every School is guaranteed to have a row, (4) an audit confirming no code path can create a School without one. This is a real data migration touching production rows and should be planned and executed as its own dedicated task with the same checkpoint-commit discipline used throughout this project — not bundled with unrelated work.
