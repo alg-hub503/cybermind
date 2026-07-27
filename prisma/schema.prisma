@@ -64,9 +64,104 @@ model School {
   createdAt        DateTime      @default(now())
   subscription     Subscription?
 
-  Client  Client[]
-  Invoice Invoice[]
-  User    User[]
+  Client               Client[]
+  Invoice              Invoice[]
+  User                 User[]
+  AcademicYear         AcademicYear[]
+  Grade                Grade[]
+  Class                Class[]
+  Student              Student[]
+  StudentAcademicRecord StudentAcademicRecord[]
+}
+
+model AcademicYear {
+  id        String   @id @default(cuid())
+  schoolId  String
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  isCurrent Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  school                School                  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  Class                 Class[]
+  StudentAcademicRecord StudentAcademicRecord[]
+
+  @@unique([schoolId, name])
+  @@index([schoolId, isCurrent])
+}
+
+model Grade {
+  id        String   @id @default(cuid())
+  schoolId  String
+  name      String
+  order     Int
+  createdAt DateTime @default(now())
+
+  school School  @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  Class  Class[]
+
+  @@unique([schoolId, name])
+  @@index([schoolId, order])
+}
+
+model Class {
+  id             String   @id @default(cuid())
+  schoolId       String
+  gradeId        String
+  academicYearId String
+  name           String
+  code           String
+  createdAt      DateTime @default(now())
+
+  school       School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  grade        Grade         @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+  academicYear AcademicYear  @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+
+  StudentAcademicRecord StudentAcademicRecord[]
+
+  @@unique([schoolId, gradeId, academicYearId, name])
+  @@unique([code])
+  @@index([schoolId, academicYearId])
+}
+
+model Student {
+  id          String   @id @default(cuid())
+  schoolId    String
+  code        String
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime?
+  enrolledAt  DateTime @default(now())
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  StudentAcademicRecord StudentAcademicRecord[]
+
+  @@unique([schoolId, code])
+  @@index([schoolId, status])
+}
+
+model StudentAcademicRecord {
+  id             String   @id @default(cuid())
+  schoolId       String
+  studentId      String
+  academicYearId String
+  classId        String
+  enrolledAt     DateTime @default(now())
+
+  school       School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  student      Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicYear AcademicYear  @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  class        Class         @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, academicYearId])
+  @@index([schoolId])
+  @@index([classId])
+  @@index([academicYearId])
 }
 
 model playing_with_neon {
