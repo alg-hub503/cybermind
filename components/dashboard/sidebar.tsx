@@ -10,6 +10,7 @@ import {
   CreditCard,
   Shield,
   Crown,
+  CalendarDays,
 } from "lucide-react";
 
 import NavItem from "./nav-item";
@@ -54,6 +55,12 @@ export default function Sidebar() {
           href="/dashboard/schools"
           label="Schools"
           icon={<GraduationCap size={20} />}
+        />
+
+        <NavItem
+          href="/dashboard/academic-years"
+          label="Academic Years"
+          icon={<CalendarDays size={20} />}
         />
 
         <NavItem
