@@ -19,7 +19,7 @@ export default async function AnalyticsPage() {
   const { user } = await requireCurrentUser();
 
   if (!user.schoolId) {
-    redirect("/schools");
+    redirect("/dashboard/schools");
   }
   const [
     analytics,

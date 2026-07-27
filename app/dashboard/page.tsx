@@ -12,7 +12,7 @@ import StatsGrid from "@/components/dashboard/widgets/stats-grid";
 export default async function DashboardPage() {
   const { session, user } = await requireCurrentUser();
   if (!user.schoolId) {
-    redirect("/schools");
+    redirect("/dashboard/schools");
   }
   const school = await getSchoolById(user.schoolId);
   if (!school || !hasActiveAccess(school.subscription?.status ?? "TRIAL")) {
