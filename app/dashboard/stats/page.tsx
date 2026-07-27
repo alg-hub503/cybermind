@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { authOptions } from "@/lib/auth";
 import { getUserByEmail } from "@/lib/services/user.service";
-import { getSchoolStats } from "@/lib/services/stats.service";
+import { getAdminStats, getSchoolStats } from "@/lib/services/stats.service";
 
 export default async function StatsPage() {
   const session = await getServerSession(authOptions);
@@ -13,74 +13,74 @@ export default async function StatsPage() {
   }
 
   const user = await getUserByEmail(session.user.email);
+  const isAdmin = user?.role === "ADMIN";
 
-  if (!user?.schoolId) {
-    return <div>No School Found</div>;
+  if (isAdmin && !user?.schoolId) {
+    const stats = await getAdminStats();
+
+    return (
+      <div className="space-y-8 p-6">
+        <div>
+          <h1 className="text-2xl font-bold">Platform Statistics</h1>
+          <p className="text-gray-500">Overview of all schools on the platform</p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border bg-white p-6">
+            <h3 className="text-sm text-gray-500">Total Schools</h3>
+            <p className="mt-2 text-3xl font-bold">{stats.schools}</p>
+          </div>
+          <div className="rounded-lg border bg-white p-6">
+            <h3 className="text-sm text-gray-500">Total Users</h3>
+            <p className="mt-2 text-3xl font-bold">{stats.users}</p>
+          </div>
+          <div className="rounded-lg border bg-white p-6">
+            <h3 className="text-sm text-gray-500">Total Clients</h3>
+            <p className="mt-2 text-3xl font-bold">{stats.clients}</p>
+          </div>
+          <div className="rounded-lg border bg-white p-6">
+            <h3 className="text-sm text-gray-500">Total Invoices</h3>
+            <p className="mt-2 text-3xl font-bold">{stats.invoices}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const {
-    clients,
-    users,
-    invoices,
-    revenue,
-  } = await getSchoolStats(user.schoolId);
+  if (!user?.schoolId) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold">Dashboard Statistics</h1>
+        <p className="mt-4 text-gray-500">No school found for your account.</p>
+      </div>
+    );
+  }
+
+  const stats = await getSchoolStats(user.schoolId);
 
   return (
-    <div style={{ padding: 30 }}>
-      <h1 style={{ marginBottom: 30 }}>
-        Dashboard Statistics
-      </h1>
+    <div className="space-y-8 p-6">
+      <div>
+        <h1 className="text-2xl font-bold">School Statistics</h1>
+        <p className="text-gray-500">Overview of your school data</p>
+      </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: 20,
-        }}
-      >
-        <div
-          style={{
-            padding: 20,
-            border: "1px solid #ddd",
-            borderRadius: 10,
-          }}
-        >
-          <h3>Total Clients</h3>
-          <h1>{clients}</h1>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-lg border bg-white p-6">
+          <h3 className="text-sm text-gray-500">Total Clients</h3>
+          <p className="mt-2 text-3xl font-bold">{stats.clients}</p>
         </div>
-
-        <div
-          style={{
-            padding: 20,
-            border: "1px solid #ddd",
-            borderRadius: 10,
-          }}
-        >
-          <h3>Total Users</h3>
-          <h1>{users}</h1>
+        <div className="rounded-lg border bg-white p-6">
+          <h3 className="text-sm text-gray-500">Total Users</h3>
+          <p className="mt-2 text-3xl font-bold">{stats.users}</p>
         </div>
-
-        <div
-          style={{
-            padding: 20,
-            border: "1px solid #ddd",
-            borderRadius: 10,
-          }}
-        >
-          <h3>Total Invoices</h3>
-          <h1>{invoices}</h1>
+        <div className="rounded-lg border bg-white p-6">
+          <h3 className="text-sm text-gray-500">Total Invoices</h3>
+          <p className="mt-2 text-3xl font-bold">{stats.invoices}</p>
         </div>
-
-        <div
-          style={{
-            padding: 20,
-            border: "1px solid #ddd",
-            borderRadius: 10,
-          }}
-        >
-          <h3>Total Revenue</h3>
-          <h1>${revenue}</h1>
+        <div className="rounded-lg border bg-white p-6">
+          <h3 className="text-sm text-gray-500">Total Revenue</h3>
+          <p className="mt-2 text-3xl font-bold">${stats.revenue}</p>
         </div>
       </div>
     </div>

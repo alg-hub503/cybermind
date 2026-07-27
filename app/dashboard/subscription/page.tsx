@@ -7,18 +7,26 @@ import { hasActiveAccess } from "@/lib/subscription-status";
 export default async function SubscriptionPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.schoolId) {
+  if (!session?.user) {
     redirect("/login");
   }
 
-  const school = await getSchoolById(session.user.schoolId);
+  const isAdmin = session.user.role === "ADMIN";
 
-  if (!school || !hasActiveAccess(school.subscription?.status ?? null)) {
+  if (!isAdmin && !session.user.schoolId) {
+    redirect("/login");
+  }
+
+  let school = null;
+  if (session.user.schoolId) {
+    school = await getSchoolById(session.user.schoolId);
+  }
+
+  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? null))) {
     redirect("/upgrade");
   }
 
-  const sub = school.subscription;
-  const isAdmin = session.user.role === "ADMIN";
+  const sub = school?.subscription ?? null;
 
   return (
     <div className="space-y-8">

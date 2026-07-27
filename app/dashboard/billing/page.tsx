@@ -11,13 +11,28 @@ import BillingActions from "./billing-actions";
 export default async function BillingPage() {
   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.schoolId) {
+  if (!session?.user) {
     redirect("/login");
   }
 
-  const school = await getSchoolById(session.user.schoolId);
+  const isAdmin = session.user.role === "ADMIN";
 
-  if (!school || !hasActiveAccess(school.subscription?.status ?? null)) {
+  if (!isAdmin && !session.user.schoolId) {
+    redirect("/login");
+  }
+
+  if (isAdmin && !session.user.schoolId) {
+    return (
+      <div className="p-6">
+        <h1 className="text-2xl font-bold">Billing</h1>
+        <p className="mt-4 text-gray-500">Select a school to view its billing details.</p>
+      </div>
+    );
+  }
+
+  const school = await getSchoolById(session.user.schoolId!);
+
+  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? null))) {
     redirect("/upgrade");
   }
 
@@ -26,25 +41,25 @@ export default async function BillingPage() {
   let exportData: Awaited<ReturnType<typeof exportBilling>> | null = null;
 
   try {
-    status = await getBillingStatus(session.user.schoolId);
+    status = await getBillingStatus(session.user.schoolId!);
   } catch {
     // no stripe customer yet
   }
 
   if (status?.hasStripeCustomer) {
     try {
-      invoices = await listInvoices(session.user.schoolId, { limit: 10 });
+      invoices = await listInvoices(session.user.schoolId!, { limit: 10 });
     } catch {
       // no invoices
     }
     try {
-      exportData = await exportBilling(session.user.schoolId);
+      exportData = await exportBilling(session.user.schoolId!);
     } catch {
       // export unavailable
     }
   }
 
-  const sub = school.subscription;
+  const sub = school?.subscription ?? null;
 
   return (
     <div className="space-y-8">
@@ -83,7 +98,7 @@ export default async function BillingPage() {
       </div>
 
       {/* Actions */}
-      <BillingActions schoolId={session.user.schoolId} />
+      <BillingActions schoolId={session.user.schoolId!} />
 
       {/* Invoices */}
       <div className="rounded-lg border bg-white p-6">
