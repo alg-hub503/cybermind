@@ -53,6 +53,14 @@ must extend the same foundation instead of creating another system.
 >
 > If a new feature requires additional information, it must extend the existing entity rather than recreate it.
 
+### Corollary to Rule 0 — Every Entity Represents Exactly One Lifecycle
+
+> A module must not force two distinct lifecycles into a single entity for convenience.
+>
+> If two concepts have different creation triggers, different mutation patterns, different deletion rules, or different future extension paths — they are separate lifecycles and must be separate entities.
+>
+> A join table between two entities is not a "duplicate" — it is a relationship. Duplication means representing the same real-world concept twice. Relationship means connecting two different concepts.
+
 ---
 
 # Rule 1
