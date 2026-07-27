@@ -12,6 +12,7 @@ import {
   Crown,
   CalendarDays,
   Layers,
+  BookOpen,
 } from "lucide-react";
 
 import NavItem from "./nav-item";
@@ -73,7 +74,13 @@ export default function Sidebar() {
         <NavItem
           href="/dashboard/classes"
           label="Classes"
-          icon={<Users size={20} />}
+          icon={<BookOpen size={20} />}
+        />
+
+        <NavItem
+          href="/dashboard/students"
+          label="Students"
+          icon={<GraduationCap size={20} />}
         />
 
         <NavItem
