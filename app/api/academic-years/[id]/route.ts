@@ -3,9 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getAcademicYear, updateAcademicYear, deleteAcademicYear } from "@/lib/features/academic-years/academic-year-actions";
-import { academicYearSchema } from "@/lib/features/academic-years/schemas/academic-year.schema";
-
-const updateAcademicYearSchema = academicYearSchema.partial();
+import { updateAcademicYearSchema } from "@/lib/features/academic-years/schemas/academic-year.schema";
 
 async function requireAccess(academicYearId: string) {
   const session = await getServerSession(authOptions);

@@ -61,6 +61,16 @@ must extend the same foundation instead of creating another system.
 >
 > A join table between two entities is not a "duplicate" — it is a relationship. Duplication means representing the same real-world concept twice. Relationship means connecting two different concepts.
 
+### Design Constraint — ADMIN and USER SchoolId Contract
+
+> ADMIN role must always have `schoolId = null`. USER role must always have `schoolId` non-null.
+>
+> This is enforced at the validation layer (Zod schema), not only in the UI.
+>
+> Rationale: ADMIN is a platform-level role with cross-school access. Binding an ADMIN to a specific school creates an ambiguous "school-insider with global powers" scenario that violates the single-lifecycle principle (Corollary 2 above). USER is always scoped to exactly one school by definition.
+>
+> Any code that creates or updates a User must reject payloads that violate this constraint before reaching the database.
+
 ---
 
 # Rule 1

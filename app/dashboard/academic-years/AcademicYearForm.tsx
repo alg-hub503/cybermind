@@ -8,20 +8,36 @@ import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
 
-interface AcademicYearFormProps {
-  schoolId: string;
+interface SchoolOption {
+  id: string;
+  name: string;
 }
 
-export default function AcademicYearForm({ schoolId }: AcademicYearFormProps) {
+interface AcademicYearFormProps {
+  schoolId?: string;
+  schools?: SchoolOption[];
+}
+
+export default function AcademicYearForm({ schoolId, schools }: AcademicYearFormProps) {
   const router = useRouter();
 
+  const [selectedSchoolId, setSelectedSchoolId] = useState(schoolId ?? "");
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [isCurrent, setIsCurrent] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const isAdmin = !schoolId && schools !== undefined;
+
   async function createAcademicYear() {
+    const targetSchoolId = isAdmin ? selectedSchoolId : schoolId;
+
+    if (!targetSchoolId) {
+      toast.error("Please select a school");
+      return;
+    }
+
     if (!name.trim()) {
       toast.error("Academic year name is required");
       return;
@@ -37,6 +53,11 @@ export default function AcademicYearForm({ schoolId }: AcademicYearFormProps) {
       return;
     }
 
+    if (new Date(endDate) <= new Date(startDate)) {
+      toast.error("End date must be after start date");
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -46,7 +67,7 @@ export default function AcademicYearForm({ schoolId }: AcademicYearFormProps) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          schoolId,
+          schoolId: targetSchoolId,
           name: name.trim(),
           startDate,
           endDate,
@@ -57,7 +78,8 @@ export default function AcademicYearForm({ schoolId }: AcademicYearFormProps) {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error ?? "Failed to create academic year");
+        const fieldError = data.details?.fieldErrors ? Object.values(data.details.fieldErrors).flat()[0] : undefined;
+        toast.error(fieldError ?? data.error ?? "Failed to create academic year");
         return;
       }
 
@@ -85,6 +107,22 @@ export default function AcademicYearForm({ schoolId }: AcademicYearFormProps) {
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row md:flex-wrap">
+        {isAdmin && (
+          <select
+            value={selectedSchoolId}
+            onChange={(e) => setSelectedSchoolId(e.target.value)}
+            disabled={loading}
+            className="rounded-lg border border-slate-300 px-4 py-2"
+          >
+            <option value="">Select a school</option>
+            {schools?.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        )}
+
         <Input
           placeholder="e.g. 2025-2026"
           value={name}
