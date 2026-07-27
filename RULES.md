@@ -43,6 +43,16 @@ billing, communication, reports, AI, and future modules are all parts of
 the same platform — not separate products connected later. Every module
 must extend the same foundation instead of creating another system.
 
+### Corollary to Rule 0 — No Duplicate Entities
+
+> Every new module must extend the existing data model through direct foreign-key relationships.
+>
+> Core entities (School, User, Subscription, Invoice, and future core entities such as Student) must always remain the single source of truth.
+>
+> No module may introduce a parallel or duplicate representation of an existing entity.
+>
+> If a new feature requires additional information, it must extend the existing entity rather than recreate it.
+
 ---
 
 # Rule 1
