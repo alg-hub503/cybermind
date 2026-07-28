@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
+
 import { cookies } from "next/headers";
 import {
   GraduationCap,
@@ -32,7 +32,7 @@ export default async function HomePage({
 }: {
   searchParams?: Promise<{ lang?: string }>;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (session?.user) {
     redirect("/dashboard");
   }

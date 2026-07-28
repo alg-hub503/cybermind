@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
+
 import { prisma } from "@/lib/prisma";
 import { hasActiveAccess } from "@/lib/subscription-status";
 import UpgradeClient from "./upgrade-client";
 
 export default async function UpgradePage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session?.user?.schoolId) {
     return (

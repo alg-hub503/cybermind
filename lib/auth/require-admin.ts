@@ -1,9 +1,8 @@
 import { ADMIN_ROLE } from "@/lib/constants";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/get-server-session";
 
 export async function requireAdmin() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   console.log("========== SERVER SESSION ==========");
   console.log(JSON.stringify(session, null, 2));

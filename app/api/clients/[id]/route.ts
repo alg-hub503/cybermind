@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
+
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getClient, updateClient, deleteClient } from "@/lib/features/clients/client-actions";
 import { clientSchema } from "@/lib/features/clients/schemas/client.schema";
@@ -8,7 +8,7 @@ import { clientSchema } from "@/lib/features/clients/schemas/client.schema";
 const updateClientSchema = clientSchema.partial();
 
 async function requireAccess(clientId: string) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (!session?.user?.email) {
     return { error: "Unauthorized", status: 401 as const };
   }

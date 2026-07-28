@@ -121,7 +121,7 @@ model Class {
   StudentAcademicRecord StudentAcademicRecord[]
 
   @@unique([schoolId, gradeId, academicYearId, name])
-  @@unique([code])
+  @@unique([schoolId, code])
   @@index([schoolId, academicYearId])
 }
 

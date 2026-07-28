@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
+
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getGrade, updateGrade, deleteGrade } from "@/lib/features/grades/grade-actions";
 import { updateGradeSchema } from "@/lib/features/grades/schemas/grade.schema";
 
 async function requireAccess(gradeId: string) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (!session?.user?.email) {
     return { error: "Unauthorized", status: 401 as const };
   }

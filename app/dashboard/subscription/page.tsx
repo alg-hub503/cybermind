@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
+
 import { getSchoolById } from "@/lib/services/domain/school.service";
 import { hasActiveAccess } from "@/lib/subscription-status";
 
 export default async function SubscriptionPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session?.user) {
     redirect("/login");

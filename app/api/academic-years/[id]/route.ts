@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
+
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getAcademicYear, updateAcademicYear, deleteAcademicYear } from "@/lib/features/academic-years/academic-year-actions";
 import { updateAcademicYearSchema } from "@/lib/features/academic-years/schemas/academic-year.schema";
 
 async function requireAccess(academicYearId: string) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (!session?.user?.email) {
     return { error: "Unauthorized", status: 401 as const };
   }

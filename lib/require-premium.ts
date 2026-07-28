@@ -1,10 +1,9 @@
 ﻿import { ADMIN_ROLE } from "@/lib/constants";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
 import { prisma } from "@/lib/prisma";
 import { isPro } from "@/lib/subscription-status";
 export async function requirePremium() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (!session) {
     throw new Error("UNAUTHORIZED");
   }

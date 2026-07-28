@@ -1,11 +1,10 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/get-server-session";
 import { redirect } from "next/navigation";
 
-import { authOptions } from "@/lib/auth";
 import { getUserByEmail } from "@/lib/services/domain/user.service";
 
 export async function requireCurrentUser() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session?.user?.email) {
     redirect("/login");

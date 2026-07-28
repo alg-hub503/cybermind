@@ -1,12 +1,12 @@
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/get-server-session";
 import { redirect } from "next/navigation";
 
-import { authOptions } from "@/lib/auth";
+
 import { getUserByEmail } from "@/lib/services/user.service";
 import { getAdminStats, getSchoolStats } from "@/lib/services/stats.service";
 
 export default async function StatsPage() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
 
   if (!session?.user?.email) {
     redirect("/login");

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
+
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getSchool, updateSchool, deleteSchool } from "@/lib/features/schools/school-actions";
 import { schoolSchema } from "@/lib/features/schools/schemas/school.schema";
@@ -8,7 +8,7 @@ import { schoolSchema } from "@/lib/features/schools/schemas/school.schema";
 const updateSchoolSchema = schoolSchema.partial();
 
 async function requireAdmin() {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (!session?.user?.email) {
     return { error: "Unauthorized", status: 401 as const };
   }
@@ -21,7 +21,7 @@ async function requireAdmin() {
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession();
   if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
