@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginPage() {
 const router = useRouter();
@@ -60,6 +61,12 @@ return (
     <button type="submit">
       Login
     </button>
+
+    <div style={{ textAlign: "center", marginTop: 12 }}>
+      <Link href="/forgot-password" style={{ color: "#6366f1", fontSize: 14 }}>
+        Forgot your password?
+      </Link>
+    </div>
   </form>
 
   {error && (

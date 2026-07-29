@@ -1,4 +1,5 @@
 import { type NextAuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
@@ -74,6 +75,7 @@ export const authOptions: NextAuthOptions = {
           schoolId: user.schoolId,
           subscriptionStatus:
             school?.subscription?.status ?? "TRIAL",
+          passwordChangedAt: user.passwordChangedAt,
         };
       },
     }),
@@ -101,6 +103,7 @@ export const authOptions: NextAuthOptions = {
 
         token.subscriptionStatus =
           user.subscriptionStatus;
+        token.passwordChangedAt = user.passwordChangedAt;
       }
 
 
@@ -119,6 +122,14 @@ export const authOptions: NextAuthOptions = {
 
         if (dbUser) {
 
+          if (
+            token.passwordChangedAt &&
+            dbUser.passwordChangedAt &&
+            dbUser.passwordChangedAt > token.passwordChangedAt
+          ) {
+            return { ...token, id: "", email: "" } as JWT;
+          }
+
           if (dbUser.schoolId) {
             const school =
               await prisma.school.findUnique({
@@ -134,7 +145,6 @@ export const authOptions: NextAuthOptions = {
             token.subscriptionStatus = "TRIAL";
           }
 
-
           token.schoolId =
             dbUser.schoolId;
 
@@ -143,6 +153,8 @@ export const authOptions: NextAuthOptions = {
 
           token.role =
             dbUser.role;
+
+          token.passwordChangedAt = dbUser.passwordChangedAt;
         }
       }
 
@@ -175,6 +187,9 @@ export const authOptions: NextAuthOptions = {
 
       session.user.subscriptionStatus =
         token.subscriptionStatus;
+
+      session.user.passwordChangedAt =
+        token.passwordChangedAt;
 
 
       return session;
