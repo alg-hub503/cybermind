@@ -20,27 +20,44 @@ export class PrismaAcademicYearRepository {
   }
 
   async create(data: CreateAcademicYearDto): Promise<AcademicYear> {
-    return prisma.academicYear.create({
-      data: {
-        schoolId: data.schoolId,
-        name: data.name,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
-        isCurrent: data.isCurrent,
-      },
+    return prisma.$transaction(async (tx) => {
+      if (data.isCurrent) {
+        await tx.academicYear.updateMany({
+          where: { schoolId: data.schoolId, isCurrent: true },
+          data: { isCurrent: false },
+        });
+      }
+      return tx.academicYear.create({
+        data: {
+          schoolId: data.schoolId,
+          name: data.name,
+          startDate: new Date(data.startDate),
+          endDate: new Date(data.endDate),
+          isCurrent: data.isCurrent,
+        },
+      });
     }) as unknown as AcademicYear;
   }
 
   async update(id: string, data: UpdateAcademicYearDto): Promise<AcademicYear> {
-    const updateData: Record<string, unknown> = {};
-    if (data.name !== undefined) updateData.name = data.name;
-    if (data.startDate !== undefined) updateData.startDate = new Date(data.startDate);
-    if (data.endDate !== undefined) updateData.endDate = new Date(data.endDate);
-    if (data.isCurrent !== undefined) updateData.isCurrent = data.isCurrent;
+    return prisma.$transaction(async (tx) => {
+      if (data.isCurrent) {
+        const current = await tx.academicYear.findUniqueOrThrow({ where: { id } });
+        await tx.academicYear.updateMany({
+          where: { schoolId: current.schoolId, isCurrent: true, NOT: { id } },
+          data: { isCurrent: false },
+        });
+      }
+      const updateData: Record<string, unknown> = {};
+      if (data.name !== undefined) updateData.name = data.name;
+      if (data.startDate !== undefined) updateData.startDate = new Date(data.startDate);
+      if (data.endDate !== undefined) updateData.endDate = new Date(data.endDate);
+      if (data.isCurrent !== undefined) updateData.isCurrent = data.isCurrent;
 
-    return prisma.academicYear.update({
-      where: { id },
-      data: updateData,
+      return tx.academicYear.update({
+        where: { id },
+        data: updateData,
+      });
     }) as unknown as AcademicYear;
   }
 

@@ -69,6 +69,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: user.id,
           email: user.email,
+          name: user.name,
           role: user.role,
           schoolId: user.schoolId,
           subscriptionStatus:
@@ -94,6 +95,7 @@ export const authOptions: NextAuthOptions = {
 
         token.id = user.id;
         token.email = user.email;
+        token.name = user.name;
         token.role = user.role;
         token.schoolId = user.schoolId;
 
@@ -136,6 +138,8 @@ export const authOptions: NextAuthOptions = {
           token.schoolId =
             dbUser.schoolId;
 
+          token.name =
+            dbUser.name;
 
           token.role =
             dbUser.role;
@@ -166,6 +170,8 @@ export const authOptions: NextAuthOptions = {
       session.user.schoolId =
         token.schoolId;
 
+      session.user.name =
+        token.name;
 
       session.user.subscriptionStatus =
         token.subscriptionStatus;

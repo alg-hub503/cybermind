@@ -1,8 +1,10 @@
 ﻿import { redirect } from "next/navigation";
 import { requireCurrentUser } from "@/lib/require-current-user";
+import { ADMIN_ROLE } from "@/lib/constants";
 import { hasActiveAccess } from "@/lib/subscription-status";
 import { getSchoolById } from "@/lib/services/domain/school.service";
 import { getDashboardOverview } from "@/lib/services/application/dashboard.service";
+import { getAdminStats } from "@/lib/services/stats.service";
 import RevenueChart from "@/components/dashboard/charts/revenue-chart";
 import DashboardHeader from "@/components/dashboard/widgets/dashboard-header";
 import QuickActions from "@/components/dashboard/widgets/quick-actions";
@@ -11,6 +13,28 @@ import SchoolSummary from "@/components/dashboard/widgets/school-summary";
 import StatsGrid from "@/components/dashboard/widgets/stats-grid";
 export default async function DashboardPage() {
   const { session, user } = await requireCurrentUser();
+
+  if (user.role === ADMIN_ROLE) {
+    const { users, clients, invoices } = await getAdminStats();
+    return (
+      <div className="space-y-8">
+        <DashboardHeader name={session?.user?.name ?? "Admin"} />
+        <SchoolSummary
+          schoolName="Platform Overview"
+          totalUsers={users}
+          totalClients={clients}
+          totalInvoices={invoices}
+        />
+        <StatsGrid
+          clients={clients}
+          users={users}
+          invoices={invoices}
+          revenue={0}
+        />
+      </div>
+    );
+  }
+
   if (!user.schoolId) {
     redirect("/dashboard/schools");
   }

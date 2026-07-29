@@ -112,8 +112,8 @@ export default function Sidebar() {
 
      <div className="border-t border-slate-800 p-6">
   <div className="space-y-1">
-    <p className="font-semibold text-white">
-      {session?.user?.name ?? "Unknown User"}
+     <p className="font-semibold text-white">
+      {session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "User"}
     </p>
 
     <p className="text-sm text-slate-400">

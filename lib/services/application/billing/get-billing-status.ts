@@ -1,8 +1,5 @@
-import { PrismaBillingRepository } from "@/lib/infrastructure/persistence/prisma/prisma-billing-repository";
 import { prisma } from "@/lib/prisma";
 import { BillingError } from "./stripe-error";
-
-const billingRepo = new PrismaBillingRepository();
 
 interface BillingStatusResult {
   hasStripeCustomer: boolean;

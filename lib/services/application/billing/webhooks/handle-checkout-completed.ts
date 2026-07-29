@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/infrastructure/stripe/stripe-client";
-import { SubscriptionPlan, SubscriptionStatus } from "@prisma/client";
+import { SubscriptionPlan } from "@prisma/client";
 import { normalizeSubscriptionStatus } from "./normalize-subscription-status";
 
 export async function handleCheckoutCompleted(session: Stripe.Checkout.Session): Promise<void> {

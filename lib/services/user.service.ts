@@ -1,4 +1,3 @@
-import { ADMIN_ROLE } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
 export async function getUsers(search?: string) {

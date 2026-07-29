@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-
-import { authOptions } from "@/lib/auth";
+import { getServerSession } from "@/lib/get-server-session";
 
 import { StripeGateway } from "@/lib/infrastructure/stripe/stripe-gateway";
 import { startCheckout } from "@/lib/services/application/billing/commands/start-checkout";
 
 export async function POST() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession();
 
     if (!session?.user?.email || !session.user.schoolId) {
       return NextResponse.json(

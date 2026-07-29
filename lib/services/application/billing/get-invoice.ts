@@ -1,5 +1,5 @@
 import { stripe } from "@/lib/infrastructure/stripe/stripe-client";
-import { BillingError, translateStripeError } from "./stripe-error";
+import { translateStripeError } from "./stripe-error";
 import { toInvoiceDto, type InvoiceDto } from "./dto/billing-types";
 
 export async function getInvoice(stripeInvoiceId: string): Promise<InvoiceDto> {
