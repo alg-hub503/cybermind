@@ -1,6 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 
 interface SessionUser {
   id: string;
@@ -30,6 +31,24 @@ export async function getServerSession(): Promise<Session | null> {
   });
 
   if (!token?.email) return null;
+
+  const tokenPasswordChangedAt = token.passwordChangedAt
+    ? new Date(token.passwordChangedAt)
+    : null;
+
+  if (tokenPasswordChangedAt) {
+    const dbUser = await prisma.user.findUnique({
+      where: { email: token.email as string },
+      select: { passwordChangedAt: true },
+    });
+
+    if (
+      dbUser?.passwordChangedAt &&
+      dbUser.passwordChangedAt > tokenPasswordChangedAt
+    ) {
+      return null;
+    }
+  }
 
   return {
     user: {
