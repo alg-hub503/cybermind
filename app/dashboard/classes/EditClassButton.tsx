@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 export default function EditClassButton({
   id,
@@ -11,13 +12,14 @@ export default function EditClassButton({
   currentName: string;
   currentCode: string;
 }) {
+  const { t } = useTranslations("classes");
   const router = useRouter();
 
   async function edit() {
-    const name = prompt("Class name", currentName);
+    const name = prompt(t("editPromptName"), currentName);
     if (!name) return;
 
-    const code = prompt("Class code", currentCode);
+    const code = prompt(t("editPromptCode"), currentCode);
     if (!code) return;
 
     await fetch(`/api/classes/${id}`, {
@@ -31,7 +33,7 @@ export default function EditClassButton({
 
   return (
     <button onClick={edit} className="rounded-lg bg-yellow-500 px-3 py-2 text-white">
-      Edit
+      {t("edit")}
     </button>
   );
 }

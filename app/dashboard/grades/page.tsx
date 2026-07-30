@@ -2,6 +2,7 @@ import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getGrades, getGradesBySchool } from "@/lib/features/grades/grade-actions";
 import { getSchools } from "@/lib/features/schools/school-actions";
+import { t } from "@/lib/i18n/server";
 import GradeForm from "./GradeForm";
 import EditGradeButton from "./EditGradeButton";
 import DeleteGradeButton from "./DeleteGradeButton";
@@ -18,11 +19,19 @@ export default async function GradesPage() {
 
   const isAdmin = user.role === ADMIN_ROLE;
 
+  const title = await t("grades.title");
+  const description = await t("grades.description");
+  const nameLabel = await t("grades.name");
+  const orderLabel = await t("grades.order");
+  const actionsLabel = await t("grades.actions");
+  const noRecords = await t("grades.noRecords");
+  const emptyDescription = await t("grades.emptyDescription");
+
   return (
     <main className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Grades</h1>
-        <p className="text-gray-500">Manage grade levels</p>
+        <h1 className="text-2xl font-bold">{title}</h1>
+        <p className="text-gray-500">{description}</p>
       </div>
 
       {isAdmin ? (
@@ -34,8 +43,8 @@ export default async function GradesPage() {
       {grades.length === 0 ? (
         <div className="mt-6">
           <EmptyState
-            title="No grades yet"
-            description="Create your first grade to get started."
+            title={noRecords}
+            description={emptyDescription}
           />
         </div>
       ) : (
@@ -43,9 +52,9 @@ export default async function GradesPage() {
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="p-3 text-left">Name</th>
-                <th className="p-3 text-left">Order</th>
-                <th className="p-3 text-right">Actions</th>
+                <th className="p-3 text-left">{nameLabel}</th>
+                <th className="p-3 text-left">{orderLabel}</th>
+                <th className="p-3 text-right">{actionsLabel}</th>
               </tr>
             </thead>
             <tbody>

@@ -1,12 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 export default function DeleteGradeButton({ id }: { id: string }) {
+  const { t } = useTranslations("grades");
   const router = useRouter();
 
   async function remove() {
-    const ok = confirm("Delete grade? This will also delete all classes and student records under this grade.");
+    const ok = confirm(t("confirmDelete"));
     if (!ok) return;
 
     await fetch(`/api/grades/${id}`, { method: "DELETE" });
@@ -16,7 +18,7 @@ export default function DeleteGradeButton({ id }: { id: string }) {
 
   return (
     <button onClick={remove} className="rounded-lg bg-red-600 px-3 py-2 text-white">
-      Delete
+      {t("delete")}
     </button>
   );
 }
