@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 import Button from "@/components/ui/button";
 
@@ -14,19 +15,14 @@ export default function EditSchoolButton({
   id,
   currentName,
 }: Props) {
+  const { t } = useTranslations("schools");
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
   async function handleEdit() {
-    const name = prompt(
-      "Enter the new school name:",
-      currentName
-    );
-
-    if (!name || name.trim() === "") {
-      return;
-    }
+    const name = prompt(t("editPrompt"), currentName);
+    if (!name || name.trim() === "") return;
 
     try {
       setLoading(true);
@@ -42,7 +38,7 @@ export default function EditSchoolButton({
       });
 
       if (!response.ok) {
-        alert("Failed to update school");
+        alert(t("failedUpdate"));
         return;
       }
 
@@ -58,7 +54,7 @@ export default function EditSchoolButton({
       disabled={loading}
       onClick={handleEdit}
     >
-      {loading ? "Saving..." : "Edit"}
+      {loading ? t("saving") : t("edit")}
     </Button>
   );
 }

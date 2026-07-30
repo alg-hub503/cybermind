@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
 
 export default function SchoolForm() {
+  const { t } = useTranslations("schools");
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -16,7 +18,7 @@ export default function SchoolForm() {
 
   async function createSchool() {
     if (!name.trim()) {
-      toast.error("School name is required");
+      toast.error(t("nameRequired"));
       return;
     }
 
@@ -36,7 +38,7 @@ export default function SchoolForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error ?? "Failed to create school");
+        toast.error(data.error ?? t("failedCreate"));
         return;
       }
 
@@ -44,10 +46,10 @@ export default function SchoolForm() {
 
       router.refresh();
 
-      toast.success("School created successfully");
+      toast.success(t("created"));
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(t("failedCreate"));
     } finally {
       setLoading(false);
     }
@@ -57,17 +59,17 @@ export default function SchoolForm() {
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-4">
         <h2 className="text-lg font-semibold">
-          Create New School
+          {t("formTitle")}
         </h2>
 
         <p className="text-sm text-slate-500">
-          Add a new school to CyberMind.
+          {t("formDescription")}
         </p>
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row">
         <Input
-          placeholder="School name..."
+          placeholder={t("namePlaceholder")}
           value={name}
           onChange={(e) => setName(e.target.value)}
           disabled={loading}
@@ -80,10 +82,10 @@ export default function SchoolForm() {
           {loading ? (
             <span className="flex items-center gap-2">
               <Spinner size={18} />
-              Creating...
+              {t("creating")}
             </span>
           ) : (
-            "Create"
+            t("create")
           )}
         </Button>
       </div>

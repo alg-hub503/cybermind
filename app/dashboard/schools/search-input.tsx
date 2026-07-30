@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 interface Props {
   defaultValue?: string;
@@ -10,6 +11,7 @@ interface Props {
 export default function SearchInput({
   defaultValue = "",
 }: Props) {
+  const { t } = useTranslations("schools");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -34,7 +36,7 @@ export default function SearchInput({
   return (
     <input
       type="text"
-      placeholder="Search schools..."
+      placeholder={t("searchPlaceholder")}
       value={value}
       onChange={(e) => handleSearch(e.target.value)}
       className="rounded-xl border border-slate-300 px-4 py-2 text-sm outline-none transition focus:border-blue-500"

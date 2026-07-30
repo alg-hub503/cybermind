@@ -1,6 +1,7 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getSchools, getSchool } from "@/lib/features/schools/school-actions";
+import { t } from "@/lib/i18n/server";
 import SchoolForm from "./SchoolForm";
 import EditSchoolButton from "./EditSchoolButton";
 import DeleteSchoolButton from "./DeleteSchoolButton";
@@ -14,11 +15,16 @@ export default async function SchoolsPage() {
       ? await (async () => { const s = await getSchool(user.schoolId!); return s ? [s] : []; })()
       : [];
 
+  const title = await t("schools.title");
+  const description = await t("schools.description");
+  const nameLabel = await t("schools.name");
+  const actionsLabel = await t("schools.actions");
+
   return (
     <main className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Schools</h1>
-        <p className="text-gray-500">Manage schools</p>
+        <h1 className="text-2xl font-bold">{title}</h1>
+        <p className="text-gray-500">{description}</p>
       </div>
 
       {user.role === ADMIN_ROLE && <SchoolForm />}
@@ -27,8 +33,8 @@ export default async function SchoolsPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b">
-              <th className="p-3 text-left">Name</th>
-              {user.role === ADMIN_ROLE && <th className="p-3 text-right">Actions</th>}
+              <th className="p-3 text-left">{nameLabel}</th>
+              {user.role === ADMIN_ROLE && <th className="p-3 text-right">{actionsLabel}</th>}
             </tr>
           </thead>
 

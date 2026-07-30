@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 export default function ClientForm() {
+  const { t } = useTranslations("clients");
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -32,7 +34,7 @@ export default function ClientForm() {
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Client name"
+        placeholder={t("namePlaceholder")}
         className="rounded-xl border px-4 py-2"
       />
 
@@ -40,7 +42,7 @@ export default function ClientForm() {
         onClick={addClient}
         className="rounded-xl bg-blue-600 px-4 py-2 text-white"
       >
-        Add
+        {t("add")}
       </button>
     </div>
   );

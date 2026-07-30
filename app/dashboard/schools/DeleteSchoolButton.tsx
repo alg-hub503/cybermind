@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 import Button from "@/components/ui/button";
 
@@ -12,12 +13,13 @@ interface Props {
 export default function DeleteSchoolButton({
   id,
 }: Props) {
+  const { t } = useTranslations("schools");
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
-    if (!confirm("Delete this school?")) return;
+    if (!confirm(t("confirmDelete"))) return;
 
     try {
       setLoading(true);
@@ -27,7 +29,7 @@ export default function DeleteSchoolButton({
       });
 
       if (!response.ok) {
-        alert("Delete failed");
+        alert(t("deleteFailed"));
         return;
       }
 
@@ -43,7 +45,7 @@ export default function DeleteSchoolButton({
       disabled={loading}
       onClick={handleDelete}
     >
-      {loading ? "Deleting..." : "Delete"}
+      {loading ? t("deleting") : t("delete")}
     </Button>
   );
 }
