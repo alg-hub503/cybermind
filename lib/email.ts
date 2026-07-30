@@ -7,7 +7,7 @@ function getResend(): Resend | null {
 }
 
 function getFromAddress(): string {
-  return process.env.EMAIL_FROM ?? "CyberMind <noreply@cybermind.app>";
+  return process.env.EMAIL_FROM ?? "CyberMind <onboarding@resend.dev>";
 }
 
 function getAppUrl(): string {
@@ -43,6 +43,7 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
   });
 
   if (error) {
-    console.error("Failed to send password reset email:", error);
+    console.error("Failed to send password reset email:", JSON.stringify(error));
+    throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
   }
 }
