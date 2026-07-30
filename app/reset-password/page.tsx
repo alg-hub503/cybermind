@@ -6,6 +6,8 @@ import Link from "next/link";
 import { toast, Toaster } from "sonner";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import { useTranslations } from "@/lib/i18n/use-translations";
+import { LanguageSwitcher } from "@/app/_components/language-switcher";
 
 function getStrength(password: string): { label: string; color: string; score: number } {
   let score = 0;
@@ -16,15 +18,17 @@ function getStrength(password: string): { label: string; color: string; score: n
   if (/[0-9]/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
-  if (score <= 2) return { label: "Weak", color: "#ef4444", score };
-  if (score <= 4) return { label: "Medium", color: "#f59e0b", score };
-  return { label: "Strong", color: "#22c55e", score };
+  if (score <= 2) return { label: "weak", color: "#ef4444", score };
+  if (score <= 4) return { label: "medium", color: "#f59e0b", score };
+  return { label: "strong", color: "#22c55e", score };
 }
 
 function ResetForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
+
+  const { t, locale, dir } = useTranslations("reset");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -36,11 +40,13 @@ function ResetForm() {
   const passwordsMatch = password === confirmPassword;
   const isValid = password.length >= 6 && passwordsMatch;
 
+  const strengthLabel = t(strength.label);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!token) {
-      toast.error("This link is invalid or has expired.");
+      toast.error(t("invalidLink"));
       return;
     }
 
@@ -62,7 +68,7 @@ function ResetForm() {
         return;
       }
 
-      toast.success("Password updated successfully!");
+      toast.success(t("success"));
       setTimeout(() => router.push("/login"), 1500);
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -73,106 +79,120 @@ function ResetForm() {
 
   if (!token) {
     return (
-      <main style={{ maxWidth: 400, margin: "100px auto", textAlign: "center" }}>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4" dir={dir}>
         <Toaster richColors />
-        <h1>Invalid Link</h1>
-        <p style={{ color: "#64748b" }}>This link is invalid or has expired.</p>
-        <Link href="/forgot-password" style={{ color: "#6366f1" }}>Request a new reset link</Link>
-      </main>
+        <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-lg">
+          <h1 className="text-2xl font-bold text-slate-900">{t("invalidLink")}</h1>
+          <p className="mt-2 text-sm text-slate-500">This link is invalid or has expired.</p>
+          <Link href="/forgot-password" className="mt-4 block text-sm font-medium text-indigo-600 hover:text-indigo-700">
+            {t("requestNewLink")}
+          </Link>
+        </div>
+      </div>
     );
   }
 
   return (
-    <main
-      style={{
-        maxWidth: 400,
-        margin: "100px auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: 16,
-      }}
-    >
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4" dir={dir}>
       <Toaster richColors />
-      <h1>Reset Password</h1>
-
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <Input
-              type={showPassword ? "text" : "password"}
-              placeholder="New Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              style={{ flex: 1 }}
-            />
-            <Button type="button" variant="outline" onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? "Hide" : "Show"}
-            </Button>
-          </div>
-          {password && (
-            <div style={{ marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
-              <div
-                style={{
-                  flex: 1,
-                  height: 4,
-                  borderRadius: 2,
-                  background: "#e2e8f0",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    width: `${(strength.score / 6) * 100}%`,
-                    height: "100%",
-                    background: strength.color,
-                    borderRadius: 2,
-                    transition: "width 0.2s",
-                  }}
-                />
-              </div>
-              <span style={{ fontSize: 12, color: strength.color, fontWeight: 500 }}>
-                {strength.label}
-              </span>
+      <div className="w-full max-w-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
+              <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
             </div>
-          )}
+            <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div>
+              <label htmlFor="newPassword" className="mb-1 block text-sm font-medium text-slate-700">
+                {t("newPassword")}
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  id="newPassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder={t("newPasswordPlaceholder")}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="flex-1"
+                />
+                <Button type="button" variant="outline" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? t("hide") : t("show")}
+                </Button>
+              </div>
+              {password && (
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="h-1 flex-1 overflow-hidden rounded-full bg-slate-200">
+                    <div
+                      className="h-full rounded-full transition-all duration-200"
+                      style={{
+                        width: `${(strength.score / 6) * 100}%`,
+                        backgroundColor: strength.color,
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium" style={{ color: strength.color }}>
+                    {strengthLabel}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-slate-700">
+                {t("confirmPassword")}
+              </label>
+              <div className="flex gap-2">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder={t("confirmPasswordPlaceholder")}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="flex-1"
+                />
+                <Button type="button" variant="outline" onClick={() => setShowConfirm(!showConfirm)}>
+                  {showConfirm ? t("hide") : t("show")}
+                </Button>
+              </div>
+              {confirmPassword && !passwordsMatch && (
+                <p className="mt-1 text-xs text-red-600">{t("passwordsDoNotMatch")}</p>
+              )}
+            </div>
+
+            <Button type="submit" disabled={loading || !isValid} className="w-full">
+              {loading ? t("loading") : t("submit")}
+            </Button>
+
+            <Link
+              href="/login"
+              className="text-center text-sm font-medium text-indigo-600 hover:text-indigo-700"
+            >
+              {t("backToLogin")}
+            </Link>
+          </form>
         </div>
-
-        <div style={{ display: "flex", gap: 8 }}>
-          <Input
-            type={showConfirm ? "text" : "password"}
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-            minLength={6}
-            style={{ flex: 1 }}
-          />
-          <Button type="button" variant="outline" onClick={() => setShowConfirm(!showConfirm)}>
-            {showConfirm ? "Hide" : "Show"}
-          </Button>
-        </div>
-
-        {confirmPassword && !passwordsMatch && (
-          <p style={{ color: "#ef4444", fontSize: 13 }}>Passwords do not match.</p>
-        )}
-
-        <Button type="submit" disabled={loading || !isValid}>
-          {loading ? "Updating..." : "Update Password"}
-        </Button>
-
-        <Link href="/login" style={{ color: "#6366f1", fontSize: 14, textAlign: "center" }}>
-          Back to Login
-        </Link>
-      </form>
-    </main>
+      </div>
+    </div>
   );
 }
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div style={{ maxWidth: 400, margin: "100px auto", textAlign: "center" }}>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4">
+          <div className="text-sm text-slate-500">Loading...</div>
+        </div>
+      }
+    >
       <ResetForm />
     </Suspense>
   );

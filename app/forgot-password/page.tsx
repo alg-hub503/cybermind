@@ -5,8 +5,11 @@ import Link from "next/link";
 import { toast, Toaster } from "sonner";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
+import { useTranslations } from "@/lib/i18n/use-translations";
+import { LanguageSwitcher } from "@/app/_components/language-switcher";
 
 export default function ForgotPasswordPage() {
+  const { t, locale, dir } = useTranslations("forgot");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -36,47 +39,58 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main
-      style={{
-        maxWidth: 400,
-        margin: "100px auto",
-        display: "flex",
-        flexDirection: "column",
-        gap: 16,
-      }}
-    >
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4" dir={dir}>
       <Toaster richColors />
-      <h1>Forgot Password</h1>
+      <div className="w-full max-w-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
+              <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
+            </div>
+            <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
+          </div>
 
-      {sent ? (
-        <p style={{ color: "#64748b" }}>
-          If an account exists for this email, a reset link has been sent. Please check your inbox.
-          <br />
-          <Link href="/login" style={{ color: "#6366f1" }}>Back to Login</Link>
-        </p>
-      ) : (
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <p style={{ color: "#64748b", fontSize: 14 }}>
-            Enter your email and we&apos;ll send you a link to reset your password.
-          </p>
+          {sent ? (
+            <div className="flex flex-col gap-4">
+              <p className="text-sm text-slate-600">{t("sent")}</p>
+              <Link
+                href="/login"
+                className="text-center text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              >
+                {t("backToLogin")}
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div>
+                <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
+                  {t("email")}
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t("emailPlaceholder")}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? t("loading") : t("submit")}
+              </Button>
 
-          <Button type="submit" disabled={loading}>
-            {loading ? "Sending..." : "Send Reset Link"}
-          </Button>
-
-          <Link href="/login" style={{ color: "#6366f1", fontSize: 14, textAlign: "center" }}>
-            Back to Login
-          </Link>
-        </form>
-      )}
-    </main>
+              <Link
+                href="/login"
+                className="text-center text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              >
+                {t("backToLogin")}
+              </Link>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
