@@ -11,6 +11,7 @@ import QuickActions from "@/components/dashboard/widgets/quick-actions";
 import RecentActivity from "@/components/dashboard/widgets/recent-activity";
 import SchoolSummary from "@/components/dashboard/widgets/school-summary";
 import StatsGrid from "@/components/dashboard/widgets/stats-grid";
+import { t } from "@/lib/i18n/server";
 export default async function DashboardPage() {
   const { session, user } = await requireCurrentUser();
 
@@ -20,7 +21,7 @@ export default async function DashboardPage() {
       <div className="space-y-8">
         <DashboardHeader name={session?.user?.name ?? "Admin"} />
         <SchoolSummary
-          schoolName="Platform Overview"
+          schoolName={await t("dashboard.platformOverview")}
           totalUsers={users}
           totalClients={clients}
           totalInvoices={invoices}

@@ -1,4 +1,7 @@
+"use client";
+
 import Card from "@/components/cards/card";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 interface RecentActivityProps {
   totalClients: number;
@@ -6,31 +9,18 @@ interface RecentActivityProps {
   totalInvoices: number;
 }
 
-export default function RecentActivity({
-  totalClients,
-  totalUsers,
-  totalInvoices,
-}: RecentActivityProps) {
+export default function RecentActivity({ totalClients, totalUsers, totalInvoices }: RecentActivityProps) {
+  const { t, dir } = useTranslations("dashboard");
+
   const activities = [
-    {
-      title: "Clients",
-      value: `${totalClients} registered`,
-    },
-    {
-      title: "Users",
-      value: `${totalUsers} active`,
-    },
-    {
-      title: "Invoices",
-      value: `${totalInvoices} created`,
-    },
+    { title: t("clients"), value: `${totalClients} ${t("registered")}` },
+    { title: t("users"), value: `${totalUsers} ${t("active")}` },
+    { title: t("invoices"), value: `${totalInvoices} ${t("created")}` },
   ];
 
   return (
-    <Card>
-      <h2 className="mb-6 text-xl font-semibold text-slate-900">
-        Recent Activity
-      </h2>
+    <Card dir={dir}>
+      <h2 className="mb-6 text-xl font-semibold text-slate-900">{t("recentActivity")}</h2>
 
       <div className="space-y-4">
         {activities.map((activity) => (
@@ -40,7 +30,6 @@ export default function RecentActivity({
           >
             <div>
               <p className="font-medium text-slate-900">{activity.title}</p>
-
               <p className="text-sm text-slate-500">{activity.value}</p>
             </div>
 

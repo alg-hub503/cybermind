@@ -9,13 +9,8 @@ interface NavItemProps {
   icon: React.ReactNode;
 }
 
-export default function NavItem({
-  href,
-  label,
-  icon,
-}: NavItemProps) {
+export default function NavItem({ href, label, icon }: NavItemProps) {
   const pathname = usePathname();
-
   const isActive = pathname === href;
 
   return (
