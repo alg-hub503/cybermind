@@ -11,7 +11,8 @@
         "prepare": "husky",
         "lint:fix": "eslint . --fix",
         "typecheck": "tsc --noEmit",
-        "check": "npm run lint && npm run typecheck && npm run build"
+        "check": "npm run lint && npm run typecheck && npm run build",
+        "test:security": "npx tsx scripts/security-regression.ts"
     },
     "dependencies": {
         "@next-auth/prisma-adapter": "^1.0.7",
@@ -45,6 +46,7 @@
         "husky": "^9.1.7",
         "lint-staged": "^17.0.8",
         "tailwindcss": "^4",
+        "tsx": "^4.23.1",
         "typescript": "^5"
     }
 }

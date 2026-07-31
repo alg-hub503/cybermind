@@ -9,15 +9,25 @@ import { prisma } from "@/lib/prisma";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export async function createSchoolUser(data: {
+export type CreateSchoolUserInput = {
   schoolId: string;
   name: string;
   email: string;
   password: string;
   role: "USER" | "ADMIN";
-}) {
+};
+
+export async function createSchoolUser(data: CreateSchoolUserInput) {
   const { user: caller } = await requireSchoolAccess(data.schoolId);
 
+  await createSchoolUserCore(caller, data);
+  revalidatePath(`/dashboard/schools/${data.schoolId}/users`);
+}
+
+export async function createSchoolUserCore(
+  caller: { role: string },
+  data: CreateSchoolUserInput
+) {
   if (!data.schoolId || !data.name?.trim()) {
     throw new Error("INVALID_INPUT");
   }
@@ -44,7 +54,7 @@ export async function createSchoolUser(data: {
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  await prisma.user.create({
+  return prisma.user.create({
     data: {
       name: data.name.trim(),
       email: data.email,
@@ -53,5 +63,4 @@ export async function createSchoolUser(data: {
       schoolId: data.schoolId,
     },
   });
-  revalidatePath(`/dashboard/schools/${data.schoolId}/users`);
 }

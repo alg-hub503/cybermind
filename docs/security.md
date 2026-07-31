@@ -116,10 +116,27 @@ never enough.
 
 ## 6. Verification
 
-`scripts/verify-p0-security.mjs` runs the full RBAC + tenant-isolation suite against a local
-dev server (needs `npm run dev` running on port 3000). It creates throwaway accounts/schools
-and deletes them afterwards. Run it after any authorization-related change:
+Security is **self-verifying**: the regression suite runs in CI on every push to `main`
+(and on pull requests) via `.github/workflows/security.yml`.
 
-```
-node scripts/verify-p0-security.mjs
-```
+- **Local run:** `npm run test:security` — spawns its own dev server on port 3000, runs the
+  full suite, cleans up test data. Requires a reachable `DATABASE_URL` (from `.env`).
+- **Suite:** `scripts/security-regression.ts` covers:
+  - Anonymous requests → 401 (APIs) / redirect (pages)
+  - ADMIN platform access → allowed
+  - USER own-school access → allowed (positive controls, incl. `[id]` read/update/delete)
+  - Cross-tenant writes (POST with foreign `schoolId`, all 6 resource types) → 403
+  - IDOR on every resource type (GET/PUT/DELETE on another school's IDs) → 403
+  - Analytics tenant isolation (page renders without foreign data)
+  - Server-action role policy (module-level): USER caller cannot create ADMIN;
+    duplicate email → `USER_EXISTS`; invalid input → `INVALID_INPUT`
+  - Stale test data is pre-cleaned and removed after the run
+
+**CI secrets required** (repository → Settings → Secrets and variables → Actions):
+
+| Secret | Purpose |
+|---|---|
+| `DATABASE_URL` | Postgres connection for the tests (dev database) |
+| `NEXTAUTH_SECRET` | Session JWT signing (must match the app's production secret) |
+
+After any authorization-related change, run `npm run test:security` locally before pushing.
