@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           if [[ -z "$DATABASE_URL" ]]; then
-            echo "DATABASE_URL is EMPTY"
+            echo "DATABASE_URL is EMPTY (CI_DATABASE_URL secret not set)"
             exit 1
           elif [[ "$DATABASE_URL" == postgresql://* ]]; then
             echo "DATABASE_URL OK (postgresql://, length ${#DATABASE_URL})"
@@ -35,12 +35,12 @@ jobs:
             exit 1
           fi
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
 
       - name: Run security regression suite
         run: npm run test:security
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.CI_DATABASE_URL }}
           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
           NEXTAUTH_URL: http://localhost:3000
           NEXT_PUBLIC_APP_URL: http://localhost:3000

@@ -438,6 +438,12 @@ async function main() {
     process.exit(1);
   }
 
+  try {
+    console.log(`Testing against database host: ${new URL(dbUrl).host}`);
+  } catch {
+    // host is informational only
+  }
+
   prisma = new PrismaClient();
   await prisma.$connect();
   await preCleanStaleTestData();
