@@ -3,7 +3,7 @@
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
-import { requireAuth } from "@/lib/authorization";
+import { requireSchoolAccess } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
@@ -16,14 +16,7 @@ export async function createSchoolUser(data: {
   password: string;
   role: "USER" | "ADMIN";
 }) {
-  const { user: caller } = await requireAuth();
-
-  const isAdmin = caller.role === ADMIN_ROLE;
-  const ownsSchool = caller.schoolId === data.schoolId;
-
-  if (!isAdmin && !ownsSchool) {
-    throw new Error("FORBIDDEN");
-  }
+  const { user: caller } = await requireSchoolAccess(data.schoolId);
 
   if (!data.schoolId || !data.name?.trim()) {
     throw new Error("INVALID_INPUT");
@@ -37,7 +30,7 @@ export async function createSchoolUser(data: {
     throw new Error("INVALID_INPUT");
   }
 
-  const role = isAdmin ? data.role : "USER";
+  const role = caller.role === ADMIN_ROLE ? data.role : "USER";
 
   const existingUser = await prisma.user.findUnique({
     where: {
