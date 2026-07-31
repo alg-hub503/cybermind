@@ -5,7 +5,7 @@ import {
   getAverageInvoice,
 } from "@/lib/services/domain/revenue.service";
 
-export async function getDashboardAnalytics() {
+export async function getDashboardAnalytics(schoolId: string) {
   const [
     totalUsers,
     totalClients,
@@ -14,14 +14,14 @@ export async function getDashboardAnalytics() {
     totalRevenue,
     averageInvoice,
   ] = await Promise.all([
-    prisma.user.count(),
-    prisma.client.count(),
-    prisma.school.count(),
-    prisma.invoice.count(),
+    prisma.user.count({ where: { schoolId } }),
+    prisma.client.count({ where: { schoolId } }),
+    prisma.school.count({ where: { id: schoolId } }),
+    prisma.invoice.count({ where: { schoolId } }),
 
-    getTotalRevenue(),
+    getTotalRevenue(schoolId),
 
-    getAverageInvoice(),
+    getAverageInvoice(schoolId),
   ]);
 
   return {
@@ -34,11 +34,14 @@ export async function getDashboardAnalytics() {
   };
 }
 
-export async function getRevenueTrend() {
+export async function getRevenueTrend(schoolId: string) {
   const invoices = await prisma.invoice.findMany({
     select: {
       amount: true,
       createdAt: true,
+    },
+    where: {
+      schoolId,
     },
     orderBy: {
       createdAt: "asc",
@@ -66,10 +69,13 @@ export async function getRevenueTrend() {
   );
 }
 
-export async function getTopClients(limit = 5) {
+export async function getTopClients(schoolId: string, limit = 5) {
   const clients = await prisma.client.findMany({
     include: {
       Invoice: true,
+    },
+    where: {
+      schoolId,
     },
   });
 
@@ -87,9 +93,12 @@ export async function getTopClients(limit = 5) {
     .slice(0, limit);
 }
 
-export async function getLatestInvoices(limit = 5) {
+export async function getLatestInvoices(schoolId: string, limit = 5) {
   return prisma.invoice.findMany({
     take: limit,
+    where: {
+      schoolId,
+    },
     orderBy: {
       createdAt: "desc",
     },

@@ -3,7 +3,11 @@
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
+import { requireAuth } from "@/lib/authorization";
+import { ADMIN_ROLE } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function createSchoolUser(data: {
   schoolId: string;
@@ -12,30 +16,49 @@ export async function createSchoolUser(data: {
   password: string;
   role: "USER" | "ADMIN";
 }) {
-  const existingUser =
-    await prisma.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    });
+  const { user: caller } = await requireAuth();
+
+  const isAdmin = caller.role === ADMIN_ROLE;
+  const ownsSchool = caller.schoolId === data.schoolId;
+
+  if (!isAdmin && !ownsSchool) {
+    throw new Error("FORBIDDEN");
+  }
+
+  if (!data.schoolId || !data.name?.trim()) {
+    throw new Error("INVALID_INPUT");
+  }
+
+  if (!EMAIL_PATTERN.test(data.email)) {
+    throw new Error("INVALID_INPUT");
+  }
+
+  if (!data.password || data.password.length < 6) {
+    throw new Error("INVALID_INPUT");
+  }
+
+  const role = isAdmin ? data.role : "USER";
+
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email: data.email,
+    },
+  });
 
   if (existingUser) {
     throw new Error("USER_EXISTS");
   }
 
-  const hashedPassword =
-    await bcrypt.hash(data.password, 10);
+  const hashedPassword = await bcrypt.hash(data.password, 10);
 
   await prisma.user.create({
     data: {
-      name: data.name,
+      name: data.name.trim(),
       email: data.email,
       password: hashedPassword,
-      role: data.role,
+      role,
       schoolId: data.schoolId,
     },
   });
-  revalidatePath(
-    `/dashboard/schools/${data.schoolId}/users`
-  );
+  revalidatePath(`/dashboard/schools/${data.schoolId}/users`);
 }

@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/auth/require-admin";
+import { requireAdmin } from "@/lib/authorization";
 import { getUsers } from "@/lib/services/user.service";
 
 import RoleButton from "@/components/RoleButton";

@@ -27,10 +27,10 @@ export default async function AnalyticsPage() {
     topClients,
     latestInvoices,
   ] = await Promise.all([
-    getDashboardAnalytics(),
-    getRevenueTrend(),
-    getTopClients(),
-    getLatestInvoices(),
+    getDashboardAnalytics(user.schoolId),
+    getRevenueTrend(user.schoolId),
+    getTopClients(user.schoolId),
+    getLatestInvoices(user.schoolId),
   ]);
 
   return (
