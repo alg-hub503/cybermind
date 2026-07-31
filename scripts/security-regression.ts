@@ -421,6 +421,14 @@ async function runSuite() {
 // ── Main ────────────────────────────────────────────────────────
 
 async function main() {
+  if (!process.env.DATABASE_URL) {
+    console.error(
+      "Missing DATABASE_URL. In CI, add it to repository secrets " +
+      "(Settings -> Secrets and variables -> Actions). Locally, ensure .env exists."
+    );
+    process.exit(1);
+  }
+
   prisma = new PrismaClient();
   await prisma.$connect();
   await preCleanStaleTestData();
