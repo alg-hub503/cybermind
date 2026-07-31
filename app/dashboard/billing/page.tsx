@@ -18,7 +18,7 @@ export default async function BillingPage() {
   const isAdmin = session.user.role === "ADMIN";
 
   if (!isAdmin && !session.user.schoolId) {
-    redirect("/login");
+    redirect("/dashboard/schools");
   }
 
   if (isAdmin && !session.user.schoolId) {

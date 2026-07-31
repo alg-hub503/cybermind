@@ -14,7 +14,7 @@ export default async function SubscriptionPage() {
   const isAdmin = session.user.role === "ADMIN";
 
   if (!isAdmin && !session.user.schoolId) {
-    redirect("/login");
+    redirect("/dashboard/schools");
   }
 
   let school = null;
