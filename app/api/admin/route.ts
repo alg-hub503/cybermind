@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { requireAdmin } from "@/lib/authorization";
+import {
+  requireAdmin,
+  toApiError,
+} from "@/lib/authorization";
 import { getAdminStats } from "@/lib/services/stats.service";
 
 export async function GET() {
@@ -10,13 +13,15 @@ export async function GET() {
     const stats = await getAdminStats();
 
     return NextResponse.json(stats);
-  } catch {
+  } catch (error) {
+    const mapped = toApiError(error);
+
     return NextResponse.json(
       {
-        error: "Forbidden",
+        error: mapped.error,
       },
       {
-        status: 403,
+        status: mapped.status,
       }
     );
   }
