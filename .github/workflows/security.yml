@@ -20,6 +20,23 @@ jobs:
       - run: npm ci
       - run: npx prisma generate
 
+      - name: Verify DATABASE_URL shape
+        shell: bash
+        run: |
+          if [[ -z "$DATABASE_URL" ]]; then
+            echo "DATABASE_URL is EMPTY"
+            exit 1
+          elif [[ "$DATABASE_URL" == postgresql://* ]]; then
+            echo "DATABASE_URL OK (postgresql://, length ${#DATABASE_URL})"
+          elif [[ "$DATABASE_URL" == postgres://* ]]; then
+            echo "DATABASE_URL OK (postgres://, length ${#DATABASE_URL})"
+          else
+            echo "DATABASE_URL INVALID (length ${#DATABASE_URL}, prefix '${DATABASE_URL:0:13}')"
+            exit 1
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Run security regression suite
         run: npm run test:security
         env:

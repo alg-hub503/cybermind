@@ -429,6 +429,15 @@ async function main() {
     process.exit(1);
   }
 
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl.startsWith("postgresql://") && !dbUrl.startsWith("postgres://")) {
+    console.error(
+      "DATABASE_URL is present but INVALID (must start with postgresql:// or postgres://): " +
+        `length=${dbUrl.length} prefix='${dbUrl.slice(0, 13)}'`
+    );
+    process.exit(1);
+  }
+
   prisma = new PrismaClient();
   await prisma.$connect();
   await preCleanStaleTestData();
