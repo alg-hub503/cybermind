@@ -39,6 +39,7 @@ model User {
   passwordChangedAt  DateTime?
   School             School?       @relation(fields: [schoolId], references: [id])
   passwordResetTokens PasswordResetToken[]
+  reports            Report[]
 }
 
 model PasswordResetToken {
@@ -52,6 +53,18 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  type        String
+  description String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Client {
