@@ -6,7 +6,59 @@ import { getSchoolById } from "@/lib/services/domain/school.service";
 import { getBillingStatus } from "@/lib/services/application/billing/get-billing-status";
 import { listInvoices } from "@/lib/services/application/billing/list-invoices";
 import { exportBilling } from "@/lib/services/application/billing/export-billing";
+import { t } from "@/lib/i18n/server";
+
+import Card from "@/components/cards/card";
+import PageTitle from "@/components/ui/page-title";
+import StatCard from "@/components/ui/stat-card";
+import EmptyState from "@/components/ui/empty-state";
 import BillingActions from "./billing-actions";
+
+const INVOICE_BADGE: Record<string, string> = {
+  paid: "bg-emerald-100 text-emerald-700",
+  open: "bg-amber-100 text-amber-700",
+  draft: "bg-slate-100 text-slate-700",
+  void: "bg-red-100 text-red-700",
+  uncollectible: "bg-red-100 text-red-700",
+};
+
+function subscriptionStatusKey(status: string | null): string {
+  switch (status) {
+    case "TRIALING":
+      return "billing.statusTrialing";
+    case "ACTIVE":
+      return "billing.statusActive";
+    case "CANCELED":
+      return "billing.statusCanceled";
+    case "PAST_DUE":
+      return "billing.statusPastDue";
+    case "UNPAID":
+      return "billing.statusUnpaid";
+    case "INCOMPLETE":
+      return "billing.statusIncomplete";
+    case "INCOMPLETE_EXPIRED":
+      return "billing.statusIncompleteExpired";
+    case "PAUSED":
+      return "billing.statusPaused";
+    default:
+      return "billing.statusUnknown";
+  }
+}
+
+function invoiceStatusKey(status: string): string | null {
+  switch (status) {
+    case "paid":
+      return "billing.invoiceStatusPaid";
+    case "open":
+      return "billing.invoiceStatusOpen";
+    case "draft":
+      return "billing.invoiceStatusDraft";
+    case "void":
+      return "billing.invoiceStatusVoid";
+    default:
+      return null;
+  }
+}
 
 export default async function BillingPage() {
   const session = await getServerSession();
@@ -23,9 +75,15 @@ export default async function BillingPage() {
 
   if (isAdmin && !session.user.schoolId) {
     return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Billing</h1>
-        <p className="mt-4 text-gray-500">Select a school to view its billing details.</p>
+      <div className="space-y-8">
+        <PageTitle
+          title={await t("billing.title")}
+          description={await t("billing.description")}
+        />
+        <EmptyState
+          title={await t("billing.selectSchoolTitle")}
+          description={await t("billing.selectSchoolDescription")}
+        />
       </div>
     );
   }
@@ -61,74 +119,96 @@ export default async function BillingPage() {
 
   const sub = school?.subscription ?? null;
 
+  const statusLabel = await t(subscriptionStatusKey(sub?.status ?? null));
+
+  const invoiceStatusLabels = new Map<string, string>();
+  for (const inv of invoices?.data ?? []) {
+    const key = invoiceStatusKey(inv.status);
+    if (key && !invoiceStatusLabels.has(key)) {
+      invoiceStatusLabels.set(key, await t(key));
+    }
+  }
+
+  const invoicePdfLabel = await t("billing.invoicePdf");
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Billing</h1>
-        <p className="text-gray-500">Manage your subscription and billing history</p>
+      <PageTitle
+        title={await t("billing.title")}
+        description={await t("billing.description")}
+      />
+
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard title={await t("billing.plan")} value={sub?.plan ?? "FREE"} />
+        <StatCard title={await t("billing.status")} value={statusLabel} />
+        <StatCard
+          title={await t("billing.renewalDate")}
+          value={
+            sub?.currentPeriodEnd
+              ? sub.currentPeriodEnd.toLocaleDateString()
+              : await t("billing.notAvailable")
+          }
+        />
+        <StatCard
+          title={await t("billing.cancelAtPeriodEnd")}
+          value={sub?.cancelAtPeriodEnd ? await t("billing.yes") : await t("billing.no")}
+        />
       </div>
 
-      {/* Subscription Overview */}
-      <div className="rounded-lg border bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold">Subscription Overview</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Plan</p>
-            <p className="text-xl font-bold">{sub?.plan ?? "FREE"}</p>
-          </div>
-          <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Status</p>
-            <p className="text-xl font-bold">{sub?.status ?? "N/A"}</p>
-          </div>
-          <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Renewal Date</p>
-            <p className="text-xl font-bold">
-              {sub?.currentPeriodEnd
-                ? sub.currentPeriodEnd.toLocaleDateString()
-                : "N/A"}
-            </p>
-          </div>
-          <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Cancel at Period End</p>
-            <p className="text-xl font-bold">
-              {sub?.cancelAtPeriodEnd ? "Yes" : "No"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Actions */}
       <BillingActions schoolId={session.user.schoolId!} />
 
-      {/* Invoices */}
-      <div className="rounded-lg border bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold">Invoices</h2>
+      <Card>
+        <h2 className="mb-4 text-lg font-semibold text-slate-900">
+          {await t("billing.invoices")}
+        </h2>
         {invoices && invoices.data.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
+            <table className="w-full">
               <thead>
-                <tr className="border-b text-gray-500">
-                  <th className="pb-2 pr-4">ID</th>
-                  <th className="pb-2 pr-4">Amount</th>
-                  <th className="pb-2 pr-4">Status</th>
-                  <th className="pb-2 pr-4">Date</th>
-                  <th className="pb-2 pr-4">PDF</th>
+                <tr className="border-b border-slate-200 text-left text-sm text-slate-500">
+                  <th className="p-4 font-medium">{await t("billing.invoiceId")}</th>
+                  <th className="p-4 font-medium">{await t("billing.invoiceAmount")}</th>
+                  <th className="p-4 font-medium">{await t("billing.invoiceStatus")}</th>
+                  <th className="p-4 font-medium">{await t("billing.invoiceDate")}</th>
+                  <th className="p-4 text-right font-medium">{invoicePdfLabel}</th>
                 </tr>
               </thead>
               <tbody>
                 {invoices.data.map((inv) => (
-                  <tr key={inv.id} className="border-b last:border-0">
-                    <td className="py-2 pr-4 font-mono text-xs">{inv.number ?? inv.id.slice(0, 12)}</td>
-                    <td className="py-2 pr-4">${(inv.total / 100).toFixed(2)} {inv.currency}</td>
-                    <td className="py-2 pr-4">{inv.status}</td>
-                    <td className="py-2 pr-4">{new Date(inv.createdAt * 1000).toLocaleDateString()}</td>
-                    <td className="py-2 pr-4">
+                  <tr
+                    key={inv.id}
+                    className="border-b border-slate-100 last:border-0 hover:bg-slate-50"
+                  >
+                    <td className="p-4 font-mono text-xs text-slate-900">
+                      {inv.number ?? inv.id.slice(0, 12)}
+                    </td>
+                    <td className="p-4 text-sm text-slate-900">
+                      ${(inv.total / 100).toFixed(2)} {inv.currency}
+                    </td>
+                    <td className="p-4">
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                          INVOICE_BADGE[inv.status] ?? "bg-slate-100 text-slate-700"
+                        }`}
+                      >
+                        {invoiceStatusLabels.get(inv.status) ?? inv.status}
+                      </span>
+                    </td>
+                    <td className="p-4 text-sm text-slate-600">
+                      {new Date(inv.createdAt * 1000).toLocaleDateString()}
+                    </td>
+                    <td className="p-4 text-right">
                       {inv.invoicePdf ? (
-                        <a href={inv.invoicePdf} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                          PDF
+                        <a
+                          href={inv.invoicePdf}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-indigo-600 hover:underline"
+                        >
+                          {invoicePdfLabel}
                         </a>
                       ) : (
-                        <span className="text-gray-400">—</span>
+                        <span className="text-slate-400">—</span>
                       )}
                     </td>
                   </tr>
@@ -137,32 +217,33 @@ export default async function BillingPage() {
             </table>
           </div>
         ) : (
-          <p className="text-gray-400">No invoices yet.</p>
+          <p className="text-slate-400">{await t("billing.noInvoices")}</p>
         )}
-      </div>
+      </Card>
 
-      {/* Export */}
       {exportData && (
-        <div className="rounded-lg border bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold">Billing Summary</h2>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border bg-slate-50 p-4">
-              <p className="text-sm text-gray-500">Total Invoices</p>
-              <p className="text-xl font-bold">{exportData.totalInvoices}</p>
-            </div>
-            <div className="rounded-lg border bg-slate-50 p-4">
-              <p className="text-sm text-gray-500">Total Payments</p>
-              <p className="text-xl font-bold">{exportData.totalPayments}</p>
-            </div>
-            <div className="rounded-lg border bg-slate-50 p-4">
-              <p className="text-sm text-gray-500">Total Refunds</p>
-              <p className="text-xl font-bold">{exportData.totalRefunds}</p>
-            </div>
+        <Card>
+          <h2 className="mb-4 text-lg font-semibold text-slate-900">
+            {await t("billing.summary")}
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <StatCard
+              title={await t("billing.totalInvoices")}
+              value={exportData.totalInvoices}
+            />
+            <StatCard
+              title={await t("billing.totalPayments")}
+              value={exportData.totalPayments}
+            />
+            <StatCard
+              title={await t("billing.totalRefunds")}
+              value={exportData.totalRefunds}
+            />
           </div>
-          <p className="mt-2 text-sm text-gray-500">
-            Net Total: ${(exportData.totalAmount / 100).toFixed(2)} USD
+          <p className="mt-4 text-sm text-slate-500">
+            {await t("billing.netTotal")}: ${(exportData.totalAmount / 100).toFixed(2)} USD
           </p>
-        </div>
+        </Card>
       )}
     </div>
   );

@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 
+import { useTranslations } from "@/lib/i18n/use-translations";
+
+import Button from "@/components/ui/button";
+
 interface BillingActionsProps {
   schoolId: string;
 }
 
 export default function BillingActions({ schoolId }: BillingActionsProps) {
+  const { t } = useTranslations("billing");
+
   const [portalLoading, setPortalLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -24,17 +30,17 @@ export default function BillingActions({ schoolId }: BillingActionsProps) {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        setMessage(data.error ?? "Failed to open portal");
+        setMessage(data.error ?? t("failedPortal"));
       }
     } catch {
-      setMessage("An error occurred");
+      setMessage(t("anError"));
     } finally {
       setPortalLoading(false);
     }
   };
 
   const cancelSubscription = async () => {
-    if (!confirm("Are you sure you want to cancel your subscription?")) return;
+    if (!confirm(t("cancelConfirm"))) return;
     try {
       setCancelLoading(true);
       setMessage(null);
@@ -45,39 +51,38 @@ export default function BillingActions({ schoolId }: BillingActionsProps) {
       });
       const data = await res.json();
       if (data.success) {
-        setMessage("Subscription canceled. It will end at the current period.");
+        setMessage(t("canceledMessage"));
         window.location.reload();
       } else {
-        setMessage(data.error ?? "Failed to cancel");
+        setMessage(data.error ?? t("failedCancel"));
       }
     } catch {
-      setMessage("An error occurred");
+      setMessage(t("anError"));
     } finally {
       setCancelLoading(false);
     }
   };
 
   return (
-    <div className="rounded-lg border bg-white p-6">
-      <h2 className="mb-4 text-lg font-semibold">Actions</h2>
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 className="mb-4 text-lg font-semibold text-slate-900">
+        {t("actions")}
+      </h2>
       <div className="flex flex-wrap gap-3">
-        <button
-          onClick={openPortal}
-          disabled={portalLoading}
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50"
-        >
-          {portalLoading ? "Opening..." : "Customer Portal (Manage Payment Methods)"}
-        </button>
-        <button
+        <Button onClick={openPortal} disabled={portalLoading}>
+          {portalLoading ? t("opening") : t("openPortal")}
+        </Button>
+        <Button
           onClick={cancelSubscription}
           disabled={cancelLoading}
-          className="rounded-lg border border-red-300 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          variant="outline"
+          className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-600"
         >
-          {cancelLoading ? "Canceling..." : "Cancel Subscription"}
-        </button>
+          {cancelLoading ? t("canceling") : t("cancelSubscription")}
+        </Button>
       </div>
       {message && (
-        <p className="mt-3 text-sm text-gray-600">{message}</p>
+        <p className="mt-3 text-sm text-slate-500">{message}</p>
       )}
     </div>
   );
