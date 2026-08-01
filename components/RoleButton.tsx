@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+import { useTranslations } from "@/lib/i18n/use-translations";
+
 import Button from "@/components/ui/button";
 
 interface RoleButtonProps {
@@ -16,6 +18,7 @@ export default function RoleButton({
   role,
 }: RoleButtonProps) {
   const router = useRouter();
+  const { t } = useTranslations("admin");
 
   const [loading, setLoading] = useState(false);
 
@@ -34,18 +37,18 @@ export default function RoleButton({
 
       if (!response.ok) {
         toast.error(
-          data.error ?? "Failed to update role"
+          data.error ?? t("roleUpdateFailed")
         );
         return;
       }
 
-      toast.success("Role updated successfully");
+      toast.success(t("roleUpdated"));
 
       router.refresh();
     } catch (error) {
       console.error(error);
 
-      toast.error("Something went wrong");
+      toast.error(t("wentWrong"));
     } finally {
       setLoading(false);
     }
@@ -58,10 +61,10 @@ export default function RoleButton({
       variant="outline"
     >
       {loading
-        ? "Updating..."
+        ? t("updating")
         : role === "ADMIN"
-        ? "Make USER"
-        : "Make ADMIN"}
+        ? t("makeUser")
+        : t("makeAdmin")}
     </Button>
   );
 }

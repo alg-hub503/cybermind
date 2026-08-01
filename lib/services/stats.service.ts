@@ -1,12 +1,14 @@
 import { prisma } from "@/lib/prisma";
 
 export async function getAdminStats() {
-  const [users, clients, schools, invoices] =
+  const [users, clients, schools, invoices, activeSubscriptions, trialAccounts] =
     await Promise.all([
       prisma.user.count(),
       prisma.client.count(),
       prisma.school.count(),
       prisma.invoice.count(),
+      prisma.subscription.count({ where: { status: "ACTIVE" } }),
+      prisma.subscription.count({ where: { status: "TRIALING" } }),
     ]);
 
   return {
@@ -14,6 +16,8 @@ export async function getAdminStats() {
     clients,
     schools,
     invoices,
+    activeSubscriptions,
+    trialAccounts,
   };
 }
 

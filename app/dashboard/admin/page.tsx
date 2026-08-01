@@ -1,78 +1,46 @@
 import { requireAdmin } from "@/lib/authorization";
 import { getUsers } from "@/lib/services/user.service";
+import { getAdminStats } from "@/lib/services/stats.service";
+import { t } from "@/lib/i18n/server";
 
-import RoleButton from "@/components/RoleButton";
+import PageTitle from "@/components/ui/page-title";
+import StatCard from "@/components/ui/stat-card";
+import AdminUsersTable from "./AdminUsersTable";
 
-interface AdminPageProps {
-  searchParams: Promise<{
-    search?: string;
-  }>;
-}
-
-export default async function AdminPage({
-  searchParams,
-}: AdminPageProps) {
+export default async function AdminPage() {
   await requireAdmin();
 
-  const params = await searchParams;
+  const [users, stats] = await Promise.all([getUsers(), getAdminStats()]);
 
-  const search = params.search ?? "";
-
-  const users = await getUsers(search);
+  const tableUsers = users.map((user) => ({
+    id: user.id,
+    email: user.email,
+    name: user.name ?? "",
+    role: user.role,
+    subscriptionStatus: user.School?.subscription?.status ?? null,
+  }));
 
   return (
-    <div style={{ padding: 30 }}>
-      <h1>Admin Users Management</h1>
+    <div className="space-y-8">
+      <PageTitle
+        title={await t("admin.title")}
+        description={await t("admin.description")}
+      />
 
-      <table
-        border={1}
-        cellPadding={10}
-        style={{
-          marginTop: 20,
-          borderCollapse: "collapse",
-          width: "100%",
-        }}
-      >
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Subscription</th>
-            <th>Role Action</th>
-            
-          </tr>
-        </thead>
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard title={await t("admin.totalUsers")} value={stats.users} />
+        <StatCard title={await t("admin.totalSchools")} value={stats.schools} />
+        <StatCard
+          title={await t("admin.activeSubscriptions")}
+          value={stats.activeSubscriptions}
+        />
+        <StatCard
+          title={await t("admin.trialAccounts")}
+          value={stats.trialAccounts}
+        />
+      </div>
 
-        <tbody>
-          {users.length === 0 ? (
-            <tr>
-              <td colSpan={4}>
-                No users found.
-              </td>
-            </tr>
-          ) : (
-            users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.email}</td>
-
-                <td>{user.role}</td>
-
-                <td>
-                  {user.School?.subscription?.status ?? "N/A"}
-                </td>
-
-                <td>
-                  <RoleButton
-                    userId={user.id}
-                    role={user.role}
-                  />
-                </td>
-
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      <AdminUsersTable users={tableUsers} />
     </div>
   );
 }
