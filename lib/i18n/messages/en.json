@@ -335,5 +335,17 @@
   "billing.statusIncomplete": "Incomplete",
   "billing.statusIncompleteExpired": "Incomplete Expired",
   "billing.statusPaused": "Paused",
-  "billing.statusUnknown": "Unknown"
+  "billing.statusUnknown": "Unknown",
+  "stats.titlePlatform": "Platform Statistics",
+  "stats.descriptionPlatform": "Overview of all schools on the platform",
+  "stats.titleDashboard": "Dashboard Statistics",
+  "stats.noSchoolTitle": "No school found",
+  "stats.noSchoolDescription": "No school found for your account.",
+  "stats.titleSchool": "School Statistics",
+  "stats.descriptionSchool": "Overview of your school data",
+  "stats.totalSchools": "Total Schools",
+  "stats.totalUsers": "Total Users",
+  "stats.totalClients": "Total Clients",
+  "stats.totalInvoices": "Total Invoices",
+  "stats.totalRevenue": "Total Revenue"
 }

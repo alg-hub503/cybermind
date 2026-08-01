@@ -335,5 +335,17 @@
   "billing.statusIncomplete": "غير مكتمل",
   "billing.statusIncompleteExpired": "منتهي غير مكتمل",
   "billing.statusPaused": "موقوف",
-  "billing.statusUnknown": "غير معروف"
+  "billing.statusUnknown": "غير معروف",
+  "stats.titlePlatform": "إحصائيات المنصة",
+  "stats.descriptionPlatform": "نظرة عامة على جميع المدارس في المنصة",
+  "stats.titleDashboard": "إحصائيات لوحة التحكم",
+  "stats.noSchoolTitle": "لم يتم العثور على مدرسة",
+  "stats.noSchoolDescription": "لم يتم العثور على مدرسة لحسابك.",
+  "stats.titleSchool": "إحصائيات المدرسة",
+  "stats.descriptionSchool": "نظرة عامة على بيانات مدرستك",
+  "stats.totalSchools": "إجمالي المدارس",
+  "stats.totalUsers": "إجمالي المستخدمين",
+  "stats.totalClients": "إجمالي العملاء",
+  "stats.totalInvoices": "إجمالي الفواتير",
+  "stats.totalRevenue": "إجمالي الإيرادات"
 }
