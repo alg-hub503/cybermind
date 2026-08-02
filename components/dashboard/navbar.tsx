@@ -23,6 +23,8 @@ export default function Navbar() {
     "/dashboard/subscription": t("subscription"),
     "/dashboard/billing": t("billing"),
     "/dashboard/admin": t("admin"),
+    "/dashboard/school-settings": t("settings"),
+    "/dashboard/hub": t("hub"),
   };
 
   const title = titles[pathname] ?? t("dashboard");

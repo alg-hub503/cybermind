@@ -70,6 +70,7 @@
   "sidebar.billing": "الفواتير",
   "sidebar.admin": "المشرف",
   "sidebar.hub": "مركز المساعدة",
+  "sidebar.settings": "الإعدادات",
   "sidebar.logout": "تسجيل الخروج",
   "sidebar.tagline": "منصة SaaS ذكية",
 
@@ -83,6 +84,8 @@
   "navbar.subscription": "الاشتراك",
   "navbar.billing": "الفواتير",
   "navbar.admin": "المشرف",
+  "navbar.settings": "إعدادات المدرسة",
+  "navbar.hub": "مركز المساعدة",
   "navbar.welcomeBack": "مرحباً بعودتك إلى CyberMind",
 
   "dashboard.title": "لوحة تحكم CyberMind",
@@ -410,5 +413,54 @@
   "hub.salesEmailValue": "sales@cybermind.app",
   "hub.salesPhone": "الهاتف",
   "hub.salesPhoneValue": "+971 50 123 4567",
-  "hub.salesNote": "يفيد فريقنا عادةً خلال ٢٤ ساعة during أيام العمل."
+  "hub.salesNote": "يفيد فريقنا عادةً خلال ٢٤ ساعة during أيام العمل.",
+
+  "settings.save": "حفظ",
+  "settings.saving": "جارٍ الحفظ...",
+  "settings.saveSuccess": "تم حفظ الإعدادات بنجاح",
+  "settings.saveError": "فشل حفظ الإعدادات. يرجى المحاولة مرة أخرى.",
+
+  "settings.general": "عام",
+  "settings.generalDescription": "معلومات أساسية عن مدرستك.",
+  "settings.schoolDescription": "وصف المدرسة",
+  "settings.descriptionPlaceholder": "وصف مختصر للمدرسة...",
+
+  "settings.branding": "العلامة التجارية",
+  "settings.brandingDescription": "تخصيص الهوية البصرية للمدرسة.",
+  "settings.logoUrl": "رابط الشعار",
+  "settings.coverUrl": "رابط صورة الغلاف",
+  "settings.faviconUrl": "رابط الأيقونة",
+  "settings.primaryColor": "اللون الأساسي",
+  "settings.secondaryColor": "اللون الثانوي",
+
+  "settings.regional": "الإقليمي",
+  "settings.regionalDescription": "اللغة والعملة والتفضيلات الإقليمية.",
+  "settings.language": "اللغة",
+  "settings.currency": "العملة",
+  "settings.timezone": "المنطقة الزمنية",
+  "settings.dateFormat": "صيغة التاريخ",
+
+  "settings.contact": "جهة الاتصال",
+  "settings.contactDescription": "كيف يمكن للطلاب وأولياء الأمور التواصل معك.",
+  "settings.contactEmail": "البريد الإلكتروني للتواصل",
+  "settings.phone": "الهاتف",
+  "settings.website": "الموقع الإلكتروني",
+  "settings.address": "العنوان",
+  "settings.addressPlaceholder": "عنوان المدرسة...",
+
+  "settings.billing": "الفواتير",
+  "settings.billingDescription": "إعدادات الفواتير للمدرسة.",
+  "settings.invoicePrefix": "بادئة رقم الفاتورة",
+  "settings.invoiceNextNum": "رقم الفاتورة التالي",
+  "settings.invoiceNotes": "ملاحظات الفاتورة",
+  "settings.invoiceNotesPlaceholder": "ملاحظات تظهر على الفواتير...",
+
+  "settings.legal": "قانوني",
+  "settings.legalDescription": "المعلومات القانونية والضريبية.",
+  "settings.taxNumber": "الرقم الضريبي",
+  "settings.taxNumberPlaceholder": "أدخل الرقم الضريبي",
+  "settings.crNumber": "رقم السجل التجاري",
+  "settings.crNumberPlaceholder": "أدخل رقم السجل التجاري",
+  "settings.legalNotes": "ملاحظات قانونية",
+  "settings.legalNotesPlaceholder": "ملاحظات قانونية إضافية..."
 }

@@ -16,6 +16,7 @@ import {
   BookOpen,
   LogOut,
   HelpCircle,
+  Settings,
 } from "lucide-react";
 
 import NavItem from "./nav-item";
@@ -58,6 +59,7 @@ export default function Sidebar() {
         <NavItem href="/dashboard/subscription" label={t("subscription")} icon={<Crown size={20} />} />
         <NavItem href="/dashboard/billing" label={t("billing")} icon={<CreditCard size={20} />} />
         <NavItem href="/dashboard/hub" label={t("hub")} icon={<HelpCircle size={20} />} />
+        <NavItem href="/dashboard/school-settings" label={t("settings")} icon={<Settings size={20} />} />
         {isAdmin && (
           <NavItem href="/dashboard/admin" label={t("admin")} icon={<Shield size={20} />} />
         )}

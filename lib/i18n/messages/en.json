@@ -70,6 +70,7 @@
   "sidebar.billing": "Billing",
   "sidebar.admin": "Admin",
   "sidebar.hub": "Help",
+  "sidebar.settings": "Settings",
   "sidebar.logout": "Logout",
   "sidebar.tagline": "AI SaaS Platform",
 
@@ -83,6 +84,8 @@
   "navbar.subscription": "Subscription",
   "navbar.billing": "Billing",
   "navbar.admin": "Admin",
+  "navbar.settings": "School Settings",
+  "navbar.hub": "Help Center",
   "navbar.welcomeBack": "Welcome back to CyberMind",
 
   "dashboard.title": "CyberMind Dashboard",
@@ -410,5 +413,54 @@
   "hub.salesEmailValue": "sales@cybermind.app",
   "hub.salesPhone": "Phone",
   "hub.salesPhoneValue": "+971 50 123 4567",
-  "hub.salesNote": "Our team typically responds within 24 hours during business days."
+  "hub.salesNote": "Our team typically responds within 24 hours during business days.",
+
+  "settings.save": "Save",
+  "settings.saving": "Saving...",
+  "settings.saveSuccess": "Settings saved successfully",
+  "settings.saveError": "Failed to save settings. Please try again.",
+
+  "settings.general": "General",
+  "settings.generalDescription": "Basic information about your school.",
+  "settings.schoolDescription": "School Description",
+  "settings.descriptionPlaceholder": "Brief description of your school...",
+
+  "settings.branding": "Branding",
+  "settings.brandingDescription": "Customize your school's visual identity.",
+  "settings.logoUrl": "Logo URL",
+  "settings.coverUrl": "Cover Image URL",
+  "settings.faviconUrl": "Favicon URL",
+  "settings.primaryColor": "Primary Color",
+  "settings.secondaryColor": "Secondary Color",
+
+  "settings.regional": "Regional",
+  "settings.regionalDescription": "Language, currency, and regional preferences.",
+  "settings.language": "Language",
+  "settings.currency": "Currency",
+  "settings.timezone": "Timezone",
+  "settings.dateFormat": "Date Format",
+
+  "settings.contact": "Contact",
+  "settings.contactDescription": "How students and parents can reach you.",
+  "settings.contactEmail": "Contact Email",
+  "settings.phone": "Phone",
+  "settings.website": "Website",
+  "settings.address": "Address",
+  "settings.addressPlaceholder": "School address...",
+
+  "settings.billing": "Billing",
+  "settings.billingDescription": "Invoice configuration for your school.",
+  "settings.invoicePrefix": "Invoice Prefix",
+  "settings.invoiceNextNum": "Next Invoice Number",
+  "settings.invoiceNotes": "Invoice Notes",
+  "settings.invoiceNotesPlaceholder": "Notes to appear on invoices...",
+
+  "settings.legal": "Legal",
+  "settings.legalDescription": "Legal and tax information.",
+  "settings.taxNumber": "Tax Number",
+  "settings.taxNumberPlaceholder": "Enter tax number",
+  "settings.crNumber": "CR Number",
+  "settings.crNumberPlaceholder": "Enter CR number",
+  "settings.legalNotes": "Legal Notes",
+  "settings.legalNotesPlaceholder": "Additional legal notes..."
 }
