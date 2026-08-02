@@ -34,6 +34,10 @@ export default function SchoolTabs({
       label: "Analytics",
       href: `/dashboard/schools/${schoolId}/analytics`,
     },
+    {
+      label: "Settings",
+      href: `/dashboard/schools/${schoolId}/settings`,
+    },
   ];
 
   return (

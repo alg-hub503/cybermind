@@ -70,7 +70,6 @@
   "sidebar.billing": "الفواتير",
   "sidebar.admin": "المشرف",
   "sidebar.hub": "مركز المساعدة",
-  "sidebar.settings": "الإعدادات",
   "sidebar.logout": "تسجيل الخروج",
   "sidebar.tagline": "منصة SaaS ذكية",
 
@@ -84,7 +83,6 @@
   "navbar.subscription": "الاشتراك",
   "navbar.billing": "الفواتير",
   "navbar.admin": "المشرف",
-  "navbar.settings": "إعدادات المدرسة",
   "navbar.hub": "مركز المساعدة",
   "navbar.welcomeBack": "مرحباً بعودتك إلى CyberMind",
 

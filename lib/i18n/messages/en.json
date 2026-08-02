@@ -70,7 +70,6 @@
   "sidebar.billing": "Billing",
   "sidebar.admin": "Admin",
   "sidebar.hub": "Help",
-  "sidebar.settings": "Settings",
   "sidebar.logout": "Logout",
   "sidebar.tagline": "AI SaaS Platform",
 
@@ -84,7 +83,6 @@
   "navbar.subscription": "Subscription",
   "navbar.billing": "Billing",
   "navbar.admin": "Admin",
-  "navbar.settings": "School Settings",
   "navbar.hub": "Help Center",
   "navbar.welcomeBack": "Welcome back to CyberMind",
 
