@@ -91,6 +91,7 @@ model School {
   stripeCustomerId String?       @unique
   createdAt        DateTime      @default(now())
   subscription     Subscription?
+  settings         SchoolSettings?
 
   Client               Client[]
   Invoice              Invoice[]
@@ -100,6 +101,52 @@ model School {
   Class                Class[]
   Student              Student[]
   StudentAcademicRecord StudentAcademicRecord[]
+}
+
+model SchoolSettings {
+  id        String   @id @default(cuid())
+  schoolId  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // General
+  description   String?
+
+  // Branding
+  logoUrl       String?
+  coverUrl      String?
+  faviconUrl    String?
+  primaryColor  String?   @default("#4F46E5")
+  secondaryColor String?  @default("#64748B")
+
+  // Regional
+  locale        String?   @default("ar")
+  currency      String?   @default("SAR")
+  timezone      String?   @default("Asia/Riyadh")
+  dateFormat    String?   @default("DD/MM/YYYY")
+
+  // Contact
+  contactEmail  String?
+  phone         String?
+  website       String?
+  address       String?
+
+  // Trial (data only — no logic in this phase)
+  trialStart    DateTime?
+  trialEnd      DateTime?
+
+  // Invoicing
+  invoicePrefix   String?   @default("INV-")
+  invoiceNextNum  Int       @default(1)
+  invoiceNotes    String?
+
+  // Legal / Tax (placeholders — no logic yet)
+  taxNumber      String?
+  crNumber       String?
+  legalNotes     String?
+
+  // Relations
+  school        School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model AcademicYear {
