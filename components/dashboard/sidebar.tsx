@@ -64,7 +64,10 @@ export default function Sidebar() {
           <NavItem href={`/dashboard/schools/${schoolId}/settings`} label={t("settings")} icon={<Settings size={20} />} />
         )}
         {isAdmin && (
-          <NavItem href="/dashboard/admin" label={t("admin")} icon={<Shield size={20} />} />
+          <>
+            <NavItem href="/dashboard/admin" label={t("admin")} icon={<Shield size={20} />} />
+            <NavItem href="/dashboard/platform-settings" label={t("platformSettings")} icon={<Settings size={20} />} />
+          </>
         )}
       </nav>
 

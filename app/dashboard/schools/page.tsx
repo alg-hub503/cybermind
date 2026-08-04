@@ -2,6 +2,7 @@ import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getSchools, getSchool } from "@/lib/features/schools/school-actions";
 import { t } from "@/lib/i18n/server";
+import Link from "next/link";
 import SchoolForm from "./SchoolForm";
 import EditSchoolButton from "./EditSchoolButton";
 import DeleteSchoolButton from "./DeleteSchoolButton";
@@ -41,7 +42,14 @@ export default async function SchoolsPage() {
           <tbody>
             {schools.map((school) => (
               <tr key={school.id} className="border-b">
-                <td className="p-3">{school.name}</td>
+                <td className="p-3">
+                  <Link
+                    href={`/dashboard/schools/${school.id}`}
+                    className="text-indigo-600 hover:underline"
+                  >
+                    {school.name}
+                  </Link>
+                </td>
                 {user.role === ADMIN_ROLE && (
                   <td className="flex justify-end gap-2 p-3">
                     <EditSchoolButton id={school.id} currentName={school.name} />
