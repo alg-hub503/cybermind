@@ -1,27 +1,44 @@
-# Current Sprint
+# Current Sprint — P2: Platform & Settings
 
 ## Sprint Goal
 
-School Management
+Complete all Platform & Settings features.
 
-## Current Task
-
-- School Details Page ✅
-- School Dashboard ⏳
-- School Statistics ⏳
-
-## Next Tasks
-
-- School Users
-- School Clients
-- School Invoices
+---
 
 ## Completed
 
-- Dashboard
-- Authentication
-- Billing
-- Schools CRUD
+- Customer Hub
+- Report Issue
+- Forgot / Reset Password
+- Report Migration
+- School Settings Backend
+- School Settings Frontend
+
+---
+
+## In Progress
+
+- Platform Settings
+
+---
+
+## Next
+
+- Contact Us
+- Talk to Sales
+- Change Email
+- Subscription Renewal
+- Trial Management
+
+---
+
+## Pending Verification
+
+- School Admin production verification (after password reset)
+- Schools page direct navigation improvement
+
+---
 
 ## Notes
 

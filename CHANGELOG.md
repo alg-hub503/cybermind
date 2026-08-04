@@ -49,7 +49,30 @@ Architectural decision: Subscription owned by **School**, not User. No email-bas
 
 ## Unreleased
 
-- Fixed: missing authorization check on school-scoped pages (clients, invoices, users, analytics, school detail) — previously any authenticated user could access another school's data by changing the URL.
+### School Settings
+
+Completed:
+
+- SchoolSettings Prisma model (26 columns, 1:1 with School via `schoolId @unique`, `onDelete: Cascade`)
+- Migration (`20260802000000_add_school_settings`)
+- Zod validation (locale: ar/en, currency: 12 values, timezone: 35 IANA values, dateFormat: 3 formats)
+- Repository (`prisma-school-settings-repository.ts`) with `findBySchoolId`, `findOrCreateBySchoolId`, `update`
+- Service layer (`school-settings-service.ts`)
+- Server actions (`school-settings-actions.ts`)
+- Protected API (`GET/PUT /api/schools/[id]/settings`) with `requireSchoolAccess`
+- Lazy-create behavior via upsert (returns defaults if no row exists)
+- School Settings UI at `/dashboard/schools/[id]/settings`
+- Six independent tabs: General, Branding, Regional, Contact, Billing, Legal
+- Each tab saves independently
+- 50+ translation keys (en/ar)
+- Admin production verification
+- Unified authorization (`requireSchoolAccess` allows ADMIN any school, USER own school only)
+- Sidebar conditional: ADMIN → schools list, USER → direct settings link
+- Path migration: moved from `/dashboard/school-settings` to `/dashboard/schools/[id]/settings`
+
+Fixed:
+
+- Missing authorization check on school-scoped pages (clients, invoices, users, analytics, school detail) — previously any authenticated user could access another school's data by changing the URL.
 
 ## Planned / Tech Debt
 

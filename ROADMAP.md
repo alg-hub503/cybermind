@@ -8,153 +8,82 @@ Build CyberMind into a professional, scalable and production-ready School Manage
 
 # Development Workflow
 
-Analyze
-
-↓
-
-Plan
-
-↓
-
-Implement
-
-↓
-
-Review
-
-↓
-
-Test
-
-↓
-
-Deploy
+Analyze → Plan → Implement → Review → Test → Deploy
 
 ---
 
-# Phase 1
-
-Foundation ✅
+# P1 — Foundation ✅ (Frozen)
 
 Completed
 
-- Next.js
-- Tailwind CSS
-- Prisma
-- PostgreSQL
+- Next.js, Tailwind CSS, Prisma, PostgreSQL
 - Authentication
 - Dashboard
+- Localization (ar/en)
+- UX polish
+- Error handling
+- Admin / Billing / Dashboard UX
+- Authorization consolidation
+- IDOR P0 fix
 
 ---
 
-# Phase 2
+# P2 — Platform & Settings (Current Phase)
 
-School Management
+Completed
 
-Tasks
+- Customer Hub
+- Report Issue
+- Forgot / Reset Password (Resend)
+- Report Migration
+- School Settings Backend
+- School Settings Frontend
+- Production Verification (Admin)
 
-- School CRUD
-- School Details
-- School Statistics
-- School Users
-- School Clients
-- School Invoices
+Remaining
 
-Status
-
-In Progress
+- Platform Settings
+- Contact Us (Real Form)
+- Talk to Sales (Real Form)
+- Change Email
+- Subscription Renewal
+- Trial Management
 
 ---
 
-# Phase 3
-
-User Management
-
-Tasks
+# P3 — Core School Features
 
 - Roles
 - Permissions
-- Profile
-- Subscription
+- Teachers
+- Staff
+- Subject Assignment
+- Teacher-Class Linking
 
 ---
 
-# Phase 4
+# P4 — AI Assistant
 
-Client Management
-
-Tasks
-
-- CRUD
-- Search
-- Filters
-- Statistics
+- Single CyberMind AI Assistant
+- Architecture review required before implementation
+- Full security review
+- Respects RBAC and multi-tenant isolation
 
 ---
 
-# Phase 5
+# P5 — Enterprise & Customer Success (Deferred)
 
-Invoice Management
-
-Tasks
-
-- CRUD
-- PDF
-- Payment Status
-- Reports
+- CRM
+- Demo Booking
+- Sales Page
+- Customer Success Center
+- Public Roadmap / Voting
 
 ---
 
-# Phase 6
+# Explicitly Not Planned
 
-Analytics
-
-Tasks
-
-- Revenue
-- Schools
-- Users
-- Charts
-
----
-
-# Phase 7
-
-Billing
-
-Tasks
-
-- Stripe
-- Subscription
-- Payments
-- Plans
-
----
-
-# Phase 8
-
-AI Features
-
-Tasks
-
-- AI Dashboard
-- AI Reports
-- AI Assistant
-- AI Insights
-
----
-
-# Phase 9
-
-Production
-
-Tasks
-
-- Security Review
-- Performance Review
-- Accessibility Review
-- Testing
-- Deployment
+- Full tax/accounting system
 
 ---
 
