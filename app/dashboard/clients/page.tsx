@@ -24,8 +24,8 @@ export default async function ClientsPage() {
 
   const columns = [
     { key: "name", header: nameLabel, width: "45%" },
-    { key: "school", header: schoolLabel, width: "40%" },
-    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+    { key: "school", header: schoolLabel, width: "45%" },
+    { key: "actions", header: actionsLabel, width: "10%", align: "center" as const },
   ];
 
   return (
@@ -43,8 +43,8 @@ export default async function ClientsPage() {
             <DataTableRow key={client.id}>
               <DataTableCell className="font-medium">{client.name}</DataTableCell>
               <DataTableCell className="text-slate-500">{client.schoolId}</DataTableCell>
-              <DataTableCell align="right">
-                <div className="flex justify-end gap-2">
+              <DataTableCell align="center">
+                <div className="flex justify-center gap-2">
                   <EditClientButton id={client.id} currentName={client.name} />
                   <DeleteClientButton id={client.id} />
                 </div>

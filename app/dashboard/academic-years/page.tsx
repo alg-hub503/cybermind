@@ -34,8 +34,8 @@ export default async function AcademicYearsPage() {
     { key: "name", header: nameLabel, width: "25%" },
     { key: "startDate", header: startDateLabel, width: "20%" },
     { key: "endDate", header: endDateLabel, width: "20%" },
-    { key: "current", header: currentLabel, width: "20%" },
-    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+    { key: "current", header: currentLabel, width: "25%" },
+    { key: "actions", header: actionsLabel, width: "10%", align: "center" as const },
   ];
 
   return (
@@ -73,8 +73,8 @@ export default async function AcademicYearsPage() {
                     </span>
                   )}
                 </DataTableCell>
-                <DataTableCell align="right">
-                  <div className="flex justify-end gap-2">
+                <DataTableCell align="center">
+                  <div className="flex justify-center gap-2">
                     <EditAcademicYearButton id={year.id} currentName={year.name} />
                     <DeleteAcademicYearButton id={year.id} />
                   </div>

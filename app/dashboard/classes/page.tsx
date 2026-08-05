@@ -34,9 +34,9 @@ export default async function ClassesPage() {
   const emptyDescription = await t("classes.emptyDescription");
 
   const columns = [
-    { key: "name", header: nameLabel, width: "50%" },
+    { key: "name", header: nameLabel, width: "55%" },
     { key: "code", header: codeLabel, width: "35%" },
-    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+    { key: "actions", header: actionsLabel, width: "10%", align: "center" as const },
   ];
 
   return (
@@ -66,8 +66,8 @@ export default async function ClassesPage() {
               <DataTableRow key={classe.id}>
                 <DataTableCell className="font-medium">{classe.name}</DataTableCell>
                 <DataTableCell className="text-slate-500">{classe.code}</DataTableCell>
-                <DataTableCell align="right">
-                  <div className="flex justify-end gap-2">
+                <DataTableCell align="center">
+                  <div className="flex justify-center gap-2">
                     <EditClassButton id={classe.id} currentName={classe.name} currentCode={classe.code} />
                     <DeleteClassButton id={classe.id} />
                   </div>

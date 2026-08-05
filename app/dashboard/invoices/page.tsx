@@ -32,8 +32,8 @@ export default async function InvoicesPage() {
   const columns = [
     { key: "client", header: tableHeaderClient, width: "30%" },
     { key: "amount", header: tableHeaderAmount, width: "20%" },
-    { key: "date", header: tableHeaderDate, width: "35%" },
-    { key: "actions", header: tableHeaderActions, width: "15%", align: "right" as const },
+    { key: "date", header: tableHeaderDate, width: "40%" },
+    { key: "actions", header: tableHeaderActions, width: "10%", align: "center" as const },
   ];
 
   return (
@@ -55,8 +55,8 @@ export default async function InvoicesPage() {
               <DataTableCell className="font-medium">{invoice.clientId}</DataTableCell>
               <DataTableCell>${invoice.amount.toFixed(2)}</DataTableCell>
               <DataTableCell className="text-slate-500">{invoice.createdAt.toLocaleDateString()}</DataTableCell>
-              <DataTableCell align="right">
-                <div className="flex justify-end gap-2">
+              <DataTableCell align="center">
+                <div className="flex justify-center">
                   <DeleteInvoiceButton id={invoice.id} />
                 </div>
               </DataTableCell>

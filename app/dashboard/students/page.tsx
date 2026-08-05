@@ -33,9 +33,9 @@ export default async function StudentsPage() {
 
   const columns = [
     { key: "code", header: codeLabel, width: "10%" },
-    { key: "name", header: nameLabel, width: "40%" },
-    { key: "status", header: statusLabel, width: "20%" },
-    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+    { key: "name", header: nameLabel, width: "45%" },
+    { key: "status", header: statusLabel, width: "35%" },
+    { key: "actions", header: actionsLabel, width: "10%", align: "center" as const },
   ];
 
   return (
@@ -72,8 +72,8 @@ export default async function StudentsPage() {
                     {student.status === "ACTIVE" ? activeLabel : inactiveLabel}
                   </span>
                 </DataTableCell>
-                <DataTableCell align="right">
-                  <div className="flex justify-end gap-2">
+                <DataTableCell align="center">
+                  <div className="flex justify-center gap-2">
                     <EditStudentButton id={student.id} currentFirstName={student.firstName} currentLastName={student.lastName} currentCode={student.code} />
                     <DeleteStudentButton id={student.id} />
                   </div>

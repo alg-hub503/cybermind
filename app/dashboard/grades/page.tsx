@@ -31,7 +31,7 @@ export default async function GradesPage() {
   const columns = [
     { key: "name", header: nameLabel, width: "60%" },
     { key: "order", header: orderLabel, width: "30%" },
-    { key: "actions", header: actionsLabel, width: "10%", align: "right" as const },
+    { key: "actions", header: actionsLabel, width: "10%", align: "center" as const },
   ];
 
   return (
@@ -61,8 +61,8 @@ export default async function GradesPage() {
               <DataTableRow key={grade.id}>
                 <DataTableCell className="font-medium">{grade.name}</DataTableCell>
                 <DataTableCell>{grade.order}</DataTableCell>
-                <DataTableCell align="right">
-                  <div className="flex justify-end gap-2">
+                <DataTableCell align="center">
+                  <div className="flex justify-center gap-2">
                     <EditGradeButton id={grade.id} currentName={grade.name} currentOrder={grade.order} />
                     <DeleteGradeButton id={grade.id} />
                   </div>

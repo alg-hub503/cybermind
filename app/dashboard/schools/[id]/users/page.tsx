@@ -137,28 +137,31 @@ export default async function UsersPage({ params }: UsersPageProps) {
                   </span>
                 </DataTableCell>
                 <DataTableCell align="center">
-                  <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center justify-center gap-2">
                     <Link
                       href={`/dashboard/users/${user.id}`}
-                      className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
+                      title="View"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-slate-500 text-white transition hover:bg-slate-600"
                     >
-                      <Eye size={18} />
+                      <Eye size={16} />
                     </Link>
 
                     {isAdmin && (
                       <>
                         <Link
                           href={`/dashboard/users/${user.id}/edit`}
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-amber-600"
+                          title="Edit"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500 text-white transition hover:bg-yellow-600"
                         >
-                          <Pencil size={18} />
+                          <Pencil size={16} />
                         </Link>
 
                         <button
-                          className="rounded-lg p-2 text-slate-500 transition hover:bg-red-100 hover:text-red-600"
+                          title="Delete"
                           type="button"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-white transition hover:bg-red-700"
                         >
-                          <Trash2 size={18} />
+                          <Trash2 size={16} />
                         </button>
                       </>
                     )}
