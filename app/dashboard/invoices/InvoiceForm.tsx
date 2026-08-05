@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 import Button from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
@@ -21,6 +22,7 @@ export default function InvoiceForm({
   clients,
   schoolId,
 }: InvoiceFormProps) {
+  const { t } = useTranslations("invoices.form");
   const router = useRouter();
 
   const [clientId, setClientId] = useState("");
@@ -29,12 +31,12 @@ export default function InvoiceForm({
 
   async function createInvoice() {
     if (!clientId) {
-      toast.error("Please select a client");
+      toast.error(t("selectClientError"));
       return;
     }
 
     if (!amount || Number(amount) <= 0) {
-      toast.error("Amount must be greater than 0");
+      toast.error(t("amountError"));
       return;
     }
 
@@ -56,11 +58,11 @@ export default function InvoiceForm({
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error ?? "Failed to create invoice");
+        toast.error(data.error ?? t("createFailed"));
         return;
       }
 
-      toast.success("Invoice created successfully");
+      toast.success(t("createSuccess"));
 
       setClientId("");
       setAmount("");
@@ -68,7 +70,7 @@ export default function InvoiceForm({
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(t("wentWrong"));
     } finally {
       setLoading(false);
     }
@@ -82,7 +84,7 @@ export default function InvoiceForm({
         disabled={loading}
         className="rounded-lg border border-slate-300 px-4 py-2"
       >
-        <option value="">Select Client</option>
+        <option value="">{t("selectClient")}</option>
 
         {clients.map((client) => (
           <option
@@ -97,7 +99,7 @@ export default function InvoiceForm({
       <input
         type="number"
         min="1"
-        placeholder="Amount"
+        placeholder={t("amountPlaceholder")}
         value={amount}
         disabled={loading}
         onChange={(e) => setAmount(e.target.value)}
@@ -111,10 +113,10 @@ export default function InvoiceForm({
         {loading ? (
           <span className="flex items-center gap-2">
             <Spinner size={16} />
-            Creating...
+            {t("creating")}
           </span>
         ) : (
-          "Create Invoice"
+          t("createInvoice")
         )}
       </Button>
     </div>

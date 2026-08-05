@@ -47,7 +47,7 @@ export default function SchoolSettingsForm({
 
       if (!response.ok) {
         const error = await response.json();
-        toast.error(error.error ?? "Failed to save settings");
+        toast.error(error.error ?? t("saveError"));
         return;
       }
 

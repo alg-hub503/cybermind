@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/server";
 import Link from "next/link";
 import { ArrowRight, ReceiptText } from "lucide-react";
 
@@ -11,19 +12,25 @@ interface RecentInvoicesProps {
   invoices: Invoice[];
 }
 
-export default function RecentInvoices({
+export default async function RecentInvoices({
   invoices,
 }: RecentInvoicesProps) {
+  const title = await t("recentInvoices.title");
+  const description = await t("recentInvoices.description");
+  const emptyTitle = await t("recentInvoices.emptyTitle");
+  const emptyDescription = await t("recentInvoices.emptyDescription");
+  const paidLabel = await t("recentInvoices.paid");
+
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-900">
-            Latest Invoices
+            {title}
           </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Recently generated invoices.
+            {description}
           </p>
         </div>
 
@@ -40,11 +47,11 @@ export default function RecentInvoices({
           />
 
           <p className="font-medium text-slate-600">
-            No invoices found
+            {emptyTitle}
           </p>
 
           <p className="mt-1 text-sm text-slate-500">
-            This school doesn&apos;t have any invoices yet.
+            {emptyDescription}
           </p>
         </div>
       ) : (
@@ -67,7 +74,7 @@ export default function RecentInvoices({
 
               <div className="flex items-center gap-3">
                 <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                  Paid
+                  {paidLabel}
                 </span>
 
                 <ArrowRight

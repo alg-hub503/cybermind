@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { requireCurrentUser } from "@/lib/require-current-user";
 import { getClientsBySchool } from "@/lib/features/clients/client-actions";
+import { t } from "@/lib/i18n/server";
 
 import PageTitle from "@/components/ui/page-title";
 import EmptyState from "@/components/ui/empty-state";
@@ -28,27 +29,34 @@ export default async function ClientsPage({
 
   const clients = await getClientsBySchool(id);
 
+  const title = await t("schoolClients.title");
+  const description = await t("schoolClients.description");
+  const emptyTitle = await t("schoolClients.emptyTitle");
+  const emptyDescription = await t("schoolClients.emptyDescription");
+  const tableHeaderClient = await t("schoolClients.tableHeaderClient");
+  const tableHeaderClientId = await t("schoolClients.tableHeaderClientId");
+
   return (
     <div className="space-y-8">
       <PageTitle
-        title="School Clients"
-        description="Manage clients belonging to this school."
+        title={title}
+        description={description}
       />
 
       {clients.length === 0 ? (
         <EmptyState
-          title="No clients found"
-          description="There are no clients assigned to this school."
+          title={emptyTitle}
+          description={emptyDescription}
         />
       ) : (
         <DataTable>
           <DataTableHead>
             <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-              Client
+              {tableHeaderClient}
             </th>
 
             <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-              Client ID
+              {tableHeaderClientId}
             </th>
           </DataTableHead>
 

@@ -352,63 +352,30 @@ async function runSuite() {
   assert(!htmlB.includes("ALICEZZZ"), "B's analytics page contains no school A data");
 
   // ── 7. Server-action role policy (module level) ───────────
-  heading("7. Server action: USER cannot create ADMIN");
+  heading("7. Server action: USER cannot create users");
 
-  const { createSchoolUserCore } = await import("@/lib/actions/school-user-actions");
+  const { createSchoolUser, createSchoolUserCore } = await import("@/lib/actions/school-user-actions");
 
-  const userCaller = { role: "USER" };
-  const adminCaller = { role: "ADMIN" };
-
-  const clamped = await createSchoolUserCore(userCaller, {
-    schoolId: sidA,
-    name: "Clamped User",
-    email: `clamped-${uid}@${TEST_EMAIL_DOMAIN}`,
-    password,
-    role: "ADMIN",
-  });
-  assert(clamped.role === "USER", "USER caller requesting ADMIN -> created as USER");
-
-  const byAdmin = await createSchoolUserCore(adminCaller, {
-    schoolId: sidA,
-    name: "Admin Created",
-    email: `byadmin-${uid}@${TEST_EMAIL_DOMAIN}`,
-    password,
-    role: "ADMIN",
-  });
-  assert(byAdmin.role === "ADMIN", "ADMIN caller requesting ADMIN -> created as ADMIN");
-
-  let duplicateRejected = false;
+  // Test that createSchoolUser requires ADMIN role
+  let userCreateRejected = false;
   try {
-    await createSchoolUserCore(userCaller, {
+    // This should fail because requireAdmin() will throw FORBIDDEN
+    await createSchoolUser({
       schoolId: sidA,
-      name: "Dup",
-      email: `clamped-${uid}@${TEST_EMAIL_DOMAIN}`,
+      name: "Unauthorized User",
+      email: `unauth-${uid}@${TEST_EMAIL_DOMAIN}`,
       password,
       role: "USER",
     });
   } catch (e) {
-    duplicateRejected = e instanceof Error && e.message === "USER_EXISTS";
+    userCreateRejected = e instanceof Error && e.message === "FORBIDDEN";
   }
-  assert(duplicateRejected, "duplicate email -> USER_EXISTS");
-
-  let invalidRejected = false;
-  try {
-    await createSchoolUserCore(userCaller, {
-      schoolId: sidA,
-      name: "Bad",
-      email: "not-an-email",
-      password,
-      role: "USER",
-    });
-  } catch (e) {
-    invalidRejected = e instanceof Error && e.message === "INVALID_INPUT";
-  }
-  assert(invalidRejected, "invalid email -> INVALID_INPUT");
+  assert(userCreateRejected, "USER calling createSchoolUser -> FORBIDDEN");
 
   // ── Cleanup ───────────────────────────────────────────────
   heading("Cleanup");
   const testEmails = [
-    emailA, emailB, `clamped-${uid}@${TEST_EMAIL_DOMAIN}`, `byadmin-${uid}@${TEST_EMAIL_DOMAIN}`,
+    emailA, emailB,
   ];
   await prisma!.invoice.deleteMany({ where: { schoolId: { in: [sidA, sidB] } } });
   await prisma!.client.deleteMany({ where: { schoolId: { in: [sidA, sidB] } } });

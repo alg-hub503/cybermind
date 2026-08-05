@@ -5,6 +5,7 @@ import { requireCurrentUser } from "@/lib/require-current-user";
 import { countClientsBySchool } from "@/lib/features/clients/client-actions";
 import { countInvoicesBySchool, getRevenueBySchool } from "@/lib/features/invoices/invoice-actions";
 import { countUsersBySchool } from "@/lib/features/users/user-actions";
+import { t } from "@/lib/i18n/server";
 
 import PageTitle from "@/components/ui/page-title";
 import StatCard from "@/components/ui/stat-card";
@@ -42,31 +43,38 @@ export default async function AnalyticsPage({
   const totalRevenue =
     revenue._sum.amount ?? 0;
 
+  const title = await t("schoolAnalytics.title");
+  const description = await t("schoolAnalytics.description");
+  const usersLabel = await t("schoolAnalytics.users");
+  const clientsLabel = await t("schoolAnalytics.clients");
+  const invoicesLabel = await t("schoolAnalytics.invoices");
+  const revenueLabel = await t("schoolAnalytics.revenue");
+
   return (
     <div className="space-y-8">
       <PageTitle
-        title="School Analytics"
-        description="Overview of this school's activity."
+        title={title}
+        description={description}
       />
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
         <StatCard
-          title="Users"
+          title={usersLabel}
           value={users}
         />
 
         <StatCard
-          title="Clients"
+          title={clientsLabel}
           value={clients}
         />
 
         <StatCard
-          title="Invoices"
+          title={invoicesLabel}
           value={invoices}
         />
 
         <StatCard
-          title="Revenue"
+          title={revenueLabel}
           value={`$${totalRevenue.toFixed(2)}`}
         />
       </div>

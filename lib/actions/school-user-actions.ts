@@ -3,7 +3,7 @@
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
-import { requireSchoolAccess } from "@/lib/authorization";
+import { requireAdmin } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
@@ -18,16 +18,13 @@ export type CreateSchoolUserInput = {
 };
 
 export async function createSchoolUser(data: CreateSchoolUserInput) {
-  const { user: caller } = await requireSchoolAccess(data.schoolId);
+  await requireAdmin();
 
-  await createSchoolUserCore(caller, data);
+  await createSchoolUserCore(data);
   revalidatePath(`/dashboard/schools/${data.schoolId}/users`);
 }
 
-export async function createSchoolUserCore(
-  caller: { role: string },
-  data: CreateSchoolUserInput
-) {
+export async function createSchoolUserCore(data: CreateSchoolUserInput) {
   if (!data.schoolId || !data.name?.trim()) {
     throw new Error("INVALID_INPUT");
   }
@@ -39,8 +36,6 @@ export async function createSchoolUserCore(
   if (!data.password || data.password.length < 6) {
     throw new Error("INVALID_INPUT");
   }
-
-  const role = caller.role === ADMIN_ROLE ? data.role : "USER";
 
   const existingUser = await prisma.user.findUnique({
     where: {
@@ -59,7 +54,7 @@ export async function createSchoolUserCore(
       name: data.name.trim(),
       email: data.email,
       password: hashedPassword,
-      role,
+      role: data.role,
       schoolId: data.schoolId,
     },
   });

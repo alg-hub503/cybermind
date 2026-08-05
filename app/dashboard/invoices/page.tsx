@@ -2,10 +2,20 @@ import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getInvoices, getInvoicesBySchool } from "@/lib/features/invoices/invoice-actions";
 import { getClientsBySchool } from "@/lib/features/clients/client-actions";
+import { t } from "@/lib/i18n/server";
 import InvoiceForm from "./InvoiceForm";
 import DeleteInvoiceButton from "./DeleteInvoiceButton";
 
 export default async function InvoicesPage() {
+  const [invoicesTitle, invoicesDescription, tableHeaderClient, tableHeaderAmount, tableHeaderDate, tableHeaderActions] = await Promise.all([
+    t("invoices.title"),
+    t("invoices.description"),
+    t("invoices.tableHeaderClient"),
+    t("invoices.tableHeaderAmount"),
+    t("invoices.tableHeaderDate"),
+    t("invoices.tableHeaderActions"),
+  ]);
+
   const { user } = await requireCurrentUser();
 
   const invoices = user.role === ADMIN_ROLE
@@ -21,8 +31,8 @@ export default async function InvoicesPage() {
   return (
     <main className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold">Invoices</h1>
-        <p className="text-gray-500">Manage your invoices</p>
+        <h1 className="text-2xl font-bold">{invoicesTitle}</h1>
+        <p className="text-gray-500">{invoicesDescription}</p>
       </div>
 
       <InvoiceForm
@@ -34,10 +44,10 @@ export default async function InvoicesPage() {
         <table className="w-full">
           <thead>
             <tr className="border-b">
-              <th className="p-3 text-left">Client</th>
-              <th className="p-3 text-left">Amount</th>
-              <th className="p-3 text-left">Date</th>
-              <th className="p-3 text-right">Actions</th>
+              <th className="p-3 text-left">{tableHeaderClient}</th>
+              <th className="p-3 text-left">{tableHeaderAmount}</th>
+              <th className="p-3 text-left">{tableHeaderDate}</th>
+              <th className="p-3 text-right">{tableHeaderActions}</th>
             </tr>
           </thead>
 

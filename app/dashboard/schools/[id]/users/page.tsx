@@ -6,6 +6,7 @@ import { ADMIN_ROLE } from "@/lib/constants";
 import { requireCurrentUser } from "@/lib/require-current-user";
 import { getSchool } from "@/lib/features/schools/school-actions";
 import { getUsersBySchool } from "@/lib/features/users/user-actions";
+import { t } from "@/lib/i18n/server";
 
 import DataTable from "@/components/legacy/data-table/data-table";
 import DataTableBody from "@/components/legacy/data-table/data-table-body";
@@ -23,7 +24,9 @@ export default async function UsersPage({ params }: UsersPageProps) {
   const { id } = await params;
 
   const { user } = await requireCurrentUser();
-  if (user.role !== ADMIN_ROLE && user.schoolId !== id) {
+  const isAdmin = user.role === ADMIN_ROLE;
+  
+  if (!isAdmin && user.schoolId !== id) {
     notFound();
   }
 
@@ -32,45 +35,63 @@ export default async function UsersPage({ params }: UsersPageProps) {
     getUsersBySchool(id),
   ]);
 
+  const title = await t("schoolUsers.title");
+  const description = await t("schoolUsers.description");
+  const addUser = await t("schoolUsers.addUser");
+  const emptyTitle = await t("schoolUsers.emptyTitle");
+  const emptyDescription = await t("schoolUsers.emptyDescription");
+  const heading = await t("schoolUsers.heading");
+  const totalUsers = (await t("schoolUsers.totalUsers")).replace("{count}", String(users.length));
+  const tableHeaderUser = await t("schoolUsers.tableHeaderUser");
+  const tableHeaderEmail = await t("schoolUsers.tableHeaderEmail");
+  const tableHeaderRole = await t("schoolUsers.tableHeaderRole");
+  const tableHeaderPlan = await t("schoolUsers.tableHeaderPlan");
+  const tableHeaderActions = await t("schoolUsers.tableHeaderActions");
+  const unnamedUser = await t("schoolUsers.unnamedUser");
+
   return (
     <div className="space-y-8">
       <PageTitle
-        title="School Users"
-        description="Manage all users assigned to this school."
+        title={title}
+        description={description}
       />
 
-      <div className="flex justify-end">
-  <Link
-    href={`/dashboard/schools/${id}/users/new`}
-    className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
-  >
-    Add User
-  </Link>
-</div>
+      {isAdmin && (
+        <div className="flex justify-end">
+          <Link
+            href={`/dashboard/schools/${id}/users/new`}
+            className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+          >
+            {addUser}
+          </Link>
+        </div>
+      )}
 
 {users.length === 0 ? (
   <EmptyState
-    title="No users found"
-    description="There are no users assigned to this school."
+    title={emptyTitle}
+    description={emptyDescription}
   />
 ) : (
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Users</h2>
+              <h2 className="text-lg font-bold text-slate-900">{heading}</h2>
 
               <p className="mt-1 text-sm text-slate-500">
-                Total Users: {users.length}
+                {totalUsers}
               </p>
             </div>
 
             <div className="flex items-center gap-3">
-              <Link
-                href={`/dashboard/schools/${id}/users/new`}
-                className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
-              >
-                Add User
-              </Link>
+              {isAdmin && (
+                <Link
+                  href={`/dashboard/schools/${id}/users/new`}
+                  className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+                >
+                  {addUser}
+                </Link>
+              )}
 
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
                 <Users size={22} />
@@ -81,23 +102,23 @@ export default async function UsersPage({ params }: UsersPageProps) {
           <DataTable>
             <DataTableHead>
               <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-                User
+                {tableHeaderUser}
               </th>
 
               <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-                Email
+                {tableHeaderEmail}
               </th>
 
               <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-                Role
+                {tableHeaderRole}
               </th>
 
               <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-                Plan
+                {tableHeaderPlan}
               </th>
 
               <th className="px-6 py-4 text-center text-sm font-semibold text-slate-600">
-                Actions
+                {tableHeaderActions}
               </th>
             </DataTableHead>
 
@@ -115,7 +136,7 @@ export default async function UsersPage({ params }: UsersPageProps) {
 
                       <div>
                         <p className="font-semibold text-slate-900">
-                          {user.name ?? "Unnamed User"}
+                          {user.name ?? unnamedUser}
                         </p>
 
                         <p className="text-xs text-slate-500">
@@ -160,19 +181,23 @@ export default async function UsersPage({ params }: UsersPageProps) {
                         <Eye size={18} />
                       </Link>
 
-                      <Link
-                        href={`/dashboard/users/${user.id}/edit`}
-                        className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-amber-600"
-                      >
-                        <Pencil size={18} />
-                      </Link>
+                      {isAdmin && (
+                        <>
+                          <Link
+                            href={`/dashboard/users/${user.id}/edit`}
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-amber-600"
+                          >
+                            <Pencil size={18} />
+                          </Link>
 
-                      <button
-                        className="rounded-lg p-2 text-slate-500 transition hover:bg-red-100 hover:text-red-600"
-                        type="button"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                          <button
+                            className="rounded-lg p-2 text-slate-500 transition hover:bg-red-100 hover:text-red-600"
+                            type="button"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

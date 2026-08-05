@@ -12,6 +12,7 @@ import { getSchool } from "@/lib/features/schools/school-actions";
 import { countClientsBySchool, getClientsBySchool } from "@/lib/features/clients/client-actions";
 import { countInvoicesBySchool, getInvoicesBySchool, getRevenueBySchool } from "@/lib/features/invoices/invoice-actions";
 import { countUsersBySchool } from "@/lib/features/users/user-actions";
+import { t } from "@/lib/i18n/server";
 
 import SchoolHeader from "@/components/dashboard/schools/school-header";
 import SchoolTabs from "@/components/dashboard/schools/school-tabs";
@@ -58,6 +59,14 @@ export default async function SchoolPage({
     getInvoicesBySchool(id, 5),
   ]);
 
+  const quickActions = await t("schoolOverview.quickActions");
+  const schoolUsers = await t("schoolOverview.schoolUsers");
+  const manageUsers = await t("schoolOverview.manageUsers");
+  const clientsLabel = await t("schoolOverview.clients");
+  const viewClients = await t("schoolOverview.viewClients");
+  const invoicesLabel = await t("schoolOverview.invoices");
+  const viewInvoices = await t("schoolOverview.viewInvoices");
+
   return (
     <div className="space-y-8">
       <SchoolHeader school={school} />
@@ -77,7 +86,7 @@ export default async function SchoolPage({
 
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="mb-6 text-xl font-bold text-slate-900">
-          Quick Actions
+          {quickActions}
         </h2>
 
         <div className="grid gap-4 md:grid-cols-3">
@@ -92,11 +101,11 @@ export default async function SchoolPage({
 
             <div>
               <p className="font-semibold">
-                School Users
+                {schoolUsers}
               </p>
 
               <p className="text-sm text-slate-500">
-                Manage users
+                {manageUsers}
               </p>
             </div>
           </Link>
@@ -112,11 +121,11 @@ export default async function SchoolPage({
 
             <div>
               <p className="font-semibold">
-                Clients
+                {clientsLabel}
               </p>
 
               <p className="text-sm text-slate-500">
-                View clients
+                {viewClients}
               </p>
             </div>
           </Link>
@@ -132,11 +141,11 @@ export default async function SchoolPage({
 
             <div>
               <p className="font-semibold">
-                Invoices
+                {invoicesLabel}
               </p>
 
               <p className="text-sm text-slate-500">
-                View invoices
+                {viewInvoices}
               </p>
             </div>
           </Link>

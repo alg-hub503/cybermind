@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 import Button from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
@@ -14,14 +15,13 @@ interface DeleteInvoiceButtonProps {
 export default function DeleteInvoiceButton({
   id,
 }: DeleteInvoiceButtonProps) {
+  const { t } = useTranslations("invoices.delete");
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
   async function deleteInvoice() {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this invoice?"
-    );
+    const confirmed = window.confirm(t("confirm"));
 
     if (!confirmed) {
       return;
@@ -40,16 +40,16 @@ export default function DeleteInvoiceButton({
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error ?? "Delete failed");
+        toast.error(data.error ?? t("failed"));
         return;
       }
 
-      toast.success("Invoice deleted successfully");
+      toast.success(t("success"));
 
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong");
+      toast.error(t("wentWrong"));
     } finally {
       setLoading(false);
     }
@@ -64,10 +64,10 @@ export default function DeleteInvoiceButton({
       {loading ? (
         <span className="flex items-center gap-2">
           <Spinner size={16} />
-          Deleting...
+          {t("deleting")}
         </span>
       ) : (
-        "Delete"
+        t("delete")
       )}
     </Button>
   );

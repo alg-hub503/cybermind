@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 interface RevenueChartProps {
   revenue: number;
@@ -16,13 +17,15 @@ interface RevenueChartProps {
 }
 
 export default function RevenueChart({ revenue, invoices }: RevenueChartProps) {
+  const { t } = useTranslations("analytics");
+
   const data = [
     {
-      name: "Revenue",
+      name: t("revenueLabel"),
       value: revenue,
     },
     {
-      name: "Invoices",
+      name: t("invoicesLabel"),
       value: invoices,
     },
   ];
@@ -30,7 +33,7 @@ export default function RevenueChart({ revenue, invoices }: RevenueChartProps) {
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="mb-6 text-xl font-semibold text-slate-900">
-        Revenue Overview
+        {t("revenueOverview")}
       </h2>
 
       <div className="h-80">

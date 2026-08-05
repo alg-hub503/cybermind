@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { requireCurrentUser } from "@/lib/require-current-user";
 import { getInvoicesBySchool } from "@/lib/features/invoices/invoice-actions";
+import { t } from "@/lib/i18n/server";
 
 import PageTitle from "@/components/ui/page-title";
 import EmptyState from "@/components/ui/empty-state";
@@ -28,31 +29,39 @@ export default async function InvoicesPage({
 
   const invoices = await getInvoicesBySchool(id);
 
+  const title = await t("schoolInvoices.title");
+  const description = await t("schoolInvoices.description");
+  const emptyTitle = await t("schoolInvoices.emptyTitle");
+  const emptyDescription = await t("schoolInvoices.emptyDescription");
+  const tableHeaderInvoice = await t("schoolInvoices.tableHeaderInvoice");
+  const tableHeaderAmount = await t("schoolInvoices.tableHeaderAmount");
+  const tableHeaderCreated = await t("schoolInvoices.tableHeaderCreated");
+
   return (
     <div className="space-y-8">
       <PageTitle
-        title="School Invoices"
-        description="Manage invoices belonging to this school."
+        title={title}
+        description={description}
       />
 
       {invoices.length === 0 ? (
         <EmptyState
-          title="No invoices found"
-          description="There are no invoices for this school."
+          title={emptyTitle}
+          description={emptyDescription}
         />
       ) : (
         <DataTable>
           <DataTableHead>
             <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-              Invoice
+              {tableHeaderInvoice}
             </th>
 
             <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-              Amount
+              {tableHeaderAmount}
             </th>
 
             <th className="px-6 py-4 text-left text-sm font-semibold text-slate-600">
-              Created
+              {tableHeaderCreated}
             </th>
           </DataTableHead>
 

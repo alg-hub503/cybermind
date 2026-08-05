@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 interface SchoolTabsProps {
   schoolId: string;
@@ -11,31 +12,32 @@ export default function SchoolTabs({
   schoolId,
 }: SchoolTabsProps) {
   const pathname = usePathname();
+  const { t } = useTranslations("schoolTabs");
 
   const tabs = [
     {
-      label: "Overview",
+      label: t("overview"),
       href: `/dashboard/schools/${schoolId}`,
       exact: true,
     },
     {
-      label: "Users",
+      label: t("users"),
       href: `/dashboard/schools/${schoolId}/users`,
     },
     {
-      label: "Clients",
+      label: t("clients"),
       href: `/dashboard/schools/${schoolId}/clients`,
     },
     {
-      label: "Invoices",
+      label: t("invoices"),
       href: `/dashboard/schools/${schoolId}/invoices`,
     },
     {
-      label: "Analytics",
+      label: t("analytics"),
       href: `/dashboard/schools/${schoolId}/analytics`,
     },
     {
-      label: "Settings",
+      label: t("settings"),
       href: `/dashboard/schools/${schoolId}/settings`,
     },
   ];

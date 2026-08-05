@@ -9,6 +9,7 @@ import {
   YAxis,
   Tooltip,
 } from "recharts";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
 interface AnalyticsChartProps {
   users: number;
@@ -23,21 +24,23 @@ export default function AnalyticsChart({
   invoices,
   revenue,
 }: AnalyticsChartProps) {
+  const { t } = useTranslations("analytics");
+
   const data = [
     {
-      name: "Users",
+      name: t("usersLabel"),
       value: users,
     },
     {
-      name: "Clients",
+      name: t("clientsLabel"),
       value: clients,
     },
     {
-      name: "Invoices",
+      name: t("invoicesLabel"),
       value: invoices,
     },
     {
-      name: "Revenue",
+      name: t("revenueLabel"),
       value: revenue,
     },
   ];
@@ -45,7 +48,7 @@ export default function AnalyticsChart({
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="mb-6 text-xl font-semibold text-slate-900">
-        School Performance
+        {t("schoolPerformance")}
       </h2>
 
       <div className="h-80">

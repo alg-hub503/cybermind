@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/get-server-session";
+import { t } from "@/lib/i18n/server";
 
 import { getSchoolById } from "@/lib/services/domain/school.service";
 import { hasActiveAccess } from "@/lib/subscription-status";
@@ -28,26 +29,45 @@ export default async function SubscriptionPage() {
 
   const sub = school?.subscription ?? null;
 
+  const title = await t("subscription.title");
+  const description = await t("subscription.description");
+  const currentPlan = await t("subscription.currentPlan");
+  const planLabel = await t("subscription.plan");
+  const statusLabel = await t("subscription.status");
+  const periodStart = await t("subscription.periodStart");
+  const periodEnd = await t("subscription.periodEnd");
+  const renewalExpiry = await t("subscription.renewalExpiry");
+  const expires = await t("subscription.expires");
+  const renews = await t("subscription.renews");
+  const cancelAtPeriodEnd = await t("subscription.cancelAtPeriodEnd");
+  const yes = await t("subscription.yes");
+  const no = await t("subscription.no");
+  const stripeReference = await t("subscription.stripeReference");
+  const stripeSubscriptionId = await t("subscription.stripeSubscriptionId");
+  const needHelp = await t("subscription.needHelp");
+  const billingPageText = await t("subscription.billingPageText");
+  const billingPageLink = await t("subscription.billingPageLink");
+
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Subscription</h1>
-        <p className="text-gray-500">Your current subscription details</p>
+        <h1 className="text-2xl font-bold">{title}</h1>
+        <p className="text-gray-500">{description}</p>
       </div>
 
       <div className="rounded-lg border bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold">Current Plan</h2>
+        <h2 className="mb-4 text-lg font-semibold">{currentPlan}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Plan</p>
+            <p className="text-sm text-gray-500">{planLabel}</p>
             <p className="text-xl font-bold">{sub?.plan ?? "FREE"}</p>
           </div>
           <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Status</p>
+            <p className="text-sm text-gray-500">{statusLabel}</p>
             <p className="text-xl font-bold">{sub?.status ?? "N/A"}</p>
           </div>
           <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Current Period Start</p>
+            <p className="text-sm text-gray-500">{periodStart}</p>
             <p className="text-xl font-bold">
               {sub?.currentPeriodStart
                 ? sub.currentPeriodStart.toLocaleDateString()
@@ -55,7 +75,7 @@ export default async function SubscriptionPage() {
             </p>
           </div>
           <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Current Period End</p>
+            <p className="text-sm text-gray-500">{periodEnd}</p>
             <p className="text-xl font-bold">
               {sub?.currentPeriodEnd
                 ? sub.currentPeriodEnd.toLocaleDateString()
@@ -63,17 +83,17 @@ export default async function SubscriptionPage() {
             </p>
           </div>
           <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Renewal / Expiry</p>
+            <p className="text-sm text-gray-500">{renewalExpiry}</p>
             <p className="text-xl font-bold">
               {sub?.cancelAtPeriodEnd
-                ? `Expires ${sub.currentPeriodEnd?.toLocaleDateString() ?? "N/A"}`
-                : `Renews ${sub?.currentPeriodEnd?.toLocaleDateString() ?? "N/A"}`}
+                ? `${expires} ${sub.currentPeriodEnd?.toLocaleDateString() ?? "N/A"}`
+                : `${renews} ${sub?.currentPeriodEnd?.toLocaleDateString() ?? "N/A"}`}
             </p>
           </div>
           <div className="rounded-lg border bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Cancel at Period End</p>
+            <p className="text-sm text-gray-500">{cancelAtPeriodEnd}</p>
             <p className="text-xl font-bold">
-              {sub?.cancelAtPeriodEnd ? "Yes" : "No"}
+              {sub?.cancelAtPeriodEnd ? yes : no}
             </p>
           </div>
         </div>
@@ -81,22 +101,21 @@ export default async function SubscriptionPage() {
 
       {isAdmin && sub?.stripeSubscriptionId && (
         <div className="rounded-lg border bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold">Stripe Reference</h2>
+          <h2 className="mb-4 text-lg font-semibold">{stripeReference}</h2>
           <div className="rounded-lg bg-slate-50 p-4">
-            <p className="text-sm text-gray-500">Stripe Subscription ID</p>
+            <p className="text-sm text-gray-500">{stripeSubscriptionId}</p>
             <p className="font-mono text-sm">{sub.stripeSubscriptionId}</p>
           </div>
         </div>
       )}
 
       <div className="rounded-lg border bg-white p-6">
-        <h2 className="mb-4 text-lg font-semibold">Need Help?</h2>
+        <h2 className="mb-4 text-lg font-semibold">{needHelp}</h2>
         <p className="text-gray-500">
-          Visit the{" "}
+          {billingPageText}{" "}
           <a href="/dashboard/billing" className="text-blue-600 hover:underline">
-            Billing page
-          </a>{" "}
-          to manage payment methods, view invoices, or cancel your subscription.
+            {billingPageLink}
+          </a>
         </p>
       </div>
     </div>

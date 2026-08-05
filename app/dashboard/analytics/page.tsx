@@ -1,5 +1,6 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
 import { redirect } from "next/navigation";
+import { t } from "@/lib/i18n/server";
 import Card from "@/components/cards/card";
 
 import RevenueCard from "@/components/analytics/revenue-card";
@@ -33,34 +34,45 @@ export default async function AnalyticsPage() {
     getLatestInvoices(user.schoolId),
   ]);
 
+  const title = await t("analytics.title");
+  const description = await t("analytics.description");
+  const totalRevenue = await t("analytics.totalRevenue");
+  const allInvoices = await t("analytics.allInvoices");
+  const averageInvoice = await t("analytics.averageInvoice");
+  const averageInvoiceValue = await t("analytics.averageInvoiceValue");
+  const totalSchools = await t("analytics.totalSchools");
+  const totalUsers = await t("analytics.totalUsers");
+  const totalClients = await t("analytics.totalClients");
+  const totalInvoices = await t("analytics.totalInvoices");
+
   return (
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-slate-900">
-          Analytics
+          {title}
         </h1>
 
         <p className="mt-2 text-slate-500">
-          Monitor your business performance with real-time analytics.
+          {description}
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         <RevenueCard
-          title="Total Revenue"
+          title={totalRevenue}
           value={analytics.totalRevenue}
-          subtitle="All invoices"
+          subtitle={allInvoices}
         />
 
         <RevenueCard
-          title="Average Invoice"
+          title={averageInvoice}
           value={analytics.averageInvoice}
-          subtitle="Average invoice value"
+          subtitle={averageInvoiceValue}
         />
 
         <Card>
           <p className="text-sm text-slate-500">
-            Total Schools
+            {totalSchools}
           </p>
 
           <h2 className="mt-2 text-3xl font-bold">
@@ -70,7 +82,7 @@ export default async function AnalyticsPage() {
 
         <Card>
           <p className="text-sm text-slate-500">
-            Total Users
+            {totalUsers}
           </p>
 
           <h2 className="mt-2 text-3xl font-bold">
@@ -80,7 +92,7 @@ export default async function AnalyticsPage() {
 
         <Card>
           <p className="text-sm text-slate-500">
-            Total Clients
+            {totalClients}
           </p>
 
           <h2 className="mt-2 text-3xl font-bold">
@@ -90,7 +102,7 @@ export default async function AnalyticsPage() {
 
         <Card>
           <p className="text-sm text-slate-500">
-            Total Invoices
+            {totalInvoices}
           </p>
 
           <h2 className="mt-2 text-3xl font-bold">
@@ -115,5 +127,3 @@ export default async function AnalyticsPage() {
     </div>
   );
 }
-
-

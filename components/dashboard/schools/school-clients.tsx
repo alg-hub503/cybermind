@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n/server";
 import Card from "@/components/cards/card";
 import Link from "next/link";
 import { Building2, ArrowRight } from "lucide-react";
@@ -11,19 +12,25 @@ interface SchoolClientsProps {
   clients: Client[];
 }
 
-export default function SchoolClients({
+export default async function SchoolClients({
   clients,
 }: SchoolClientsProps) {
+  const title = await t("schoolClientsCard.title");
+  const description = await t("schoolClientsCard.description");
+  const emptyTitle = await t("schoolClientsCard.emptyTitle");
+  const emptyDescription = await t("schoolClientsCard.emptyDescription");
+  const clientIdLabel = await t("schoolClientsCard.clientId");
+
   return (
     <Card className="rounded-2xl border border-slate-200 p-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h3 className="text-xl font-bold text-slate-900">
-            Recent Clients
+            {title}
           </h3>
 
           <p className="mt-1 text-sm text-slate-500">
-            Latest clients belonging to this school.
+            {description}
           </p>
         </div>
 
@@ -40,11 +47,11 @@ export default function SchoolClients({
           />
 
           <p className="font-medium text-slate-600">
-            No clients found
+            {emptyTitle}
           </p>
 
           <p className="mt-1 text-sm text-slate-500">
-            This school doesn&apos;t have any clients yet.
+            {emptyDescription}
           </p>
         </div>
       ) : (
@@ -66,7 +73,7 @@ export default function SchoolClients({
                   </p>
 
                   <p className="text-sm text-slate-500">
-                    Client ID
+                    {clientIdLabel}
                   </p>
                 </div>
               </div>
