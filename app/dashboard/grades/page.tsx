@@ -7,6 +7,7 @@ import GradeForm from "./GradeForm";
 import EditGradeButton from "./EditGradeButton";
 import DeleteGradeButton from "./DeleteGradeButton";
 import EmptyState from "@/components/ui/empty-state";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function GradesPage() {
   const { user } = await requireCurrentUser();
@@ -26,6 +27,12 @@ export default async function GradesPage() {
   const actionsLabel = await t("grades.actions");
   const noRecords = await t("grades.noRecords");
   const emptyDescription = await t("grades.emptyDescription");
+
+  const columns = [
+    { key: "name", header: nameLabel, width: "50%" },
+    { key: "order", header: orderLabel, width: "35%" },
+    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+  ];
 
   return (
     <main className="p-6">
@@ -48,28 +55,21 @@ export default async function GradesPage() {
           />
         </div>
       ) : (
-        <div className="mt-6 rounded-lg border bg-white">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="p-3 text-left">{nameLabel}</th>
-                <th className="p-3 text-left">{orderLabel}</th>
-                <th className="p-3 text-right">{actionsLabel}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {grades.map((grade) => (
-                <tr key={grade.id} className="border-b">
-                  <td className="p-3 font-medium">{grade.name}</td>
-                  <td className="p-3">{grade.order}</td>
-                  <td className="flex justify-end gap-2 p-3">
+        <div className="mt-6">
+          <DataTable columns={columns}>
+            {grades.map((grade) => (
+              <DataTableRow key={grade.id}>
+                <DataTableCell className="font-medium">{grade.name}</DataTableCell>
+                <DataTableCell>{grade.order}</DataTableCell>
+                <DataTableCell align="right">
+                  <div className="flex justify-end gap-2">
                     <EditGradeButton id={grade.id} currentName={grade.name} currentOrder={grade.order} />
                     <DeleteGradeButton id={grade.id} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </DataTableCell>
+              </DataTableRow>
+            ))}
+          </DataTable>
         </div>
       )}
     </main>

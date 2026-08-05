@@ -5,6 +5,7 @@ import { t } from "@/lib/i18n/server";
 import ClientForm from "./ClientForm";
 import EditClientButton from "./EditClientButton";
 import DeleteClientButton from "./DeleteClientButton";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function ClientsPage() {
   const { user } = await requireCurrentUser();
@@ -21,6 +22,12 @@ export default async function ClientsPage() {
   const schoolLabel = await t("clients.school");
   const actionsLabel = await t("clients.actions");
 
+  const columns = [
+    { key: "name", header: nameLabel, width: "45%" },
+    { key: "school", header: schoolLabel, width: "40%" },
+    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+  ];
+
   return (
     <main className="p-6">
       <div className="mb-6">
@@ -30,29 +37,21 @@ export default async function ClientsPage() {
 
       <ClientForm />
 
-      <div className="rounded-lg border bg-white">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b">
-              <th className="p-3 text-left">{nameLabel}</th>
-              <th className="p-3 text-left">{schoolLabel}</th>
-              <th className="p-3 text-right">{actionsLabel}</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {clients.map((client) => (
-              <tr key={client.id} className="border-b">
-                <td className="p-3">{client.name}</td>
-                <td className="p-3">{client.schoolId}</td>
-                <td className="flex justify-end gap-2 p-3">
+      <div className="mt-6">
+        <DataTable columns={columns}>
+          {clients.map((client) => (
+            <DataTableRow key={client.id}>
+              <DataTableCell className="font-medium">{client.name}</DataTableCell>
+              <DataTableCell className="text-slate-500">{client.schoolId}</DataTableCell>
+              <DataTableCell align="right">
+                <div className="flex justify-end gap-2">
                   <EditClientButton id={client.id} currentName={client.name} />
                   <DeleteClientButton id={client.id} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </DataTableCell>
+            </DataTableRow>
+          ))}
+        </DataTable>
       </div>
     </main>
   );

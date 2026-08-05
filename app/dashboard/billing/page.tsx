@@ -12,6 +12,7 @@ import Card from "@/components/cards/card";
 import PageTitle from "@/components/ui/page-title";
 import StatCard from "@/components/ui/stat-card";
 import EmptyState from "@/components/ui/empty-state";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 import BillingActions from "./billing-actions";
 
 const INVOICE_BADGE: Record<string, string> = {
@@ -162,60 +163,52 @@ export default async function BillingPage() {
           {await t("billing.invoices")}
         </h2>
         {invoices && invoices.data.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-200 text-left text-sm text-slate-500">
-                  <th className="p-4 font-medium">{await t("billing.invoiceId")}</th>
-                  <th className="p-4 font-medium">{await t("billing.invoiceAmount")}</th>
-                  <th className="p-4 font-medium">{await t("billing.invoiceStatus")}</th>
-                  <th className="p-4 font-medium">{await t("billing.invoiceDate")}</th>
-                  <th className="p-4 text-right font-medium">{invoicePdfLabel}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoices.data.map((inv) => (
-                  <tr
-                    key={inv.id}
-                    className="border-b border-slate-100 last:border-0 hover:bg-slate-50"
+          <DataTable
+            columns={[
+              { key: "id", header: await t("billing.invoiceId"), width: "15%" },
+              { key: "amount", header: await t("billing.invoiceAmount"), width: "15%" },
+              { key: "status", header: await t("billing.invoiceStatus"), width: "15%" },
+              { key: "date", header: await t("billing.invoiceDate"), width: "40%" },
+              { key: "pdf", header: invoicePdfLabel, width: "15%", align: "right" },
+            ]}
+          >
+            {invoices.data.map((inv) => (
+              <DataTableRow key={inv.id}>
+                <DataTableCell className="font-mono text-xs text-slate-900">
+                  {inv.number ?? inv.id.slice(0, 12)}
+                </DataTableCell>
+                <DataTableCell className="text-slate-900">
+                  ${(inv.total / 100).toFixed(2)} {inv.currency}
+                </DataTableCell>
+                <DataTableCell>
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                      INVOICE_BADGE[inv.status] ?? "bg-slate-100 text-slate-700"
+                    }`}
                   >
-                    <td className="p-4 font-mono text-xs text-slate-900">
-                      {inv.number ?? inv.id.slice(0, 12)}
-                    </td>
-                    <td className="p-4 text-sm text-slate-900">
-                      ${(inv.total / 100).toFixed(2)} {inv.currency}
-                    </td>
-                    <td className="p-4">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                          INVOICE_BADGE[inv.status] ?? "bg-slate-100 text-slate-700"
-                        }`}
-                      >
-                        {invoiceStatusLabels.get(inv.status) ?? inv.status}
-                      </span>
-                    </td>
-                    <td className="p-4 text-sm text-slate-600">
-                      {new Date(inv.createdAt * 1000).toLocaleDateString()}
-                    </td>
-                    <td className="p-4 text-right">
-                      {inv.invoicePdf ? (
-                        <a
-                          href={inv.invoicePdf}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-indigo-600 hover:underline"
-                        >
-                          {invoicePdfLabel}
-                        </a>
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    {invoiceStatusLabels.get(inv.status) ?? inv.status}
+                  </span>
+                </DataTableCell>
+                <DataTableCell className="text-slate-600">
+                  {new Date(inv.createdAt * 1000).toLocaleDateString()}
+                </DataTableCell>
+                <DataTableCell align="right">
+                  {inv.invoicePdf ? (
+                    <a
+                      href={inv.invoicePdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-indigo-600 hover:underline"
+                    >
+                      {invoicePdfLabel}
+                    </a>
+                  ) : (
+                    <span className="text-slate-400">—</span>
+                  )}
+                </DataTableCell>
+              </DataTableRow>
+            ))}
+          </DataTable>
         ) : (
           <p className="text-slate-400">{await t("billing.noInvoices")}</p>
         )}

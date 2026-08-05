@@ -9,6 +9,7 @@ import ClassForm from "./ClassForm";
 import EditClassButton from "./EditClassButton";
 import DeleteClassButton from "./DeleteClassButton";
 import EmptyState from "@/components/ui/empty-state";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function ClassesPage() {
   const { user } = await requireCurrentUser();
@@ -32,6 +33,12 @@ export default async function ClassesPage() {
   const noRecords = await t("classes.noRecords");
   const emptyDescription = await t("classes.emptyDescription");
 
+  const columns = [
+    { key: "name", header: nameLabel, width: "50%" },
+    { key: "code", header: codeLabel, width: "35%" },
+    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+  ];
+
   return (
     <main className="p-6">
       <div className="mb-6">
@@ -53,28 +60,21 @@ export default async function ClassesPage() {
           />
         </div>
       ) : (
-        <div className="mt-6 rounded-lg border bg-white">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="p-3 text-left">{nameLabel}</th>
-                <th className="p-3 text-left">{codeLabel}</th>
-                <th className="p-3 text-right">{actionsLabel}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {classes.map((classe) => (
-                <tr key={classe.id} className="border-b">
-                  <td className="p-3 font-medium">{classe.name}</td>
-                  <td className="p-3 text-gray-500">{classe.code}</td>
-                  <td className="flex justify-end gap-2 p-3">
+        <div className="mt-6">
+          <DataTable columns={columns}>
+            {classes.map((classe) => (
+              <DataTableRow key={classe.id}>
+                <DataTableCell className="font-medium">{classe.name}</DataTableCell>
+                <DataTableCell className="text-slate-500">{classe.code}</DataTableCell>
+                <DataTableCell align="right">
+                  <div className="flex justify-end gap-2">
                     <EditClassButton id={classe.id} currentName={classe.name} currentCode={classe.code} />
                     <DeleteClassButton id={classe.id} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </DataTableCell>
+              </DataTableRow>
+            ))}
+          </DataTable>
         </div>
       )}
     </main>

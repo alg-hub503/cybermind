@@ -5,6 +5,7 @@ import { getClientsBySchool } from "@/lib/features/clients/client-actions";
 import { t } from "@/lib/i18n/server";
 import InvoiceForm from "./InvoiceForm";
 import DeleteInvoiceButton from "./DeleteInvoiceButton";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function InvoicesPage() {
   const [invoicesTitle, invoicesDescription, tableHeaderClient, tableHeaderAmount, tableHeaderDate, tableHeaderActions] = await Promise.all([
@@ -28,6 +29,13 @@ export default async function InvoicesPage() {
     ? await getClientsBySchool(user.schoolId)
     : [];
 
+  const columns = [
+    { key: "client", header: tableHeaderClient, width: "30%" },
+    { key: "amount", header: tableHeaderAmount, width: "20%" },
+    { key: "date", header: tableHeaderDate, width: "35%" },
+    { key: "actions", header: tableHeaderActions, width: "15%", align: "right" as const },
+  ];
+
   return (
     <main className="p-6">
       <div className="mb-6">
@@ -40,30 +48,21 @@ export default async function InvoicesPage() {
         schoolId={user.schoolId ?? ""}
       />
 
-      <div className="rounded-lg border bg-white">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b">
-              <th className="p-3 text-left">{tableHeaderClient}</th>
-              <th className="p-3 text-left">{tableHeaderAmount}</th>
-              <th className="p-3 text-left">{tableHeaderDate}</th>
-              <th className="p-3 text-right">{tableHeaderActions}</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {invoices.map((invoice) => (
-              <tr key={invoice.id} className="border-b">
-                <td className="p-3">{invoice.clientId}</td>
-                <td className="p-3">${invoice.amount.toFixed(2)}</td>
-                <td className="p-3">{invoice.createdAt.toLocaleDateString()}</td>
-                <td className="flex justify-end gap-2 p-3">
+      <div className="mt-6">
+        <DataTable columns={columns}>
+          {invoices.map((invoice) => (
+            <DataTableRow key={invoice.id}>
+              <DataTableCell className="font-medium">{invoice.clientId}</DataTableCell>
+              <DataTableCell>${invoice.amount.toFixed(2)}</DataTableCell>
+              <DataTableCell className="text-slate-500">{invoice.createdAt.toLocaleDateString()}</DataTableCell>
+              <DataTableCell align="right">
+                <div className="flex justify-end gap-2">
                   <DeleteInvoiceButton id={invoice.id} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </DataTableCell>
+            </DataTableRow>
+          ))}
+        </DataTable>
       </div>
     </main>
   );

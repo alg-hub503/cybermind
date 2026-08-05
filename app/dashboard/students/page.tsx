@@ -7,6 +7,7 @@ import StudentForm from "./StudentForm";
 import EditStudentButton from "./EditStudentButton";
 import DeleteStudentButton from "./DeleteStudentButton";
 import EmptyState from "@/components/ui/empty-state";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function StudentsPage() {
   const { user } = await requireCurrentUser();
@@ -30,6 +31,13 @@ export default async function StudentsPage() {
   const noRecords = await t("students.noRecords");
   const emptyDescription = await t("students.emptyDescription");
 
+  const columns = [
+    { key: "code", header: codeLabel, width: "10%" },
+    { key: "name", header: nameLabel, width: "40%" },
+    { key: "status", header: statusLabel, width: "20%" },
+    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+  ];
+
   return (
     <main className="p-6">
       <div className="mb-6">
@@ -51,36 +59,28 @@ export default async function StudentsPage() {
           />
         </div>
       ) : (
-        <div className="mt-6 rounded-lg border bg-white">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="p-3 text-left">{codeLabel}</th>
-                <th className="p-3 text-left">{nameLabel}</th>
-                <th className="p-3 text-left">{statusLabel}</th>
-                <th className="p-3 text-right">{actionsLabel}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr key={student.id} className="border-b">
-                  <td className="p-3 font-mono text-sm">{student.code}</td>
-                  <td className="p-3">{student.firstName} {student.lastName}</td>
-                  <td className="p-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                      student.status === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
-                    }`}>
-                      {student.status === "ACTIVE" ? activeLabel : inactiveLabel}
-                    </span>
-                  </td>
-                  <td className="flex justify-end gap-2 p-3">
+        <div className="mt-6">
+          <DataTable columns={columns}>
+            {students.map((student) => (
+              <DataTableRow key={student.id}>
+                <DataTableCell className="font-mono text-sm">{student.code}</DataTableCell>
+                <DataTableCell className="font-medium">{student.firstName} {student.lastName}</DataTableCell>
+                <DataTableCell>
+                  <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                    student.status === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                  }`}>
+                    {student.status === "ACTIVE" ? activeLabel : inactiveLabel}
+                  </span>
+                </DataTableCell>
+                <DataTableCell align="right">
+                  <div className="flex justify-end gap-2">
                     <EditStudentButton id={student.id} currentFirstName={student.firstName} currentLastName={student.lastName} currentCode={student.code} />
                     <DeleteStudentButton id={student.id} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </DataTableCell>
+              </DataTableRow>
+            ))}
+          </DataTable>
         </div>
       )}
     </main>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import SchoolForm from "./SchoolForm";
 import EditSchoolButton from "./EditSchoolButton";
 import DeleteSchoolButton from "./DeleteSchoolButton";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function SchoolsPage() {
   const { user } = await requireCurrentUser();
@@ -21,6 +22,17 @@ export default async function SchoolsPage() {
   const nameLabel = await t("schools.name");
   const actionsLabel = await t("schools.actions");
 
+  const isAdmin = user.role === ADMIN_ROLE;
+
+  const columns = isAdmin
+    ? [
+        { key: "name", header: nameLabel, width: "85%" },
+        { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+      ]
+    : [
+        { key: "name", header: nameLabel, width: "100%" },
+      ];
+
   return (
     <main className="p-6">
       <div className="mb-6">
@@ -28,38 +40,31 @@ export default async function SchoolsPage() {
         <p className="text-gray-500">{description}</p>
       </div>
 
-      {user.role === ADMIN_ROLE && <SchoolForm />}
+      {isAdmin && <SchoolForm />}
 
-      <div className="rounded-lg border bg-white">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b">
-              <th className="p-3 text-left">{nameLabel}</th>
-              {user.role === ADMIN_ROLE && <th className="p-3 text-right">{actionsLabel}</th>}
-            </tr>
-          </thead>
-
-          <tbody>
-            {schools.map((school) => (
-              <tr key={school.id} className="border-b">
-                <td className="p-3">
-                  <Link
-                    href={`/dashboard/schools/${school.id}`}
-                    className="text-indigo-600 hover:underline"
-                  >
-                    {school.name}
-                  </Link>
-                </td>
-                {user.role === ADMIN_ROLE && (
-                  <td className="flex justify-end gap-2 p-3">
+      <div className="mt-6">
+        <DataTable columns={columns}>
+          {schools.map((school) => (
+            <DataTableRow key={school.id}>
+              <DataTableCell>
+                <Link
+                  href={`/dashboard/schools/${school.id}`}
+                  className="font-medium text-indigo-600 hover:underline"
+                >
+                  {school.name}
+                </Link>
+              </DataTableCell>
+              {isAdmin && (
+                <DataTableCell align="right">
+                  <div className="flex justify-end gap-2">
                     <EditSchoolButton id={school.id} currentName={school.name} />
                     <DeleteSchoolButton id={school.id} />
-                  </td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </div>
+                </DataTableCell>
+              )}
+            </DataTableRow>
+          ))}
+        </DataTable>
       </div>
     </main>
   );

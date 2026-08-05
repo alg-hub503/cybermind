@@ -7,6 +7,7 @@ import AcademicYearForm from "./AcademicYearForm";
 import EditAcademicYearButton from "./EditAcademicYearButton";
 import DeleteAcademicYearButton from "./DeleteAcademicYearButton";
 import EmptyState from "@/components/ui/empty-state";
+import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function AcademicYearsPage() {
   const { user } = await requireCurrentUser();
@@ -29,6 +30,14 @@ export default async function AcademicYearsPage() {
   const noRecords = await t("academicYears.noRecords");
   const emptyDescription = await t("academicYears.emptyDescription");
 
+  const columns = [
+    { key: "name", header: nameLabel, width: "25%" },
+    { key: "startDate", header: startDateLabel, width: "20%" },
+    { key: "endDate", header: endDateLabel, width: "20%" },
+    { key: "current", header: currentLabel, width: "20%" },
+    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+  ];
+
   return (
     <main className="p-6">
       <div className="mb-6">
@@ -50,39 +59,29 @@ export default async function AcademicYearsPage() {
           />
         </div>
       ) : (
-        <div className="mt-6 rounded-lg border bg-white">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="p-3 text-left">{nameLabel}</th>
-                <th className="p-3 text-left">{startDateLabel}</th>
-                <th className="p-3 text-left">{endDateLabel}</th>
-                <th className="p-3 text-left">{currentLabel}</th>
-                <th className="p-3 text-right">{actionsLabel}</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {years.map((year) => (
-                <tr key={year.id} className="border-b">
-                  <td className="p-3 font-medium">{year.name}</td>
-                  <td className="p-3">{new Date(year.startDate).toLocaleDateString()}</td>
-                  <td className="p-3">{new Date(year.endDate).toLocaleDateString()}</td>
-                  <td className="p-3">
-                    {year.isCurrent && (
-                      <span className="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                        {currentLabel}
-                      </span>
-                    )}
-                  </td>
-                  <td className="flex justify-end gap-2 p-3">
+        <div className="mt-6">
+          <DataTable columns={columns}>
+            {years.map((year) => (
+              <DataTableRow key={year.id}>
+                <DataTableCell className="font-medium">{year.name}</DataTableCell>
+                <DataTableCell className="text-slate-500">{new Date(year.startDate).toLocaleDateString()}</DataTableCell>
+                <DataTableCell className="text-slate-500">{new Date(year.endDate).toLocaleDateString()}</DataTableCell>
+                <DataTableCell>
+                  {year.isCurrent && (
+                    <span className="inline-flex rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                      {currentLabel}
+                    </span>
+                  )}
+                </DataTableCell>
+                <DataTableCell align="right">
+                  <div className="flex justify-end gap-2">
                     <EditAcademicYearButton id={year.id} currentName={year.name} />
                     <DeleteAcademicYearButton id={year.id} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </DataTableCell>
+              </DataTableRow>
+            ))}
+          </DataTable>
         </div>
       )}
     </main>
