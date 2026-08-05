@@ -23,11 +23,11 @@ export default function DataTable({
       <div className="overflow-x-auto">
         <table className="table-fixed w-full">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50">
+            <tr className="border-b border-slate-300 bg-slate-100">
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 ${
+                  className={`px-4 py-3 text-xs font-bold uppercase tracking-wider text-slate-700 ${
                     col.align === "right"
                       ? "text-right"
                       : col.align === "center"

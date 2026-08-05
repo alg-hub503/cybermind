@@ -29,9 +29,9 @@ export default async function GradesPage() {
   const emptyDescription = await t("grades.emptyDescription");
 
   const columns = [
-    { key: "name", header: nameLabel, width: "50%" },
-    { key: "order", header: orderLabel, width: "35%" },
-    { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
+    { key: "name", header: nameLabel, width: "60%" },
+    { key: "order", header: orderLabel, width: "30%" },
+    { key: "actions", header: actionsLabel, width: "10%", align: "right" as const },
   ];
 
   return (
