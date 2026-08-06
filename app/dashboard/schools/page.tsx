@@ -2,16 +2,15 @@ import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getSchools, getSchool } from "@/lib/features/schools/school-actions";
 import { t } from "@/lib/i18n/server";
-import Link from "next/link";
 import SchoolForm from "./SchoolForm";
-import EditSchoolButton from "./EditSchoolButton";
-import DeleteSchoolButton from "./DeleteSchoolButton";
-import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
+import SchoolsList from "./SchoolsList";
 
 export default async function SchoolsPage() {
   const { user } = await requireCurrentUser();
 
-  const schools = user.role === ADMIN_ROLE
+  const isAdmin = user.role === ADMIN_ROLE;
+
+  const schools = isAdmin
     ? await getSchools()
     : user.schoolId
       ? await (async () => { const s = await getSchool(user.schoolId!); return s ? [s] : []; })()
@@ -19,19 +18,8 @@ export default async function SchoolsPage() {
 
   const title = await t("schools.title");
   const description = await t("schools.description");
-  const nameLabel = await t("schools.name");
-  const actionsLabel = await t("schools.actions");
-
-  const isAdmin = user.role === ADMIN_ROLE;
-
-  const columns = isAdmin
-    ? [
-        { key: "name", header: nameLabel, width: "85%" },
-        { key: "actions", header: actionsLabel, width: "15%", align: "right" as const },
-      ]
-    : [
-        { key: "name", header: nameLabel, width: "100%" },
-      ];
+  const noRecords = await t("schools.noRecords");
+  const emptyDescription = await t("schools.emptyDescription");
 
   return (
     <main className="p-6">
@@ -43,28 +31,12 @@ export default async function SchoolsPage() {
       {isAdmin && <SchoolForm />}
 
       <div className="mt-6">
-        <DataTable columns={columns}>
-          {schools.map((school) => (
-            <DataTableRow key={school.id}>
-              <DataTableCell>
-                <Link
-                  href={`/dashboard/schools/${school.id}`}
-                  className="font-medium text-indigo-600 hover:underline"
-                >
-                  {school.name}
-                </Link>
-              </DataTableCell>
-              {isAdmin && (
-                <DataTableCell align="right">
-                  <div className="flex justify-end gap-2">
-                    <EditSchoolButton id={school.id} currentName={school.name} />
-                    <DeleteSchoolButton id={school.id} />
-                  </div>
-                </DataTableCell>
-              )}
-            </DataTableRow>
-          ))}
-        </DataTable>
+        <SchoolsList
+          schools={schools}
+          isAdmin={isAdmin}
+          emptyTitle={noRecords}
+          emptyDescription={emptyDescription}
+        />
       </div>
     </main>
   );
