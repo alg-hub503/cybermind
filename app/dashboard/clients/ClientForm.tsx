@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "@/lib/i18n/use-translations";
 
-export default function ClientForm() {
+interface ClientFormProps {
+  schoolId?: string;
+}
+
+export default function ClientForm({ schoolId }: ClientFormProps) {
   const { t } = useTranslations("clients");
   const router = useRouter();
 
@@ -20,6 +24,7 @@ export default function ClientForm() {
       },
       body: JSON.stringify({
         name: name.trim(),
+        ...(schoolId ? { schoolId } : {}),
       }),
     });
 

@@ -10,7 +10,9 @@ import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-tab
 export default async function ClientsPage() {
   const { user } = await requireCurrentUser();
 
-  const clients = user.role === ADMIN_ROLE
+  const isAdmin = user.role === ADMIN_ROLE;
+
+  const clients = isAdmin
     ? await getClients()
     : user.schoolId
       ? await getClientsBySchool(user.schoolId)
@@ -35,7 +37,11 @@ export default async function ClientsPage() {
         <p className="text-gray-500">{description}</p>
       </div>
 
-      <ClientForm />
+      {isAdmin ? (
+        <ClientForm />
+      ) : user.schoolId ? (
+        <ClientForm schoolId={user.schoolId} />
+      ) : null}
 
       <div className="mt-6">
         <DataTable columns={columns}>
