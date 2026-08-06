@@ -3,19 +3,33 @@ import type { Class, CreateClassDto, UpdateClassDto } from "../types/class";
 
 export class PrismaClassRepository {
   async findAll(): Promise<Class[]> {
-    return prisma.class.findMany({ orderBy: { createdAt: "desc" } }) as unknown as Class[];
+    return prisma.class.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { grade: true, academicYear: true },
+    }) as unknown as Class[];
   }
 
   async findById(id: string): Promise<Class | null> {
-    return prisma.class.findUnique({ where: { id } }) as unknown as Class | null;
+    return prisma.class.findUnique({
+      where: { id },
+      include: { grade: true, academicYear: true },
+    }) as unknown as Class | null;
   }
 
   async findBySchool(schoolId: string): Promise<Class[]> {
-    return prisma.class.findMany({ where: { schoolId }, orderBy: { createdAt: "desc" } }) as unknown as Class[];
+    return prisma.class.findMany({
+      where: { schoolId },
+      orderBy: { createdAt: "desc" },
+      include: { grade: true, academicYear: true },
+    }) as unknown as Class[];
   }
 
   async findByGrade(gradeId: string): Promise<Class[]> {
-    return prisma.class.findMany({ where: { gradeId }, orderBy: { name: "asc" } }) as unknown as Class[];
+    return prisma.class.findMany({
+      where: { gradeId },
+      orderBy: { name: "asc" },
+      include: { grade: true, academicYear: true },
+    }) as unknown as Class[];
   }
 
   async create(data: CreateClassDto): Promise<Class> {

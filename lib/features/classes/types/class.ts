@@ -6,6 +6,8 @@ export interface Class {
   name: string;
   code: string;
   createdAt: Date;
+  grade?: { name: string };
+  academicYear?: { name: string };
 }
 
 export interface CreateClassDto {

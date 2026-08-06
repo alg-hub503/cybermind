@@ -6,10 +6,7 @@ import { getGradesBySchool, getGrades } from "@/lib/features/grades/grade-action
 import { getAcademicYearsBySchool, getAcademicYears } from "@/lib/features/academic-years/academic-year-actions";
 import { t } from "@/lib/i18n/server";
 import ClassForm from "./ClassForm";
-import EditClassButton from "./EditClassButton";
-import DeleteClassButton from "./DeleteClassButton";
-import EmptyState from "@/components/ui/empty-state";
-import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
+import ClassesList from "./ClassesList";
 
 export default async function ClassesPage() {
   const { user } = await requireCurrentUser();
@@ -27,17 +24,8 @@ export default async function ClassesPage() {
 
   const title = await t("classes.title");
   const description = await t("classes.description");
-  const nameLabel = await t("classes.name");
-  const codeLabel = await t("classes.code");
-  const actionsLabel = await t("classes.actions");
   const noRecords = await t("classes.noRecords");
   const emptyDescription = await t("classes.emptyDescription");
-
-  const columns = [
-    { key: "name", header: nameLabel, width: "55%" },
-    { key: "code", header: codeLabel, width: "35%" },
-    { key: "actions", header: actionsLabel, width: "10%", align: "center" as const },
-  ];
 
   return (
     <main className="p-6">
@@ -52,31 +40,13 @@ export default async function ClassesPage() {
         <ClassForm schoolId={user.schoolId} grades={grades} academicYears={academicYears} />
       ) : null}
 
-      {classes.length === 0 ? (
-        <div className="mt-6">
-          <EmptyState
-            title={noRecords}
-            description={emptyDescription}
-          />
-        </div>
-      ) : (
-        <div className="mt-6">
-          <DataTable columns={columns}>
-            {classes.map((classe) => (
-              <DataTableRow key={classe.id}>
-                <DataTableCell className="font-medium">{classe.name}</DataTableCell>
-                <DataTableCell className="text-slate-500">{classe.code}</DataTableCell>
-                <DataTableCell align="center">
-                  <div className="flex justify-center gap-2">
-                    <EditClassButton id={classe.id} currentName={classe.name} currentCode={classe.code} />
-                    <DeleteClassButton id={classe.id} />
-                  </div>
-                </DataTableCell>
-              </DataTableRow>
-            ))}
-          </DataTable>
-        </div>
-      )}
+      <div className="mt-6">
+        <ClassesList
+          classes={classes}
+          emptyTitle={noRecords}
+          emptyDescription={emptyDescription}
+        />
+      </div>
     </main>
   );
 }
