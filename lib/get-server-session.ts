@@ -10,6 +10,7 @@ interface SessionUser {
   schoolId: string | null;
   subscriptionStatus: string;
   name?: string | null;
+  emailChangedAt?: Date | null;
 }
 
 interface Session {
@@ -32,21 +33,35 @@ export async function getServerSession(): Promise<Session | null> {
 
   if (!token?.email) return null;
 
-  const tokenPasswordChangedAt = token.passwordChangedAt
-    ? new Date(token.passwordChangedAt)
-    : null;
+  const dbUser = await prisma.user.findUnique({
+    where: { email: token.email as string },
+    select: { passwordChangedAt: true, emailChangedAt: true },
+  });
 
-  if (tokenPasswordChangedAt) {
-    const dbUser = await prisma.user.findUnique({
-      where: { email: token.email as string },
-      select: { passwordChangedAt: true },
-    });
+  if (dbUser) {
+    const tokenPasswordChangedAt = token.passwordChangedAt
+      ? new Date(token.passwordChangedAt)
+      : null;
 
     if (
-      dbUser?.passwordChangedAt &&
+      tokenPasswordChangedAt &&
+      dbUser.passwordChangedAt &&
       dbUser.passwordChangedAt > tokenPasswordChangedAt
     ) {
       return null;
+    }
+
+    if (dbUser.emailChangedAt) {
+      const tokenEmailChangedAt = token.emailChangedAt
+        ? new Date(token.emailChangedAt)
+        : null;
+
+      if (
+        !tokenEmailChangedAt ||
+        dbUser.emailChangedAt > tokenEmailChangedAt
+      ) {
+        return null;
+      }
     }
   }
 
@@ -58,6 +73,7 @@ export async function getServerSession(): Promise<Session | null> {
       schoolId: token.schoolId as string | null,
       subscriptionStatus: (token.subscriptionStatus as string) ?? "TRIAL",
       name: (token.name as string) ?? null,
+      emailChangedAt: token.emailChangedAt as Date | null,
     },
     expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
   };

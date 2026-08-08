@@ -76,6 +76,7 @@ export const authOptions: NextAuthOptions = {
           subscriptionStatus:
             school?.subscription?.status ?? "TRIAL",
           passwordChangedAt: user.passwordChangedAt,
+          emailChangedAt: user.emailChangedAt,
         };
       },
     }),
@@ -104,6 +105,7 @@ export const authOptions: NextAuthOptions = {
         token.subscriptionStatus =
           user.subscriptionStatus;
         token.passwordChangedAt = user.passwordChangedAt;
+        token.emailChangedAt = user.emailChangedAt;
       }
 
 
@@ -128,6 +130,19 @@ export const authOptions: NextAuthOptions = {
             dbUser.passwordChangedAt > token.passwordChangedAt
           ) {
             return { ...token, id: "", email: "" } as JWT;
+          }
+
+          if (dbUser.emailChangedAt) {
+            const tokenEmailChangedAt = token.emailChangedAt
+              ? new Date(token.emailChangedAt)
+              : null;
+
+            if (
+              !tokenEmailChangedAt ||
+              dbUser.emailChangedAt > tokenEmailChangedAt
+            ) {
+              return { ...token, id: "", email: "" } as JWT;
+            }
           }
 
           if (dbUser.schoolId) {
@@ -155,6 +170,7 @@ export const authOptions: NextAuthOptions = {
             dbUser.role;
 
           token.passwordChangedAt = dbUser.passwordChangedAt;
+          token.emailChangedAt = dbUser.emailChangedAt;
         }
       }
 
@@ -190,6 +206,9 @@ export const authOptions: NextAuthOptions = {
 
       session.user.passwordChangedAt =
         token.passwordChangedAt;
+
+      session.user.emailChangedAt =
+        token.emailChangedAt;
 
 
       return session;
