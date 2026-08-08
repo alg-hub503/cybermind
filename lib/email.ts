@@ -94,3 +94,78 @@ export async function sendContactNotification(params: ContactNotificationParams)
     throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
   }
 }
+
+interface SalesInquiryNotificationParams {
+  contactName: string;
+  email: string;
+  organizationName: string;
+  phone?: string;
+  studentCount?: number;
+  currentSolution?: string;
+  requirements: string;
+  demoRequested?: boolean;
+}
+
+export async function sendSalesInquiryNotification(params: SalesInquiryNotificationParams): Promise<void> {
+  const resend = getResend();
+  const salesEmail = process.env.SALES_EMAIL || "sales@cybermind.app";
+
+  if (!resend || process.env.NODE_ENV !== "production") {
+    console.log("=== DEV: Sales Inquiry ===");
+    console.log(`  From: ${params.contactName} <${params.email}>`);
+    console.log(`  Organization: ${params.organizationName}`);
+    console.log(`  Phone: ${params.phone || "N/A"}`);
+    console.log(`  Students: ${params.studentCount || "N/A"}`);
+    console.log(`  Current Solution: ${params.currentSolution || "N/A"}`);
+    console.log(`  Requirements: ${params.requirements}`);
+    console.log(`  Demo Requested: ${params.demoRequested ? "Yes" : "No"}`);
+    console.log("==========================");
+    return;
+  }
+
+  const demoRow = params.demoRequested
+    ? `<p style="color: #475569; margin: 4px 0;"><strong>Demo Requested:</strong> Yes</p>`
+    : "";
+
+  const phoneRow = params.phone
+    ? `<p style="color: #475569; margin: 4px 0;"><strong>Phone:</strong> ${params.phone}</p>`
+    : "";
+
+  const studentsRow = params.studentCount
+    ? `<p style="color: #475569; margin: 4px 0;"><strong>Student Count:</strong> ${params.studentCount}</p>`
+    : "";
+
+  const solutionRow = params.currentSolution
+    ? `<p style="color: #475569; margin: 4px 0;"><strong>Current Solution:</strong> ${params.currentSolution}</p>`
+    : "";
+
+  const { error } = await resend.emails.send({
+    from: getFromAddress(),
+    to: salesEmail,
+    replyTo: params.email,
+    subject: `[Sales Inquiry] ${params.organizationName}`,
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1e1e1e;">New Sales Inquiry</h1>
+        <div style="background-color: #f8fafc; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="color: #475569; margin: 4px 0;"><strong>Organization:</strong> ${params.organizationName}</p>
+          <p style="color: #475569; margin: 4px 0;"><strong>Contact:</strong> ${params.contactName}</p>
+          <p style="color: #475569; margin: 4px 0;"><strong>Email:</strong> ${params.email}</p>
+          ${phoneRow}
+          ${studentsRow}
+          ${solutionRow}
+          ${demoRow}
+        </div>
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="color: #1e1e1e; white-space: pre-wrap;">${params.requirements}</p>
+        </div>
+        <p style="color: #94a3b8; font-size: 14px;">This inquiry was submitted via the CyberMind Talk to Sales form.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("Failed to send sales inquiry notification:", JSON.stringify(error));
+    throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
+  }
+}

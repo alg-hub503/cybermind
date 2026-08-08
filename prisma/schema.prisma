@@ -41,6 +41,7 @@ model User {
   passwordResetTokens PasswordResetToken[]
   reports            Report[]
   contactMessages    ContactMessage[]
+  salesInquiries     SalesInquiry[]
 }
 
 model PasswordResetToken {
@@ -124,6 +125,7 @@ model School {
   Student              Student[]
   StudentAcademicRecord StudentAcademicRecord[]
   contactMessages      ContactMessage[]
+  salesInquiries       SalesInquiry[]
 }
 
 model SchoolSettings {
@@ -307,4 +309,36 @@ enum ContactMessageStatus {
   NEW
   READ
   REPLIED
+}
+
+enum SalesInquiryStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CLOSED
+}
+
+model SalesInquiry {
+  id               String             @id @default(cuid())
+  userId           String
+  schoolId         String?
+  organizationName String
+  contactName      String
+  email            String
+  phone            String?
+  studentCount     Int?
+  currentSolution  String?
+  requirements     String
+  demoRequested    Boolean            @default(false)
+  status           SalesInquiryStatus @default(NEW)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([schoolId])
+  @@index([status])
+  @@index([createdAt])
 }

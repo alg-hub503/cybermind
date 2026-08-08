@@ -40,6 +40,15 @@ export default function HubTabs() {
   const [contactMessage, setContactMessage] = useState("");
   const [contactStatus, setContactStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
+  // Sales form state
+  const [salesOrg, setSalesOrg] = useState("");
+  const [salesPhone, setSalesPhone] = useState("");
+  const [salesStudents, setSalesStudents] = useState("");
+  const [salesSolution, setSalesSolution] = useState("");
+  const [salesRequirements, setSalesRequirements] = useState("");
+  const [salesDemo, setSalesDemo] = useState(false);
+  const [salesStatus, setSalesStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+
   const filteredFaq = FAQ_ITEMS.filter((item) => {
     if (!faqQuery.trim()) return true;
     const q = faqQuery.toLowerCase();
@@ -92,6 +101,38 @@ export default function HubTabs() {
       }
     } catch {
       setContactStatus("error");
+    }
+  };
+
+  const submitSales = async () => {
+    if (!salesOrg.trim() || !salesRequirements.trim()) return;
+    setSalesStatus("submitting");
+    try {
+      const res = await fetch("/api/sales-inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          organizationName: salesOrg.trim(),
+          phone: salesPhone.trim() || undefined,
+          studentCount: salesStudents ? parseInt(salesStudents, 10) : undefined,
+          currentSolution: salesSolution.trim() || undefined,
+          requirements: salesRequirements.trim(),
+          demoRequested: salesDemo,
+        }),
+      });
+      if (res.ok) {
+        setSalesStatus("success");
+        setSalesOrg("");
+        setSalesPhone("");
+        setSalesStudents("");
+        setSalesSolution("");
+        setSalesRequirements("");
+        setSalesDemo(false);
+      } else {
+        setSalesStatus("error");
+      }
+    } catch {
+      setSalesStatus("error");
     }
   };
 
@@ -264,15 +305,86 @@ export default function HubTabs() {
       {active === "sales" && (
         <div className="space-y-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-slate-600">{t("salesDesc")}</p>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("salesOrg")}</label>
+                <input
+                  type="text"
+                  value={salesOrg}
+                  onChange={(e) => setSalesOrg(e.target.value)}
+                  placeholder={t("salesOrgPlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("salesPhone")}</label>
+                <input
+                  type="tel"
+                  value={salesPhone}
+                  onChange={(e) => setSalesPhone(e.target.value)}
+                  placeholder={t("salesPhonePlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("salesStudents")}</label>
+                <input
+                  type="number"
+                  value={salesStudents}
+                  onChange={(e) => setSalesStudents(e.target.value)}
+                  placeholder={t("salesStudentsPlaceholder")}
+                  min="1"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("salesSolution")}</label>
+                <input
+                  type="text"
+                  value={salesSolution}
+                  onChange={(e) => setSalesSolution(e.target.value)}
+                  placeholder={t("salesSolutionPlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("salesRequirements")}</label>
+                <textarea
+                  value={salesRequirements}
+                  onChange={(e) => setSalesRequirements(e.target.value)}
+                  rows={5}
+                  placeholder={t("salesRequirementsPlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="salesDemo"
+                  checked={salesDemo}
+                  onChange={(e) => setSalesDemo(e.target.checked)}
+                  className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                />
+                <label htmlFor="salesDemo" className="text-sm font-medium text-slate-700">{t("salesDemo")}</label>
+              </div>
+              <button
+                onClick={submitSales}
+                disabled={salesStatus === "submitting" || !salesOrg.trim() || !salesRequirements.trim()}
+                className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {salesStatus === "submitting" ? t("salesSubmitting") : t("salesSubmit")}
+              </button>
+              {salesStatus === "success" && (
+                <p className="text-sm text-emerald-600">{t("salesSuccess")}</p>
+              )}
+              {salesStatus === "error" && (
+                <p className="text-sm text-red-600">{t("salesError")}</p>
+              )}
+            </div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold text-slate-900">{t("salesEmail")}</h3>
-            <p className="mt-2 text-sm text-slate-600">{t("salesEmailValue")}</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold text-slate-900">{t("salesPhone")}</h3>
-            <p className="mt-2 text-sm text-slate-600">{t("salesPhoneValue")}</p>
+            <h3 className="font-semibold text-slate-900">{t("salesContactInfo")}</h3>
+            <p className="mt-2 text-sm text-slate-600">{t("salesContactInfoValue")}</p>
           </div>
           <p className="text-sm text-slate-500">{t("salesNote")}</p>
         </div>
