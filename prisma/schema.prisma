@@ -31,15 +31,19 @@ model User {
   id                 String        @id @default(cuid())
   name               String?
   email              String        @unique
+  pendingEmail       String?       @unique
   password           String?
   role               String        @default("USER")
   schoolId           String?
   subscriptionStatus String        @default("TRIAL")
   stripeCustomerId   String?       @unique
   passwordChangedAt  DateTime?
+  emailChangedAt     DateTime?
   School             School?       @relation(fields: [schoolId], references: [id])
-  passwordResetTokens PasswordResetToken[]
-  reports            Report[]
+   passwordResetTokens  PasswordResetToken[]
+   emailChangeTokens   EmailChangeToken[]
+   emailChangeAttempts EmailChangeAttempt[]
+   reports             Report[]
   contactMessages    ContactMessage[]
   salesInquiries     SalesInquiry[]
 }
@@ -55,6 +59,28 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+model EmailChangeToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model EmailChangeAttempt {
+  id        String   @id @default(cuid())
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
 
 model Report {

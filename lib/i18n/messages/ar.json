@@ -659,5 +659,30 @@
   "analytics.revenueOverview": "نظرة عامة على الإيرادات",
   "analytics.usersLabel": "المستخدمون",
   "analytics.clientsLabel": "العملاء",
-  "analytics.schoolPerformance": "أداء المدرسة"
+  "analytics.schoolPerformance": "أداء المدرسة",
+
+  "profile.title": "الملف الشخصي",
+  "profile.description": "إدارة إعدادات حسابك",
+  "profile.changeEmail": "تغيير البريد الإلكتروني",
+  "profile.changeEmailDescription": "تحديث بريدك الإلكتروني. ستحتاج إلى التحقق من بريدك الجديد.",
+  "profile.currentEmail": "البريد الإلكتروني الحالي",
+  "profile.newEmail": "البريد الإلكتروني الجديد",
+  "profile.newEmailPlaceholder": "أدخل بريدك الإلكتروني الجديد",
+  "profile.currentPassword": "كلمة المرور الحالية",
+  "profile.currentPasswordPlaceholder": "أدخل كلمة المرور الحالية",
+  "profile.sendVerification": "إرسال التحقق",
+  "profile.sending": "جاري الإرسال...",
+  "profile.verificationSent": "تم إرسال بريد التحقق!",
+  "profile.verificationSentDescription": "يرجى التحقق من صندوق بريدك الإلكتروني والنقر على رابط التحقق.",
+  "profile.emailSameAsCurrent": "يجب أن يكون البريد الإلكتروني الجديد مختلفاً عن الحالي",
+  "profile.error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+
+  "verifyEmail.verifying": "جاري التحقق من بريدك الإلكتروني...",
+  "verifyEmail.success": "تم التحقق من البريد الإلكتروني!",
+  "verifyEmail.successDescription": "تم تغيير بريدك الإلكتروني بنجاح. يرجى تسجيل الدخول بريدك الجديد.",
+  "verifyEmail.errorTitle": "فشل التحقق",
+  "verifyEmail.invalidToken": "رابط التحقق غير صالح",
+  "verifyEmail.error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+  "verifyEmail.goToLogin": "الذهاب لتسجيل الدخول",
+  "verifyEmail.backToProfile": "العودة للملف الشخصي"
 }

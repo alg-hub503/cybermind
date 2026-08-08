@@ -169,3 +169,68 @@ export async function sendSalesInquiryNotification(params: SalesInquiryNotificat
     throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
   }
 }
+
+export async function sendEmailChangeVerification(email: string, token: string): Promise<void> {
+  const resend = getResend();
+  const verifyUrl = `${getAppUrl()}/verify-email?token=${token}`;
+
+  if (!resend || process.env.NODE_ENV !== "production") {
+    console.log("=== DEV: Email Change Verification ===");
+    console.log(`  To: ${email}`);
+    console.log(`  URL: ${verifyUrl}`);
+    console.log("======================================");
+    return;
+  }
+
+  const { error } = await resend.emails.send({
+    from: getFromAddress(),
+    to: email,
+    subject: "Verify your new email address",
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto;">
+        <h1 style="color: #1e1e1e;">CyberMind</h1>
+        <p style="color: #475569;">You requested to change your email address. Click the button below to verify your new email.</p>
+        <a href="${verifyUrl}" style="display: inline-block; background-color: #6366f1; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500; margin: 16px 0;">
+          Verify Email
+        </a>
+        <p style="color: #94a3b8; font-size: 14px;">This link expires in 60 minutes. If you didn't request this, you can safely ignore this email.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("Failed to send email change verification:", JSON.stringify(error));
+    throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
+  }
+}
+
+export async function sendEmailChangeNotification(oldEmail: string, newEmail: string): Promise<void> {
+  const resend = getResend();
+
+  if (!resend || process.env.NODE_ENV !== "production") {
+    console.log("=== DEV: Email Change Notification ===");
+    console.log(`  To: ${oldEmail}`);
+    console.log(`  New email: ${newEmail}`);
+    console.log("======================================");
+    return;
+  }
+
+  const { error } = await resend.emails.send({
+    from: getFromAddress(),
+    to: oldEmail,
+    subject: "Your email address has been changed",
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto;">
+        <h1 style="color: #1e1e1e;">CyberMind</h1>
+        <p style="color: #475569;">Your email address has been successfully changed to <strong>${newEmail}</strong>.</p>
+        <p style="color: #475569;">If you did not make this change, please contact support immediately.</p>
+        <p style="color: #94a3b8; font-size: 14px;">This is a notification email. No action is required.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("Failed to send email change notification:", JSON.stringify(error));
+    throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
+  }
+}

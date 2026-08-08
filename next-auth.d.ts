@@ -12,6 +12,7 @@ declare module "next-auth" {
       name?: string | null;
       image?: string | null;
       passwordChangedAt?: Date | null;
+      emailChangedAt?: Date | null;
     };
   }
 
@@ -22,6 +23,7 @@ declare module "next-auth" {
     schoolId: string | null;
     subscriptionStatus: string;
     passwordChangedAt?: Date | null;
+    emailChangedAt?: Date | null;
   }
 }
 
@@ -33,5 +35,6 @@ declare module "next-auth/jwt" {
     schoolId: string | null;
     subscriptionStatus: string;
     passwordChangedAt?: Date | null;
+    emailChangedAt?: Date | null;
   }
 }

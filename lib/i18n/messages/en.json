@@ -659,5 +659,30 @@
   "analytics.revenueOverview": "Revenue Overview",
   "analytics.usersLabel": "Users",
   "analytics.clientsLabel": "Clients",
-  "analytics.schoolPerformance": "School Performance"
+  "analytics.schoolPerformance": "School Performance",
+
+  "profile.title": "Profile",
+  "profile.description": "Manage your account settings",
+  "profile.changeEmail": "Change Email",
+  "profile.changeEmailDescription": "Update your email address. You will need to verify your new email.",
+  "profile.currentEmail": "Current Email",
+  "profile.newEmail": "New Email",
+  "profile.newEmailPlaceholder": "Enter your new email",
+  "profile.currentPassword": "Current Password",
+  "profile.currentPasswordPlaceholder": "Enter your current password",
+  "profile.sendVerification": "Send Verification",
+  "profile.sending": "Sending...",
+  "profile.verificationSent": "Verification email sent!",
+  "profile.verificationSentDescription": "Please check your new email inbox and click the verification link.",
+  "profile.emailSameAsCurrent": "New email must be different from current email",
+  "profile.error": "Something went wrong. Please try again.",
+
+  "verifyEmail.verifying": "Verifying your email...",
+  "verifyEmail.success": "Email verified!",
+  "verifyEmail.successDescription": "Your email address has been successfully changed. Please log in with your new email.",
+  "verifyEmail.errorTitle": "Verification failed",
+  "verifyEmail.invalidToken": "Invalid verification link",
+  "verifyEmail.error": "Something went wrong. Please try again.",
+  "verifyEmail.goToLogin": "Go to Login",
+  "verifyEmail.backToProfile": "Back to Profile"
 }
