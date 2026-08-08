@@ -39,16 +39,17 @@ export async function getServerSession(): Promise<Session | null> {
   });
 
   if (dbUser) {
-    const tokenPasswordChangedAt = token.passwordChangedAt
-      ? new Date(token.passwordChangedAt)
-      : null;
+    if (dbUser.passwordChangedAt) {
+      const tokenPasswordChangedAt = token.passwordChangedAt
+        ? new Date(token.passwordChangedAt)
+        : null;
 
-    if (
-      tokenPasswordChangedAt &&
-      dbUser.passwordChangedAt &&
-      dbUser.passwordChangedAt > tokenPasswordChangedAt
-    ) {
-      return null;
+      if (
+        !tokenPasswordChangedAt ||
+        dbUser.passwordChangedAt > tokenPasswordChangedAt
+      ) {
+        return null;
+      }
     }
 
     if (dbUser.emailChangedAt) {

@@ -124,12 +124,17 @@ export const authOptions: NextAuthOptions = {
 
         if (dbUser) {
 
-          if (
-            token.passwordChangedAt &&
-            dbUser.passwordChangedAt &&
-            dbUser.passwordChangedAt > token.passwordChangedAt
-          ) {
-            return { ...token, id: "", email: "" } as JWT;
+          if (dbUser.passwordChangedAt) {
+            const tokenPasswordChangedAt = token.passwordChangedAt
+              ? new Date(token.passwordChangedAt)
+              : null;
+
+            if (
+              !tokenPasswordChangedAt ||
+              dbUser.passwordChangedAt > tokenPasswordChangedAt
+            ) {
+              return { ...token, id: "", email: "" } as JWT;
+            }
           }
 
           if (dbUser.emailChangedAt) {
