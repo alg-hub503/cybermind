@@ -73,53 +73,55 @@ export function ResourceList<T>({
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
       <ul className="divide-y divide-slate-100">
-        {items.map((item) => (
-          <li
-            key={String(item[keyField])}
-            className="group flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-slate-50"
-          >
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="truncate text-sm font-semibold text-slate-900">
-                {renderPrimary(item)}
-              </span>
+        {items.map((item) => {
+          const badge = renderBadge?.(item);
 
-              {renderMeta && (
-                <span className="hidden shrink-0 text-sm text-slate-400 sm:inline">
-                  {renderMeta(item)}
+          return (
+            <li
+              key={String(item[keyField])}
+              className="group flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-slate-50"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="truncate text-sm font-semibold text-slate-900">
+                  {renderPrimary(item)}
                 </span>
-              )}
 
-              {renderBadge && (
-                <span className="shrink-0">{renderBadge(item)}</span>
-              )}
-            </div>
+                {renderMeta && (
+                  <span className="hidden shrink-0 text-sm text-slate-400 sm:inline">
+                    {renderMeta(item)}
+                  </span>
+                )}
 
-            {(onEdit || onDelete) && (
-              <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 max-sm:opacity-100">
-                {onEdit && (
-                  <button
-                    type="button"
-                    onClick={() => onEdit(item)}
-                    aria-label="Edit"
-                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
-                  >
-                    <Pencil size={16} />
-                  </button>
-                )}
-                {onDelete && (
-                  <button
-                    type="button"
-                    onClick={() => onDelete(item)}
-                    aria-label="Delete"
-                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                )}
+                {badge != null && <span className="shrink-0">{badge}</span>}
               </div>
-            )}
-          </li>
-        ))}
+
+              {(onEdit || onDelete) && (
+                <div className="flex shrink-0 items-center gap-1 opacity-100 transition-opacity focus-within:opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100">
+                  {onEdit && (
+                    <button
+                      type="button"
+                      onClick={() => onEdit(item)}
+                      aria-label="Edit"
+                      className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-amber-50 hover:text-amber-600"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      type="button"
+                      onClick={() => onDelete(item)}
+                      aria-label="Delete"
+                      className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
+                </div>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
