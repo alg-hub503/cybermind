@@ -47,3 +47,50 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
     throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
   }
 }
+
+interface ContactNotificationParams {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendContactNotification(params: ContactNotificationParams): Promise<void> {
+  const resend = getResend();
+  const supportEmail = process.env.SUPPORT_EMAIL || "support@cybermind.app";
+
+  if (!resend || process.env.NODE_ENV !== "production") {
+    console.log("=== DEV: Contact Us Message ===");
+    console.log(`  From: ${params.name} <${params.email}>`);
+    console.log(`  Subject: ${params.subject}`);
+    console.log(`  Message: ${params.message}`);
+    console.log("===============================");
+    return;
+  }
+
+  const { error } = await resend.emails.send({
+    from: getFromAddress(),
+    to: supportEmail,
+    replyTo: params.email,
+    subject: `[Contact Us] ${params.subject}`,
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1e1e1e;">New Contact Us Message</h1>
+        <div style="background-color: #f8fafc; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="color: #475569; margin: 4px 0;"><strong>From:</strong> ${params.name}</p>
+          <p style="color: #475569; margin: 4px 0;"><strong>Email:</strong> ${params.email}</p>
+          <p style="color: #475569; margin: 4px 0;"><strong>Subject:</strong> ${params.subject}</p>
+        </div>
+        <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+          <p style="color: #1e1e1e; white-space: pre-wrap;">${params.message}</p>
+        </div>
+        <p style="color: #94a3b8; font-size: 14px;">This message was sent via the CyberMind Contact Us form.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("Failed to send contact notification:", JSON.stringify(error));
+    throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
+  }
+}

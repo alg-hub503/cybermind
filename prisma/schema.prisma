@@ -40,6 +40,7 @@ model User {
   School             School?       @relation(fields: [schoolId], references: [id])
   passwordResetTokens PasswordResetToken[]
   reports            Report[]
+  contactMessages    ContactMessage[]
 }
 
 model PasswordResetToken {
@@ -64,6 +65,27 @@ model Report {
   createdAt   DateTime @default(now())
 
   @@index([userId])
+  @@index([createdAt])
+}
+
+model ContactMessage {
+  id        String               @id @default(cuid())
+  userId    String
+  schoolId  String?
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    ContactMessageStatus @default(NEW)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school School? @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([schoolId])
+  @@index([status])
   @@index([createdAt])
 }
 
@@ -101,6 +123,7 @@ model School {
   Class                Class[]
   Student              Student[]
   StudentAcademicRecord StudentAcademicRecord[]
+  contactMessages      ContactMessage[]
 }
 
 model SchoolSettings {
@@ -278,4 +301,10 @@ enum SubscriptionStatus {
 enum SubscriptionPlan {
   FREE
   PRO
+}
+
+enum ContactMessageStatus {
+  NEW
+  READ
+  REPLIED
 }

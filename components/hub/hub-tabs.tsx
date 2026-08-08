@@ -33,6 +33,13 @@ export default function HubTabs() {
   const [reportDesc, setReportDesc] = useState("");
   const [reportStatus, setReportStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
+  // Contact form state
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactSubject, setContactSubject] = useState("");
+  const [contactMessage, setContactMessage] = useState("");
+  const [contactStatus, setContactStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+
   const filteredFaq = FAQ_ITEMS.filter((item) => {
     if (!faqQuery.trim()) return true;
     const q = faqQuery.toLowerCase();
@@ -57,6 +64,34 @@ export default function HubTabs() {
       }
     } catch {
       setReportStatus("error");
+    }
+  };
+
+  const submitContact = async () => {
+    if (!contactSubject.trim() || !contactMessage.trim()) return;
+    setContactStatus("submitting");
+    try {
+      const res = await fetch("/api/contact-messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: contactName.trim(),
+          email: contactEmail.trim(),
+          subject: contactSubject.trim(),
+          message: contactMessage.trim(),
+        }),
+      });
+      if (res.ok) {
+        setContactStatus("success");
+        setContactName("");
+        setContactEmail("");
+        setContactSubject("");
+        setContactMessage("");
+      } else {
+        setContactStatus("error");
+      }
+    } catch {
+      setContactStatus("error");
     }
   };
 
@@ -120,16 +155,65 @@ export default function HubTabs() {
       {active === "contact" && (
         <div className="space-y-4">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold text-slate-900">{t("contactEmail")}</h3>
-            <p className="mt-2 text-sm text-slate-600">{t("contactEmailValue")}</p>
+            <div className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("contactName")}</label>
+                <input
+                  type="text"
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  placeholder={t("contactNamePlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("contactEmailLabel")}</label>
+                <input
+                  type="email"
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  placeholder={t("contactEmailPlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("contactSubject")}</label>
+                <input
+                  type="text"
+                  value={contactSubject}
+                  onChange={(e) => setContactSubject(e.target.value)}
+                  placeholder={t("contactSubjectPlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">{t("contactMessage")}</label>
+                <textarea
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                  rows={5}
+                  placeholder={t("contactMessagePlaceholder")}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                />
+              </div>
+              <button
+                onClick={submitContact}
+                disabled={contactStatus === "submitting" || !contactSubject.trim() || !contactMessage.trim()}
+                className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {contactStatus === "submitting" ? t("contactSubmitting") : t("contactSubmit")}
+              </button>
+              {contactStatus === "success" && (
+                <p className="text-sm text-emerald-600">{t("contactSuccess")}</p>
+              )}
+              {contactStatus === "error" && (
+                <p className="text-sm text-red-600">{t("contactError")}</p>
+              )}
+            </div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="font-semibold text-slate-900">{t("contactHours")}</h3>
             <p className="mt-2 text-sm text-slate-600">{t("contactHoursValue")}</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold text-slate-900">{t("contactSocial")}</h3>
-            <p className="mt-2 text-sm text-slate-600">Twitter / LinkedIn / Facebook</p>
           </div>
         </div>
       )}
