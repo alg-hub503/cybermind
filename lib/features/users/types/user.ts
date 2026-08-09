@@ -4,5 +4,4 @@ export interface User {
   email: string;
   role: string;
   schoolId: string | null;
-  subscriptionStatus: string;
 }

@@ -35,7 +35,6 @@ model User {
   password           String?
   role               String        @default("USER")
   schoolId           String?
-  subscriptionStatus String        @default("TRIAL")
   stripeCustomerId   String?       @unique
   passwordChangedAt  DateTime?
   emailChangedAt     DateTime?

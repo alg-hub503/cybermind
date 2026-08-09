@@ -102,8 +102,6 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.schoolId = user.schoolId;
 
-        token.subscriptionStatus =
-          user.subscriptionStatus;
         token.passwordChangedAt = user.passwordChangedAt;
         token.emailChangedAt = user.emailChangedAt;
       }

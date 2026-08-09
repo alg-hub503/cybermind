@@ -6,7 +6,6 @@ const userSelect = {
   email: true,
   role: true,
   schoolId: true,
-  subscriptionStatus: true,
 } as const;
 
 export class PrismaUserRepository {

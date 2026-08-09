@@ -21,7 +21,6 @@ declare module "next-auth" {
     email: string;
     role: string;
     schoolId: string | null;
-    subscriptionStatus: string;
     passwordChangedAt?: Date | null;
     emailChangedAt?: Date | null;
   }
