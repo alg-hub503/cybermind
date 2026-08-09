@@ -11,5 +11,5 @@ export function normalizeSubscriptionStatus(status: string): SubscriptionStatus 
     incomplete_expired: SubscriptionStatus.INCOMPLETE_EXPIRED,
     paused: SubscriptionStatus.PAUSED,
   };
-  return mapping[status] ?? SubscriptionStatus.ACTIVE;
+  return mapping[status] ?? SubscriptionStatus.PAST_DUE;
 }
