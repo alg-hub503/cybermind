@@ -14,6 +14,7 @@ import StatCard from "@/components/ui/stat-card";
 import EmptyState from "@/components/ui/empty-state";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 import BillingActions from "./billing-actions";
+import PaymentBanner from "@/components/dashboard/payment-banner";
 
 const INVOICE_BADGE: Record<string, string> = {
   paid: "bg-emerald-100 text-emerald-700",
@@ -90,8 +91,10 @@ export default async function BillingPage() {
   }
 
   const school = await getSchoolById(session.user.schoolId!);
+  const subStatus = school?.subscription?.status ?? null;
+  const isPastDueOrUnpaid = subStatus === "PAST_DUE" || subStatus === "UNPAID";
 
-  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? "TRIALING"))) {
+  if (!isAdmin && (!school || (!hasActiveAccess(subStatus ?? "TRIALING") && !isPastDueOrUnpaid))) {
     redirect("/upgrade");
   }
 
@@ -132,12 +135,18 @@ export default async function BillingPage() {
 
   const invoicePdfLabel = await t("billing.invoicePdf");
 
+  const showPaymentBanner = (subStatus === "PAST_DUE" || subStatus === "UNPAID") && session.user.schoolId;
+
   return (
     <div className="space-y-8">
       <PageTitle
         title={await t("billing.title")}
         description={await t("billing.description")}
       />
+
+      {showPaymentBanner && (
+        <PaymentBanner schoolId={session.user.schoolId!} />
+      )}
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard title={await t("billing.plan")} value={sub?.plan ?? "FREE"} />

@@ -11,6 +11,7 @@ import QuickActions from "@/components/dashboard/widgets/quick-actions";
 import RecentActivity from "@/components/dashboard/widgets/recent-activity";
 import SchoolSummary from "@/components/dashboard/widgets/school-summary";
 import StatsGrid from "@/components/dashboard/widgets/stats-grid";
+import PaymentBanner from "@/components/dashboard/payment-banner";
 import { t } from "@/lib/i18n/server";
 export default async function DashboardPage() {
   const { session, user } = await requireCurrentUser();
@@ -40,7 +41,9 @@ export default async function DashboardPage() {
     redirect("/dashboard/schools");
   }
   const school = await getSchoolById(user.schoolId);
-  if (!school || !hasActiveAccess(school.subscription?.status ?? "TRIALING")) {
+  const subStatus = school?.subscription?.status ?? null;
+  const isPastDueOrUnpaid = subStatus === "PAST_DUE" || subStatus === "UNPAID";
+  if (!school || (!hasActiveAccess(subStatus ?? "TRIALING") && !isPastDueOrUnpaid)) {
     redirect("/upgrade");
   }
   const {
@@ -51,9 +54,14 @@ export default async function DashboardPage() {
     totalRevenue,
   } = await getDashboardOverview(user.schoolId);
   const displaySchool = school ?? overviewSchool;
+  const showPaymentBanner = subStatus === "PAST_DUE" || subStatus === "UNPAID";
+
   return (
     <div className="space-y-8">
       <DashboardHeader name={session?.user?.name ?? "User"} />
+      {showPaymentBanner && user.schoolId && (
+        <PaymentBanner schoolId={user.schoolId} />
+      )}
       {displaySchool && (
         <SchoolSummary
           schoolName={displaySchool.name}
