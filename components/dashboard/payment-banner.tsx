@@ -10,10 +10,12 @@ interface PaymentBannerProps {
 export default function PaymentBanner({ schoolId }: PaymentBannerProps) {
   const { t, dir } = useTranslations("billing");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleUpdatePayment = async () => {
     try {
       setLoading(true);
+      setMessage(null);
       const res = await fetch("/api/stripe/portal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -22,9 +24,11 @@ export default function PaymentBanner({ schoolId }: PaymentBannerProps) {
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        setMessage(data.error ?? t("failedPortal"));
       }
     } catch {
-      // silent — user can retry
+      setMessage(t("anError"));
     } finally {
       setLoading(false);
     }
@@ -65,6 +69,9 @@ export default function PaymentBanner({ schoolId }: PaymentBannerProps) {
           >
             {loading ? t("opening") : t("updatePaymentMethod")}
           </button>
+          {message && (
+            <p className="mt-2 text-sm text-amber-700">{message}</p>
+          )}
         </div>
       </div>
     </div>
