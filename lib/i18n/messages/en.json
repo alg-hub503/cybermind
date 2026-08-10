@@ -512,7 +512,7 @@
   "platformSettings.platform": "Platform",
   "platformSettings.platformDescription": "Platform-wide configuration options.",
   "platformSettings.maintenanceMode": "Maintenance Mode",
-  "platformSettings.maintenanceModeNote": "Maintenance Mode is currently stored only and is not yet enforced by the application.",
+  "platformSettings.maintenanceModeNote": "When enabled, non-admin users are redirected to a maintenance page and API access is restricted.",
   "platformSettings.save": "Save Settings",
   "platformSettings.saving": "Saving...",
   "platformSettings.saveSuccess": "Settings saved successfully",
@@ -698,5 +698,11 @@
   "verifyEmail.invalidToken": "Invalid verification link",
   "verifyEmail.error": "Something went wrong. Please try again.",
   "verifyEmail.goToLogin": "Go to Login",
-  "verifyEmail.backToProfile": "Back to Profile"
+  "verifyEmail.backToProfile": "Back to Profile",
+
+  "maintenance.title": "Platform Under Maintenance",
+  "maintenance.description": "We're performing scheduled maintenance. Please try again later.",
+  "maintenance.support": "Questions? Contact us at",
+  "maintenance.login": "Login",
+  "maintenance.home": "Back to Home"
 }

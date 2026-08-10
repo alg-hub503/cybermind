@@ -512,7 +512,7 @@
   "platformSettings.platform": "المنصة",
   "platformSettings.platformDescription": "خيارات تكوين على مستوى المنصة.",
   "platformSettings.maintenanceMode": "وضع الصيانة",
-  "platformSettings.maintenanceModeNote": "وضع الصيانة مخزّن حالياً فقط ولا يتم تطبيقه بعد من قبل التطبيق.",
+  "platformSettings.maintenanceModeNote": "عند التفعيل، يتم إعادة توجيه المستخدمين غير الإداريين إلى صفحة الصيانة وتقييد الوصول إلى واجهة برمجة التطبيقات.",
   "platformSettings.save": "حفظ الإعدادات",
   "platformSettings.saving": "جارٍ الحفظ...",
   "platformSettings.saveSuccess": "تم حفظ الإعدادات بنجاح",
@@ -698,5 +698,11 @@
   "verifyEmail.invalidToken": "رابط التحقق غير صالح",
   "verifyEmail.error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
   "verifyEmail.goToLogin": "الذهاب لتسجيل الدخول",
-  "verifyEmail.backToProfile": "العودة للملف الشخصي"
+  "verifyEmail.backToProfile": "العودة للملف الشخصي",
+
+  "maintenance.title": "المنصة قيد الصيانة",
+  "maintenance.description": "نقوم حالياً بصيانة مجدولة. يرجى المحاولة مرة أخرى لاحقاً.",
+  "maintenance.support": "لديك أسئلة؟ تواصل معنا عبر",
+  "maintenance.login": "تسجيل الدخول",
+  "maintenance.home": "العودة للرئيسية"
 }

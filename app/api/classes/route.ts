@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/get-server-session";
+import { requireSession, toApiError } from "@/lib/authorization";
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getClasses, getClassesBySchool, createClass } from "@/lib/features/classes/class-actions";
 import { classSchema } from "@/lib/features/classes/schemas/class.schema";
 
 export async function GET() {
-  const session = await getServerSession();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const access = await requireSession().catch(toApiError);
+  if ("error" in access) {
+    return NextResponse.json(access, { status: access.status });
   }
+  const { session } = access;
 
   if (session.user.role === ADMIN_ROLE) {
     const classes = await getClasses();
@@ -25,10 +26,11 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await getServerSession();
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const access = await requireSession().catch(toApiError);
+  if ("error" in access) {
+    return NextResponse.json(access, { status: access.status });
   }
+  const { session } = access;
 
   const body = await req.json();
   const parsed = classSchema.safeParse(body);

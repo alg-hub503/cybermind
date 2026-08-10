@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/get-server-session";
+import { requireSession, toApiError } from "@/lib/authorization";
 
 import { StripeGateway } from "@/lib/infrastructure/stripe/stripe-gateway";
 import { startCheckout } from "@/lib/services/application/billing/commands/start-checkout";
 
 export async function POST() {
   try {
-    const session = await getServerSession();
+    const access = await requireSession().catch(toApiError);
+    if ("error" in access) {
+      return NextResponse.json(access, { status: access.status });
+    }
+    const { session } = access;
 
-    if (!session?.user?.email || !session.user.schoolId) {
+    if (!session.user.schoolId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }

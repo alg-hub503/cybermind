@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "@/lib/get-server-session";
+import { requireSession, toApiError } from "@/lib/authorization";
 import { createCustomerPortal } from "@/lib/services/application/billing/create-customer-portal";
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession();
-    if (!session?.user?.schoolId) {
+    const access = await requireSession().catch(toApiError);
+    if ("error" in access) {
+      return NextResponse.json(access, { status: access.status });
+    }
+    const { session } = access;
+
+    if (!session.user.schoolId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
