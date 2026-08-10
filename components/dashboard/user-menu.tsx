@@ -4,15 +4,18 @@ import { signOut, useSession } from "next-auth/react";
 
 import Button from "@/components/ui/button";
 import { useTranslations } from "@/lib/i18n/use-translations";
+import { useTrialAccess } from "@/components/dashboard/trial-access-provider";
+import { toAccessString } from "@/lib/trial-status";
 
 export default function UserMenu() {
   const { data: session } = useSession();
   const { t, dir } = useTranslations("userMenu");
+  const access = useTrialAccess();
 
   const name = session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "Guest";
   const email = session?.user?.email ?? "No email";
   const role = session?.user?.role ?? "USER";
-  const subscription = session?.user?.subscriptionStatus ?? "TRIAL";
+  const subscription = access ? toAccessString(access) : "...";
   const initial = name.charAt(0).toUpperCase();
 
   return (

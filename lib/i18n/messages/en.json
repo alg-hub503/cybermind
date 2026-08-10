@@ -481,6 +481,12 @@
   "settings.invoiceNextNum": "Next Invoice Number",
   "settings.invoiceNotes": "Invoice Notes",
   "settings.invoiceNotesPlaceholder": "Notes to appear on invoices...",
+  "settings.taxAndBilling": "Tax & Billing Contact",
+  "settings.taxAndBillingDescription": "Tax rate and billing email configuration.",
+  "settings.taxRate": "Tax Rate (%)",
+  "settings.taxRateHint": "Percentage applied to invoices. For future use.",
+  "settings.billingEmail": "Billing Email",
+  "settings.billingEmailHint": "Email for invoice-related communications.",
 
   "settings.legal": "Legal",
   "settings.legalDescription": "Legal and tax information.",
@@ -646,6 +652,11 @@
   "subscription.needHelp": "Need Help?",
   "subscription.billingPageText": "Visit the",
   "subscription.billingPageLink": "Billing page",
+  "subscription.trialDaysLeft": "Trial Period",
+  "subscription.trialEndsAt": "days remaining — ends on",
+
+  "trial.warningTitle": "Trial Ending Soon",
+  "trial.warningMessage": "Your trial expires in {days} day(s). Upgrade now to keep full access.",
 
   "analytics.title": "Analytics",
   "analytics.description": "Monitor your business performance with real-time analytics.",

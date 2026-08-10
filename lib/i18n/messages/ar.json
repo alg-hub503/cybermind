@@ -481,6 +481,12 @@
   "settings.invoiceNextNum": "رقم الفاتورة التالي",
   "settings.invoiceNotes": "ملاحظات الفاتورة",
   "settings.invoiceNotesPlaceholder": "ملاحظات تظهر على الفواتير...",
+  "settings.taxAndBilling": "الضريبة وبيانات الفوترة",
+  "settings.taxAndBillingDescription": "إعداد نسبة الضريبة والبريد الإلكتروني للفوترة.",
+  "settings.taxRate": "نسبة الضريبة (%)",
+  "settings.taxRateHint": "النسبة المطبّقة على الفواتير. للاستخدام المستقبلي.",
+  "settings.billingEmail": "البريد الإلكتروني للفوترة",
+  "settings.billingEmailHint": "البريد الإلكتروني المخصص لمراسلات الفواتير.",
 
   "settings.legal": "قانوني",
   "settings.legalDescription": "المعلومات القانونية والضريبية.",
@@ -646,6 +652,11 @@
   "subscription.needHelp": "تحتاج مساعدة؟",
   "subscription.billingPageText": "قم بزيارة",
   "subscription.billingPageLink": "صفحة الفواتير",
+  "subscription.trialDaysLeft": "فترة التجربة",
+  "subscription.trialEndsAt": "أيام متبقية — تنتهي في",
+
+  "trial.warningTitle": "التجربة تنتهي قريباً",
+  "trial.warningMessage": "تنتهي تجربتك خلال {days} يوم(أيام). قم بالترقية الآن للحفاظ على الوصول الكامل.",
 
   "analytics.title": "التحليلات",
   "analytics.description": "راقب أداء عملك مع التحليلات في الوقت الفعلي.",

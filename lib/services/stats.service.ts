@@ -8,7 +8,15 @@ export async function getAdminStats() {
       prisma.school.count(),
       prisma.invoice.count(),
       prisma.subscription.count({ where: { status: "ACTIVE" } }),
-      prisma.subscription.count({ where: { status: "TRIALING" } }),
+      prisma.school.count({
+        where: {
+          subscription: null,
+          settings: {
+            trialStart: { not: null },
+            trialEnd: { gt: new Date() },
+          },
+        },
+      }),
     ]);
 
   return {

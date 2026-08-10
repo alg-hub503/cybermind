@@ -7,6 +7,7 @@ export async function getSchoolById(id: string) {
     },
     include: {
       subscription: true,
+      settings: true,
     },
   });
 }

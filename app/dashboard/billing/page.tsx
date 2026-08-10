@@ -6,6 +6,9 @@ import { getSchoolById } from "@/lib/services/domain/school.service";
 import { getBillingStatus } from "@/lib/services/application/billing/get-billing-status";
 import { listInvoices } from "@/lib/services/application/billing/list-invoices";
 import { exportBilling } from "@/lib/services/application/billing/export-billing";
+import { getPlatformSettings } from "@/lib/features/platform/platform-settings-actions";
+import { resolveTrialStatus, toAccessString } from "@/lib/trial-status";
+import { formatDate } from "@/lib/format-date";
 import { t } from "@/lib/i18n/server";
 
 import Card from "@/components/cards/card";
@@ -15,6 +18,8 @@ import EmptyState from "@/components/ui/empty-state";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 import BillingActions from "./billing-actions";
 import PaymentBanner from "@/components/dashboard/payment-banner";
+import { TrialAccessSetter } from "@/components/dashboard/trial-access-provider";
+import TrialWarningBanner from "@/components/dashboard/trial-warning-banner";
 
 const INVOICE_BADGE: Record<string, string> = {
   paid: "bg-emerald-100 text-emerald-700",
@@ -90,11 +95,21 @@ export default async function BillingPage() {
     );
   }
 
-  const school = await getSchoolById(session.user.schoolId!);
-  const subStatus = school?.subscription?.status ?? null;
+  const [school, platformSettings] = await Promise.all([
+    getSchoolById(session.user.schoolId!),
+    getPlatformSettings(),
+  ]);
+
+  if (!school) {
+    redirect("/upgrade");
+  }
+
+  const access = resolveTrialStatus(school, platformSettings);
+  const accessStr = toAccessString(access);
+  const subStatus = school.subscription?.status ?? null;
   const isPastDueOrUnpaid = subStatus === "PAST_DUE" || subStatus === "UNPAID";
 
-  if (!isAdmin && (!school || (!hasActiveAccess(subStatus ?? "TRIALING") && !isPastDueOrUnpaid))) {
+  if (!isAdmin && !hasActiveAccess(accessStr) && !isPastDueOrUnpaid) {
     redirect("/upgrade");
   }
 
@@ -121,9 +136,10 @@ export default async function BillingPage() {
     }
   }
 
-  const sub = school?.subscription ?? null;
+  const sub = school.subscription ?? null;
 
   const statusLabel = await t(subscriptionStatusKey(sub?.status ?? null));
+  const dateFormat = school.settings?.dateFormat ?? "DD/MM/YYYY";
 
   const invoiceStatusLabels = new Map<string, string>();
   for (const inv of invoices?.data ?? []) {
@@ -136,9 +152,16 @@ export default async function BillingPage() {
   const invoicePdfLabel = await t("billing.invoicePdf");
 
   const showPaymentBanner = (subStatus === "PAST_DUE" || subStatus === "UNPAID") && session.user.schoolId;
+  const showTrialWarning =
+    access.status === "TRIALING" &&
+    access.daysLeft !== null &&
+    access.daysLeft > 0 &&
+    access.warningDays !== null &&
+    access.daysLeft <= access.warningDays;
 
   return (
     <div className="space-y-8">
+      <TrialAccessSetter access={access} />
       <PageTitle
         title={await t("billing.title")}
         description={await t("billing.description")}
@@ -148,6 +171,10 @@ export default async function BillingPage() {
         <PaymentBanner schoolId={session.user.schoolId!} />
       )}
 
+      {showTrialWarning && access.daysLeft !== null && (
+        <TrialWarningBanner daysLeft={access.daysLeft} />
+      )}
+
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard title={await t("billing.plan")} value={sub?.plan ?? "FREE"} />
         <StatCard title={await t("billing.status")} value={statusLabel} />
@@ -155,7 +182,7 @@ export default async function BillingPage() {
           title={await t("billing.renewalDate")}
           value={
             sub?.currentPeriodEnd
-              ? sub.currentPeriodEnd.toLocaleDateString()
+              ? formatDate(sub.currentPeriodEnd, dateFormat)
               : await t("billing.notAvailable")
           }
         />

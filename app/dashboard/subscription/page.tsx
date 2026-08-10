@@ -1,9 +1,13 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/get-server-session";
+import { hasActiveAccess } from "@/lib/subscription-status";
+import { getSchoolById } from "@/lib/services/domain/school.service";
+import { getPlatformSettings } from "@/lib/features/platform/platform-settings-actions";
+import { resolveTrialStatus, toAccessString } from "@/lib/trial-status";
+import { formatDate } from "@/lib/format-date";
 import { t } from "@/lib/i18n/server";
 
-import { getSchoolById } from "@/lib/services/domain/school.service";
-import { hasActiveAccess } from "@/lib/subscription-status";
+import { TrialAccessSetter } from "@/components/dashboard/trial-access-provider";
 
 export default async function SubscriptionPage() {
   const session = await getServerSession();
@@ -23,11 +27,27 @@ export default async function SubscriptionPage() {
     school = await getSchoolById(session.user.schoolId);
   }
 
-  if (!isAdmin && (!school || !hasActiveAccess(school.subscription?.status ?? "TRIALING"))) {
-    redirect("/upgrade");
+  if (!isAdmin) {
+    if (!school) {
+      redirect("/upgrade");
+    }
+
+    const platformSettings = await getPlatformSettings();
+    const access = resolveTrialStatus(school, platformSettings);
+    const accessStr = toAccessString(access);
+
+    if (!hasActiveAccess(accessStr)) {
+      redirect("/upgrade");
+    }
   }
 
   const sub = school?.subscription ?? null;
+  const dateFormat = school?.settings?.dateFormat ?? "DD/MM/YYYY";
+
+  const platformSettings = school ? await getPlatformSettings() : null;
+  const access = school && platformSettings
+    ? resolveTrialStatus(school, platformSettings)
+    : null;
 
   const title = await t("subscription.title");
   const description = await t("subscription.description");
@@ -47,13 +67,26 @@ export default async function SubscriptionPage() {
   const needHelp = await t("subscription.needHelp");
   const billingPageText = await t("subscription.billingPageText");
   const billingPageLink = await t("subscription.billingPageLink");
+  const trialDaysLeft = await t("subscription.trialDaysLeft");
+  const trialEndsAt = await t("subscription.trialEndsAt");
 
   return (
     <div className="space-y-8">
+      {access && <TrialAccessSetter access={access} />}
+
       <div>
         <h1 className="text-2xl font-bold">{title}</h1>
         <p className="text-gray-500">{description}</p>
       </div>
+
+      {access?.status === "TRIALING" && access.daysLeft !== null && access.trialEnd && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
+          <h2 className="mb-2 text-lg font-semibold text-amber-800">{trialDaysLeft}</h2>
+          <p className="text-sm text-amber-700">
+            {access.daysLeft} {trialEndsAt} {formatDate(access.trialEnd, dateFormat)}
+          </p>
+        </div>
+      )}
 
       <div className="rounded-lg border bg-white p-6">
         <h2 className="mb-4 text-lg font-semibold">{currentPlan}</h2>
@@ -70,7 +103,7 @@ export default async function SubscriptionPage() {
             <p className="text-sm text-gray-500">{periodStart}</p>
             <p className="text-xl font-bold">
               {sub?.currentPeriodStart
-                ? sub.currentPeriodStart.toLocaleDateString()
+                ? formatDate(sub.currentPeriodStart, dateFormat)
                 : "N/A"}
             </p>
           </div>
@@ -78,7 +111,7 @@ export default async function SubscriptionPage() {
             <p className="text-sm text-gray-500">{periodEnd}</p>
             <p className="text-xl font-bold">
               {sub?.currentPeriodEnd
-                ? sub.currentPeriodEnd.toLocaleDateString()
+                ? formatDate(sub.currentPeriodEnd, dateFormat)
                 : "N/A"}
             </p>
           </div>
@@ -86,8 +119,8 @@ export default async function SubscriptionPage() {
             <p className="text-sm text-gray-500">{renewalExpiry}</p>
             <p className="text-xl font-bold">
               {sub?.cancelAtPeriodEnd
-                ? `${expires} ${sub.currentPeriodEnd?.toLocaleDateString() ?? "N/A"}`
-                : `${renews} ${sub?.currentPeriodEnd?.toLocaleDateString() ?? "N/A"}`}
+                ? `${expires} ${sub.currentPeriodEnd ? formatDate(sub.currentPeriodEnd, dateFormat) : "N/A"}`
+                : `${renews} ${sub?.currentPeriodEnd ? formatDate(sub.currentPeriodEnd, dateFormat) : "N/A"}`}
             </p>
           </div>
           <div className="rounded-lg border bg-slate-50 p-4">

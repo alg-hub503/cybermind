@@ -24,29 +24,46 @@ export async function POST(req: Request) {
       );
     }
 
-    // 🔥 FIX: ensure password is always hashed correctly
     const hashedPassword = await bcrypt.hash(String(body.password), 12);
 
-    const school = await prisma.school.create({
-      data: {
-        name: `${body.email.split("@")[0]} School`,
-      },
-    });
+    const result = await prisma.$transaction(async (tx) => {
+      const school = await tx.school.create({
+        data: {
+          name: `${body.email.split("@")[0]} School`,
+        },
+      });
 
-    const user = await prisma.user.create({
-      data: {
-        email: body.email,
-        name: body.name ?? null,
-        password: hashedPassword,
-        schoolId: school.id,
-        role: "USER",
-      },
+      const platformSettings = await tx.platformSettings.findUnique({
+        where: { id: "singleton" },
+      });
+      const duration = platformSettings?.trialDurationDays ?? 14;
+      const now = new Date();
+
+      await tx.schoolSettings.create({
+        data: {
+          schoolId: school.id,
+          trialStart: now,
+          trialEnd: new Date(now.getTime() + duration * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      const user = await tx.user.create({
+        data: {
+          email: body.email,
+          name: body.name ?? null,
+          password: hashedPassword,
+          schoolId: school.id,
+          role: "USER",
+        },
+      });
+
+      return { user, school };
     });
 
     return NextResponse.json({
-      id: user.id,
-      email: user.email,
-      schoolId: school.id,
+      id: result.user.id,
+      email: result.user.email,
+      schoolId: result.school.id,
       message: "User and School created successfully",
     });
   } catch (error) {
