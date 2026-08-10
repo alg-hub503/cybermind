@@ -190,6 +190,10 @@ model SchoolSettings {
   invoiceNextNum  Int       @default(1)
   invoiceNotes    String?
 
+  // Billing (configuration only — no calculation logic in this phase)
+  taxRate         Float?
+  billingEmail    String?
+
   // Legal / Tax (placeholders — no logic yet)
   taxNumber      String?
   crNumber       String?

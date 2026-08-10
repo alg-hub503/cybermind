@@ -35,6 +35,10 @@ export interface SchoolSettings {
   invoiceNextNum: number;
   invoiceNotes: string | null;
 
+  // Billing
+  taxRate: number | null;
+  billingEmail: string | null;
+
   // Legal / Tax
   taxNumber: string | null;
   crNumber: string | null;

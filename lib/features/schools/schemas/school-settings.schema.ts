@@ -45,6 +45,10 @@ export const schoolSettingsSchema = z.object({
   invoiceNextNum: z.number().int().min(1).optional(),
   invoiceNotes: z.string().max(500).nullable().optional(),
 
+  // Billing
+  taxRate: z.number().min(0).max(100).nullable().optional(),
+  billingEmail: z.string().email().nullable().optional(),
+
   // Legal / Tax
   taxNumber: z.string().max(50).nullable().optional(),
   crNumber: z.string().max(50).nullable().optional(),
