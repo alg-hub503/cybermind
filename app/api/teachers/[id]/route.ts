@@ -49,7 +49,7 @@ export async function PUT(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (teacher.schoolId !== session.user.schoolId) {
+  if (session.user.schoolId && teacher.schoolId !== session.user.schoolId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -85,7 +85,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (teacher.schoolId !== session.user.schoolId) {
+  if (session.user.schoolId && teacher.schoolId !== session.user.schoolId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

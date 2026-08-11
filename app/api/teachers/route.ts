@@ -3,6 +3,7 @@ import { requireSession, toApiError } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getTeachers, getTeachersBySchool, createTeacher } from "@/lib/features/teachers/teacher-actions";
 import { createTeacherSchema } from "@/lib/features/teachers/schemas/teacher.schema";
+import { getSchoolById } from "@/lib/services/domain/school.service";
 
 export async function GET() {
   const access = await requireSession().catch(toApiError);
@@ -42,8 +43,13 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
   }
 
-  if (parsed.data.schoolId !== session.user.schoolId) {
+  if (session.user.schoolId && parsed.data.schoolId !== session.user.schoolId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const school = await getSchoolById(parsed.data.schoolId);
+  if (!school) {
+    return NextResponse.json({ error: "School not found" }, { status: 400 });
   }
 
   try {
