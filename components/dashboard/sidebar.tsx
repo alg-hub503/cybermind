@@ -56,6 +56,8 @@ export default function Sidebar() {
         <NavItem href="/dashboard/grades" label={t("grades")} icon={<Layers size={20} />} />
         <NavItem href="/dashboard/classes" label={t("classes")} icon={<BookOpen size={20} />} />
         <NavItem href="/dashboard/students" label={t("students")} icon={<GraduationCap size={20} />} />
+        <NavItem href="/dashboard/teachers" label={t("teachers")} icon={<Users size={20} />} />
+        <NavItem href="/dashboard/staff" label={t("staff")} icon={<Users size={20} />} />
         <NavItem href="/dashboard/stats" label={t("stats")} icon={<BarChart3 size={20} />} />
         <NavItem href="/dashboard/subscription" label={t("subscription")} icon={<Crown size={20} />} />
         <NavItem href="/dashboard/billing" label={t("billing")} icon={<CreditCard size={20} />} />
@@ -66,6 +68,7 @@ export default function Sidebar() {
         {isAdmin && (
           <>
             <NavItem href="/dashboard/admin" label={t("admin")} icon={<Shield size={20} />} />
+            <NavItem href="/dashboard/roles" label={t("roles")} icon={<Shield size={20} />} />
             <NavItem href="/dashboard/platform-settings" label={t("platformSettings")} icon={<Settings size={20} />} />
           </>
         )}

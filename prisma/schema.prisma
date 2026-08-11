@@ -45,6 +45,9 @@ model User {
    reports             Report[]
   contactMessages    ContactMessage[]
   salesInquiries     SalesInquiry[]
+  teacherProfile     TeacherProfile?
+  staffProfile       StaffProfile?
+  userRoles          UserRole[]
 }
 
 model PasswordResetToken {
@@ -151,6 +154,9 @@ model School {
   StudentAcademicRecord StudentAcademicRecord[]
   contactMessages      ContactMessage[]
   salesInquiries       SalesInquiry[]
+  teacherProfiles      TeacherProfile[]
+  staffProfiles        StaffProfile[]
+  userRoles            UserRole[]
 }
 
 model SchoolSettings {
@@ -310,6 +316,93 @@ model StudentAcademicRecord {
   @@index([schoolId])
   @@index([classId])
   @@index([academicYearId])
+}
+
+model TeacherProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  schoolId       String
+  phone          String?
+  specialization String?
+  qualifications String?
+  hireDate       DateTime?
+  status         String   @default("ACTIVE")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId])
+  @@index([status])
+}
+
+model StaffProfile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  schoolId   String
+  phone      String?
+  position   String?
+  department String?
+  hireDate   DateTime?
+  status     String   @default("ACTIVE")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@index([schoolId])
+  @@index([status])
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  RolePermission RolePermission[]
+  UserRole       UserRole[]
+
+  @@unique([name])
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+
+  RolePermission RolePermission[]
+}
+
+model RolePermission {
+  id           String @id @default(cuid())
+  roleId       String
+  permissionId String
+
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  schoolId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId, schoolId])
+  @@index([schoolId])
 }
 
 model playing_with_neon {
