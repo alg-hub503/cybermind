@@ -23,6 +23,7 @@ export interface CreateStaffDto {
 }
 
 export interface UpdateStaffDto {
+  name?: string;
   phone?: string | null;
   position?: string | null;
   department?: string | null;

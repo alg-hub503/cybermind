@@ -4,6 +4,8 @@ import { getTeachers, getTeachersBySchool } from "@/lib/features/teachers/teache
 import { getSchools } from "@/lib/features/schools/school-actions";
 import { t } from "@/lib/i18n/server";
 import TeacherForm from "./TeacherForm";
+import EditTeacherButton from "./EditTeacherButton";
+import DeleteTeacherButton from "./DeleteTeacherButton";
 import EmptyState from "@/components/ui/empty-state";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
@@ -77,10 +79,23 @@ export default async function TeachersPage() {
                   <div className="flex justify-center gap-2">
                     <a
                       href={`/dashboard/teachers/${teacher.id}`}
-                      className="rounded-lg border border-slate-300 px-3 py-1 text-sm hover:bg-slate-50"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-white transition hover:bg-blue-600"
+                      title={actionsLabel}
                     >
-                      {actionsLabel}
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      </svg>
                     </a>
+                    <EditTeacherButton
+                      id={teacher.id}
+                      currentName={teacher.user.name ?? ""}
+                      currentPhone={teacher.phone}
+                      currentSpecialization={teacher.specialization}
+                      currentQualifications={teacher.qualifications}
+                      currentHireDate={teacher.hireDate ? new Date(teacher.hireDate).toISOString().split("T")[0] : null}
+                    />
+                    <DeleteTeacherButton id={teacher.id} />
                   </div>
                 </DataTableCell>
               </DataTableRow>

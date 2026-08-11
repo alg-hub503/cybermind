@@ -61,19 +61,28 @@ export class PrismaTeacherRepository {
   }
 
   async update(id: string, data: UpdateTeacherDto) {
-    const updateData: Record<string, unknown> = {};
-    if (data.phone !== undefined) updateData.phone = data.phone;
-    if (data.specialization !== undefined) updateData.specialization = data.specialization;
-    if (data.qualifications !== undefined) updateData.qualifications = data.qualifications;
+    const profileData: Record<string, unknown> = {};
+    if (data.phone !== undefined) profileData.phone = data.phone;
+    if (data.specialization !== undefined) profileData.specialization = data.specialization;
+    if (data.qualifications !== undefined) profileData.qualifications = data.qualifications;
     if (data.hireDate !== undefined) {
-      updateData.hireDate = data.hireDate ? new Date(data.hireDate) : null;
+      profileData.hireDate = data.hireDate ? new Date(data.hireDate) : null;
     }
-    if (data.status !== undefined) updateData.status = data.status;
+    if (data.status !== undefined) profileData.status = data.status;
 
-    return prisma.teacherProfile.update({
-      where: { id },
-      data: updateData,
-      include: { user: { select: { id: true, name: true, email: true, role: true } } },
+    const profile = await prisma.teacherProfile.findUnique({ where: { id }, select: { userId: true } });
+    if (!profile) throw new Error("Teacher not found");
+
+    return prisma.$transaction(async (tx) => {
+      if (data.name !== undefined) {
+        await tx.user.update({ where: { id: profile.userId }, data: { name: data.name } });
+      }
+
+      return tx.teacherProfile.update({
+        where: { id },
+        data: profileData,
+        include: { user: { select: { id: true, name: true, email: true, role: true } } },
+      });
     });
   }
 

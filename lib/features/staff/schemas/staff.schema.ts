@@ -12,6 +12,7 @@ export const createStaffSchema = z.object({
 });
 
 export const updateStaffSchema = z.object({
+  name: z.string().trim().min(1).optional(),
   phone: z.string().nullable().optional(),
   position: z.string().nullable().optional(),
   department: z.string().nullable().optional(),

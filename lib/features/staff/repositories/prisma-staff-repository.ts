@@ -61,19 +61,28 @@ export class PrismaStaffRepository {
   }
 
   async update(id: string, data: UpdateStaffDto) {
-    const updateData: Record<string, unknown> = {};
-    if (data.phone !== undefined) updateData.phone = data.phone;
-    if (data.position !== undefined) updateData.position = data.position;
-    if (data.department !== undefined) updateData.department = data.department;
+    const profileData: Record<string, unknown> = {};
+    if (data.phone !== undefined) profileData.phone = data.phone;
+    if (data.position !== undefined) profileData.position = data.position;
+    if (data.department !== undefined) profileData.department = data.department;
     if (data.hireDate !== undefined) {
-      updateData.hireDate = data.hireDate ? new Date(data.hireDate) : null;
+      profileData.hireDate = data.hireDate ? new Date(data.hireDate) : null;
     }
-    if (data.status !== undefined) updateData.status = data.status;
+    if (data.status !== undefined) profileData.status = data.status;
 
-    return prisma.staffProfile.update({
-      where: { id },
-      data: updateData,
-      include: { user: { select: { id: true, name: true, email: true, role: true } } },
+    const profile = await prisma.staffProfile.findUnique({ where: { id }, select: { userId: true } });
+    if (!profile) throw new Error("Staff not found");
+
+    return prisma.$transaction(async (tx) => {
+      if (data.name !== undefined) {
+        await tx.user.update({ where: { id: profile.userId }, data: { name: data.name } });
+      }
+
+      return tx.staffProfile.update({
+        where: { id },
+        data: profileData,
+        include: { user: { select: { id: true, name: true, email: true, role: true } } },
+      });
     });
   }
 

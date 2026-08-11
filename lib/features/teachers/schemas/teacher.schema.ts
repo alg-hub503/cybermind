@@ -12,6 +12,7 @@ export const createTeacherSchema = z.object({
 });
 
 export const updateTeacherSchema = z.object({
+  name: z.string().trim().min(1).optional(),
   phone: z.string().nullable().optional(),
   specialization: z.string().nullable().optional(),
   qualifications: z.string().nullable().optional(),

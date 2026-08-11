@@ -23,6 +23,7 @@ export interface CreateTeacherDto {
 }
 
 export interface UpdateTeacherDto {
+  name?: string;
   phone?: string | null;
   specialization?: string | null;
   qualifications?: string | null;
