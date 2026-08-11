@@ -169,13 +169,16 @@ export default function StaffForm({ schoolId, schools }: StaffFormProps) {
           disabled={loading}
         />
 
-        <Input
-          placeholder={t("hireDatePlaceholder")}
-          value={hireDate}
-          onChange={(e) => setHireDate(e.target.value)}
-          disabled={loading}
-          type="date"
-        />
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">{t("hireDate")}</label>
+          <Input
+            placeholder={t("hireDatePlaceholder")}
+            value={hireDate}
+            onChange={(e) => setHireDate(e.target.value)}
+            disabled={loading}
+            type="date"
+          />
+        </div>
 
         <Button onClick={createStaff} disabled={loading}>
           {loading ? (
