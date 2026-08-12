@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireSession, toApiError } from "@/lib/authorization";
+import { requireSession, requirePermission, toApiError } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getStaffMember, updateStaffMember, deleteStaffMember } from "@/lib/features/staff/staff-actions";
 import { updateStaffSchema } from "@/lib/features/staff/schemas/staff.schema";
@@ -32,16 +32,12 @@ export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const access = await requireSession().catch(toApiError);
+  const access = await requirePermission("MANAGE_STAFF").catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }
-  const { session } = access;
+  const { user } = access;
   const { id } = await params;
-
-  if (session.user.role !== ADMIN_ROLE) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
 
   const staff = await getStaffMember(id);
 
@@ -49,7 +45,7 @@ export async function PUT(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (session.user.schoolId && staff.schoolId !== session.user.schoolId) {
+  if (user.role !== ADMIN_ROLE && staff.schoolId !== user.schoolId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -68,16 +64,12 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const access = await requireSession().catch(toApiError);
+  const access = await requirePermission("MANAGE_STAFF").catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }
-  const { session } = access;
+  const { user } = access;
   const { id } = await params;
-
-  if (session.user.role !== ADMIN_ROLE) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
 
   const staff = await getStaffMember(id);
 
@@ -85,7 +77,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  if (session.user.schoolId && staff.schoolId !== session.user.schoolId) {
+  if (user.role !== ADMIN_ROLE && staff.schoolId !== user.schoolId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
