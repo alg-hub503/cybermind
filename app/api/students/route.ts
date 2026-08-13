@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireSession, toApiError } from "@/lib/authorization";
+import { requireSession, requirePermission, toApiError } from "@/lib/authorization";
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getStudents, getStudentsBySchool, createStudent } from "@/lib/features/students/student-actions";
@@ -26,11 +26,11 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const access = await requireSession().catch(toApiError);
+  const access = await requirePermission("MANAGE_STUDENTS").catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }
-  const { session } = access;
+  const { user } = access;
 
   const body = await req.json();
   const parsed = studentSchema.safeParse(body);
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
   }
 
-  if (session.user.role !== ADMIN_ROLE && parsed.data.schoolId !== session.user.schoolId) {
+  if (user.role !== ADMIN_ROLE && parsed.data.schoolId !== user.schoolId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

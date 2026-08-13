@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import {
+  requirePermission,
   requireResourceAccess,
   toApiError,
 } from "@/lib/authorization";
@@ -21,12 +22,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const access = await requirePermission("MANAGE_STUDENTS").catch(toApiError);
+  if ("error" in access) {
+    return NextResponse.json({ error: access.error }, { status: access.status });
+  }
+  const { user } = access;
   const { id } = await params;
 
   const student = await getStudent(id);
-  const access = await requireResourceAccess(student).catch(toApiError);
-  if ("error" in access) {
-    return NextResponse.json({ error: access.error }, { status: access.status });
+
+  if (!student) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (user.role !== ADMIN_ROLE && student.schoolId !== user.schoolId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const body = await req.json();
@@ -36,7 +46,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
   }
 
-  if (parsed.data.schoolId && access.user.role !== ADMIN_ROLE && parsed.data.schoolId !== access.user.schoolId) {
+  if (parsed.data.schoolId && user.role !== ADMIN_ROLE && parsed.data.schoolId !== user.schoolId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -52,12 +62,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const access = await requirePermission("MANAGE_STUDENTS").catch(toApiError);
+  if ("error" in access) {
+    return NextResponse.json({ error: access.error }, { status: access.status });
+  }
+  const { user } = access;
   const { id } = await params;
 
   const student = await getStudent(id);
-  const access = await requireResourceAccess(student).catch(toApiError);
-  if ("error" in access) {
-    return NextResponse.json({ error: access.error }, { status: access.status });
+
+  if (!student) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (user.role !== ADMIN_ROLE && student.schoolId !== user.schoolId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   await deleteStudent(id);

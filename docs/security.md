@@ -14,6 +14,7 @@ these helpers:
 | `requireAdmin()` | `requireAuth()` + role is `ADMIN_ROLE` | `UNAUTHORIZED` / `FORBIDDEN` |
 | `requireSchoolAccess(schoolId)` | `requireAuth()` + caller is ADMIN **or** caller's `schoolId` matches | `UNAUTHORIZED` / `FORBIDDEN` |
 | `requireResourceAccess(resource)` | `requireAuth()` + resource exists + caller is ADMIN **or** `resource.schoolId === caller.schoolId` | `UNAUTHORIZED` / `FORBIDDEN` / `NOT_FOUND` |
+| `requirePermission(code)` | `requireAuth()` + user is ADMIN (bypass) **or** the user has `code` among the union of permissions across their school-scoped `UserRole` rows | `UNAUTHORIZED` / `FORBIDDEN` |
 | `toApiError(error)` | Maps thrown codes to HTTP responses | — |
 
 Convention:

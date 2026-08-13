@@ -57,6 +57,22 @@ export async function POST(req: Request) {
         },
       });
 
+      const adminRole = await tx.role.findUnique({
+        where: { name: "ADMIN" },
+      });
+
+      if (!adminRole) {
+        throw new Error("ADMIN role is not seeded; run scripts/seed-roles-permissions.ts");
+      }
+
+      await tx.userRole.create({
+        data: {
+          userId: user.id,
+          roleId: adminRole.id,
+          schoolId: school.id,
+        },
+      });
+
       return { user, school };
     });
 
