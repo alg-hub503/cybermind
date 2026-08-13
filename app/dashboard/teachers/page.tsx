@@ -5,7 +5,6 @@ import { getSchools } from "@/lib/features/schools/school-actions";
 import { t } from "@/lib/i18n/server";
 import TeacherForm from "./TeacherForm";
 import EditTeacherButton from "./EditTeacherButton";
-import DeleteTeacherButton from "./DeleteTeacherButton";
 import EmptyState from "@/components/ui/empty-state";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
@@ -95,7 +94,6 @@ export default async function TeachersPage() {
                       currentQualifications={teacher.qualifications}
                       currentHireDate={teacher.hireDate ? new Date(teacher.hireDate).toISOString().split("T")[0] : null}
                     />
-                    <DeleteTeacherButton id={teacher.id} />
                   </div>
                 </DataTableCell>
               </DataTableRow>
