@@ -16,7 +16,7 @@ export default function DeleteClientButton({
     if (!ok) return;
 
     await fetch(
-      `/api/clients?id=${id}`,
+      `/api/clients/${id}`,
       {
         method: "DELETE",
       }
