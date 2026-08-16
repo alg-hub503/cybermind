@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Class, CreateClassDto, UpdateClassDto } from "../types/class";
+import type { Class, ClassWithDetails, CreateClassDto, UpdateClassDto } from "../types/class";
 
 export class PrismaClassRepository {
   async findAll(): Promise<Class[]> {
@@ -48,5 +48,42 @@ export class PrismaClassRepository {
 
   async delete(id: string): Promise<Class> {
     return prisma.class.delete({ where: { id } }) as unknown as Class;
+  }
+
+  async findByIdWithDetails(id: string): Promise<ClassWithDetails | null> {
+    const cls = await prisma.class.findUnique({
+      where: { id },
+      include: {
+        grade: { select: { id: true, name: true } },
+        academicYear: { select: { id: true, name: true } },
+      },
+    });
+
+    if (!cls) return null;
+
+    const records = await prisma.studentAcademicRecord.findMany({
+      where: {
+        classId: cls.id,
+        academicYearId: cls.academicYearId,
+        schoolId: cls.schoolId,
+      },
+      include: {
+        student: {
+          select: { id: true, code: true, firstName: true, lastName: true },
+        },
+      },
+    });
+
+    const students = records.map((r) => r.student);
+
+    return {
+      id: cls.id,
+      schoolId: cls.schoolId,
+      name: cls.name,
+      code: cls.code,
+      grade: cls.grade,
+      academicYear: cls.academicYear,
+      students,
+    };
   }
 }

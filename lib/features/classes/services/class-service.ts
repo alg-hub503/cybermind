@@ -1,5 +1,5 @@
 import { PrismaClassRepository } from "../repositories/prisma-class-repository";
-import type { CreateClassDto, UpdateClassDto } from "../types/class";
+import type { CreateClassDto, UpdateClassDto, ClassWithDetails } from "../types/class";
 
 export class ClassService {
   private repository = new PrismaClassRepository();
@@ -11,4 +11,7 @@ export class ClassService {
   create(data: CreateClassDto) { return this.repository.create(data); }
   update(id: string, data: UpdateClassDto) { return this.repository.update(id, data); }
   delete(id: string) { return this.repository.delete(id); }
+  getByIdWithDetails(id: string): Promise<ClassWithDetails | null> {
+    return this.repository.findByIdWithDetails(id);
+  }
 }
