@@ -16,3 +16,12 @@ export interface UpdateGradeDto {
   name?: string;
   order?: number;
 }
+
+export interface GradeWithClasses extends Grade {
+  classes: Array<{
+    id: string;
+    name: string;
+    code: string;
+    academicYear: { id: string; name: string };
+  }>;
+}

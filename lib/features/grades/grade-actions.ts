@@ -8,3 +8,4 @@ export const getGradesBySchool = (schoolId: string) => service.getBySchool(schoo
 export const createGrade = (data: Parameters<GradeService["create"]>[0]) => service.create(data);
 export const updateGrade = (id: string, data: Parameters<GradeService["update"]>[1]) => service.update(id, data);
 export const deleteGrade = (id: string) => service.delete(id);
+export const getGradeWithClasses = (id: string) => service.getByIdWithClasses(id);

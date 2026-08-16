@@ -1,5 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import type { Grade, CreateGradeDto, UpdateGradeDto } from "../types/grade";
+import type {
+  Grade,
+  GradeWithClasses,
+  CreateGradeDto,
+  UpdateGradeDto,
+} from "../types/grade";
 
 export class PrismaGradeRepository {
   async findAll(): Promise<Grade[]> {
@@ -28,5 +33,26 @@ export class PrismaGradeRepository {
 
   async delete(id: string): Promise<Grade> {
     return prisma.grade.delete({ where: { id } }) as unknown as Grade;
+  }
+
+  async findByIdWithClasses(id: string): Promise<GradeWithClasses | null> {
+    const grade = await prisma.grade.findUnique({
+      where: { id },
+      include: {
+        Class: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+            academicYear: { select: { id: true, name: true } },
+          },
+        },
+      },
+    });
+
+    if (!grade) return null;
+
+    const { Class: classes, ...rest } = grade;
+    return { ...rest, classes } as unknown as GradeWithClasses;
   }
 }

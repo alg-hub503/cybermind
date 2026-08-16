@@ -1,5 +1,5 @@
 import { PrismaGradeRepository } from "../repositories/prisma-grade-repository";
-import type { CreateGradeDto, UpdateGradeDto } from "../types/grade";
+import type { CreateGradeDto, UpdateGradeDto, GradeWithClasses } from "../types/grade";
 
 export class GradeService {
   private repository = new PrismaGradeRepository();
@@ -10,4 +10,7 @@ export class GradeService {
   create(data: CreateGradeDto) { return this.repository.create(data); }
   update(id: string, data: UpdateGradeDto) { return this.repository.update(id, data); }
   delete(id: string) { return this.repository.delete(id); }
+  getByIdWithClasses(id: string): Promise<GradeWithClasses | null> {
+    return this.repository.findByIdWithClasses(id);
+  }
 }
