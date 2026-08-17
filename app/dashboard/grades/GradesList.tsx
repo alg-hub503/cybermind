@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "@/lib/i18n/use-translations";
 import { ResourceList } from "@/components/ui/resource-list";
+import Link from "next/link";
 
 interface Grade {
   id: string;
@@ -54,7 +55,14 @@ export default function GradesList({
     <ResourceList
       items={grades}
       keyField="id"
-      renderPrimary={(grade) => grade.name}
+      renderPrimary={(grade) => (
+        <Link
+          href={`/dashboard/grades/${grade.id}`}
+          className="hover:underline"
+        >
+          {grade.name}
+        </Link>
+      )}
       renderMeta={(grade) => `${t("order")}: ${grade.order}`}
       onEdit={handleEdit}
       onDelete={handleDelete}

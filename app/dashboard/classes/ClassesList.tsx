@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "@/lib/i18n/use-translations";
 import { ResourceList } from "@/components/ui/resource-list";
+import Link from "next/link";
 
 interface Class {
   id: string;
@@ -55,7 +56,14 @@ export default function ClassesList({
     <ResourceList
       items={classes}
       keyField="id"
-      renderPrimary={(cls) => cls.name}
+      renderPrimary={(cls) => (
+        <Link
+          href={`/dashboard/classes/${cls.id}`}
+          className="hover:underline"
+        >
+          {cls.name}
+        </Link>
+      )}
       renderMeta={(cls) => {
         const parts: string[] = [cls.code];
         if (cls.grade) parts.push(cls.grade.name);
