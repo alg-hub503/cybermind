@@ -9,3 +9,4 @@ export const getStudentByCode = (schoolId: string, code: string) => service.getB
 export const createStudent = (data: Parameters<StudentService["create"]>[0]) => service.create(data);
 export const updateStudent = (id: string, data: Parameters<StudentService["update"]>[1]) => service.update(id, data);
 export const deleteStudent = (id: string) => service.delete(id);
+export const getStudentWithDetails = (id: string) => service.getByIdWithDetails(id);

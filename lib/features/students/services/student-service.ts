@@ -1,5 +1,5 @@
 import { PrismaStudentRepository } from "../repositories/prisma-student-repository";
-import type { CreateStudentDto, UpdateStudentDto } from "../types/student";
+import type { CreateStudentDto, UpdateStudentDto, StudentWithDetails } from "../types/student";
 
 export class StudentService {
   private repository = new PrismaStudentRepository();
@@ -11,4 +11,7 @@ export class StudentService {
   create(data: CreateStudentDto) { return this.repository.create(data); }
   update(id: string, data: UpdateStudentDto) { return this.repository.update(id, data); }
   delete(id: string) { return this.repository.delete(id); }
+  getByIdWithDetails(id: string): Promise<StudentWithDetails | null> {
+    return this.repository.findByIdWithDetails(id);
+  }
 }

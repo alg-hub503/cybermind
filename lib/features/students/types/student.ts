@@ -26,3 +26,18 @@ export interface UpdateStudentDto {
   dateOfBirth?: string | null;
   status?: string;
 }
+
+export interface StudentWithDetails {
+  id: string;
+  schoolId: string;
+  code: string;
+  firstName: string;
+  lastName: string;
+  dateOfBirth: Date | null;
+  status: string;
+  academicHistory: Array<{
+    academicYear: { id: string; name: string };
+    class: { id: string; name: string };
+    enrolledAt: Date;
+  }>;
+}

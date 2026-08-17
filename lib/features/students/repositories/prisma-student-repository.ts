@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import type { Student, CreateStudentDto, UpdateStudentDto } from "../types/student";
+import type { Student, StudentWithDetails, CreateStudentDto, UpdateStudentDto } from "../types/student";
 
 export class PrismaStudentRepository {
   async findAll(): Promise<Student[]> {
@@ -45,5 +45,48 @@ export class PrismaStudentRepository {
 
   async delete(id: string): Promise<Student> {
     return prisma.student.delete({ where: { id } }) as unknown as Student;
+  }
+
+  async findByIdWithDetails(id: string): Promise<StudentWithDetails | null> {
+    const student = await prisma.student.findUnique({ where: { id } });
+    if (!student) return null;
+
+    const records = await prisma.studentAcademicRecord.findMany({
+      where: {
+        studentId: student.id,
+        schoolId: student.schoolId,
+      },
+      include: {
+        academicYear: { select: { id: true, name: true } },
+        class: { select: { id: true, name: true, academicYearId: true } },
+      },
+    });
+
+    // Defensive consistency filter: Prisma schema has no @@unique constraint
+    // linking StudentAcademicRecord.academicYearId to Class.academicYearId.
+    // A mismatched academic year/class pair could appear if data integrity
+    // was violated at the database level. We filter on the JS side to guarantee
+    // the displayed history shows only internally consistent (academicYear ↔ class)
+    // enrollments — identical to the pattern used in Class Detail.
+    const consistentRecords = records.filter(
+      (r) => r.academicYearId === r.class.academicYearId
+    );
+
+    const academicHistory = consistentRecords.map((r) => ({
+      academicYear: r.academicYear,
+      class: { id: r.class.id, name: r.class.name },
+      enrolledAt: r.enrolledAt,
+    }));
+
+    return {
+      id: student.id,
+      schoolId: student.schoolId,
+      code: student.code,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      dateOfBirth: student.dateOfBirth,
+      status: student.status,
+      academicHistory,
+    };
   }
 }
