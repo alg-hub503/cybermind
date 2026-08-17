@@ -8,6 +8,7 @@ import EditStudentButton from "./EditStudentButton";
 import DeleteStudentButton from "./DeleteStudentButton";
 import EmptyState from "@/components/ui/empty-state";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
+import Link from "next/link";
 
 export default async function StudentsPage() {
   const { user } = await requireCurrentUser();
@@ -64,7 +65,14 @@ export default async function StudentsPage() {
             {students.map((student) => (
               <DataTableRow key={student.id}>
                 <DataTableCell className="font-mono text-sm">{student.code}</DataTableCell>
-                <DataTableCell className="font-medium">{student.firstName} {student.lastName}</DataTableCell>
+                <DataTableCell className="font-medium">
+                  <Link
+                    href={`/dashboard/students/${student.id}`}
+                    className="hover:underline"
+                  >
+                    {student.firstName} {student.lastName}
+                  </Link>
+                </DataTableCell>
                 <DataTableCell>
                   <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                     student.status === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
