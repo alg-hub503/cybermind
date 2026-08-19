@@ -127,13 +127,23 @@ model Client {
 }
 
 model Invoice {
-  id        String   @id
-  amount    Float
-  clientId  String
-  schoolId  String
-  createdAt DateTime @default(now())
-  Client    Client   @relation(fields: [clientId], references: [id])
-  School    School   @relation(fields: [schoolId], references: [id])
+  id         String           @id
+  amount     Float
+  clientId   String
+  schoolId   String
+  studentId  String?
+  status     InvoiceStatus    @default(ISSUED)
+  dueDate    DateTime?
+  period     String?
+  createdAt  DateTime         @default(now())
+  Client     Client           @relation(fields: [clientId], references: [id])
+  School     School           @relation(fields: [schoolId], references: [id])
+  Student    Student?         @relation(fields: [studentId], references: [id])
+
+  @@index([schoolId])
+  @@index([clientId])
+  @@index([studentId])
+  @@index([status])
 }
 
 model School {
@@ -294,6 +304,7 @@ model Student {
   school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
   StudentAcademicRecord StudentAcademicRecord[]
+  Invoice               Invoice[]
 
   @@unique([schoolId, code])
   @@index([schoolId, status])
@@ -420,6 +431,15 @@ enum SubscriptionStatus {
   INCOMPLETE
   INCOMPLETE_EXPIRED
   PAUSED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PAID
+  PARTIALLY_PAID
+  OVERDUE
+  CANCELED
 }
 
 enum SubscriptionPlan {
