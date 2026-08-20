@@ -2,6 +2,7 @@ import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getInvoices, getInvoicesBySchool } from "@/lib/features/invoices/invoice-actions";
 import { getClientsBySchool } from "@/lib/features/clients/client-actions";
+import { getStudentsBySchool } from "@/lib/features/students/student-actions";
 import { t } from "@/lib/i18n/server";
 import InvoiceForm from "./InvoiceForm";
 import DeleteInvoiceButton from "./DeleteInvoiceButton";
@@ -29,6 +30,10 @@ export default async function InvoicesPage() {
     ? await getClientsBySchool(user.schoolId)
     : [];
 
+  const students = user.schoolId
+    ? await getStudentsBySchool(user.schoolId)
+    : [];
+
   const columns = [
     { key: "client", header: tableHeaderClient, width: "30%" },
     { key: "amount", header: tableHeaderAmount, width: "20%" },
@@ -45,6 +50,7 @@ export default async function InvoicesPage() {
 
       <InvoiceForm
         clients={clients.map((c) => ({ id: c.id, name: c.name }))}
+        students={students.map((s) => ({ id: s.id, firstName: s.firstName, lastName: s.lastName }))}
         schoolId={user.schoolId ?? ""}
       />
 
@@ -52,7 +58,9 @@ export default async function InvoicesPage() {
         <DataTable columns={columns}>
           {invoices.map((invoice) => (
             <DataTableRow key={invoice.id}>
-              <DataTableCell className="font-medium">{invoice.clientId}</DataTableCell>
+              <DataTableCell className="font-medium">
+                {invoice.Client?.name ?? (invoice.Student ? `${invoice.Student.firstName} ${invoice.Student.lastName}` : "—")}
+              </DataTableCell>
               <DataTableCell>${invoice.amount.toFixed(2)}</DataTableCell>
               <DataTableCell className="text-slate-500">{invoice.createdAt.toLocaleDateString()}</DataTableCell>
               <DataTableCell align="center">

@@ -6,6 +6,10 @@ export class PrismaInvoiceRepository {
   findAll() {
     return prisma.invoice.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        Client: true,
+        Student: true,
+      },
     });
   }
 
@@ -20,6 +24,10 @@ export class PrismaInvoiceRepository {
       where: { schoolId },
       take: limit,
       orderBy: { createdAt: "desc" },
+      include: {
+        Client: true,
+        Student: true,
+      },
     });
   }
 
@@ -37,18 +45,35 @@ export class PrismaInvoiceRepository {
   }
 
   create(data: CreateInvoiceDto) {
-    return prisma.invoice.create({
-      data: {
-        id: randomUUID(),
-        ...data,
-      },
-    });
+    const invoiceData: {
+      id: string;
+      amount: number;
+      schoolId: string;
+      clientId?: string | null;
+      studentId?: string | null;
+    } = {
+      id: randomUUID(),
+      amount: data.amount,
+      schoolId: data.schoolId,
+      clientId: data.clientId ?? null,
+      studentId: data.studentId ?? null,
+    };
+
+    return prisma.invoice.create({ data: invoiceData });
   }
 
-  update(id: string, data: Partial<Invoice>) {
+  async update(id: string, data: Partial<Invoice>): Promise<Invoice> {
+    const updateData: Record<string, unknown> = {};
+    if (data.amount !== undefined) updateData.amount = data.amount;
+    if (data.clientId !== undefined) updateData.clientId = data.clientId;
+    if (data.studentId !== undefined) updateData.studentId = data.studentId;
+    if (data.status !== undefined) updateData.status = data.status;
+    if (data.dueDate !== undefined) updateData.dueDate = data.dueDate;
+    if (data.period !== undefined) updateData.period = data.period;
+
     return prisma.invoice.update({
       where: { id },
-      data,
+      data: updateData,
     });
   }
 

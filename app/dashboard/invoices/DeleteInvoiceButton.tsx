@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "@/lib/i18n/use-translations";
 
-import Button from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
 
 interface DeleteInvoiceButtonProps {

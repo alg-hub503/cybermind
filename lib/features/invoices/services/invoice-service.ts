@@ -1,5 +1,5 @@
 import { PrismaInvoiceRepository } from "../repositories/prisma-invoice-repository";
-import { CreateInvoiceDto, UpdateInvoiceDto } from "../types/invoice";
+import { CreateInvoiceDto, Invoice, UpdateInvoiceDto } from "../types/invoice";
 
 export class InvoiceService {
   private repository = new PrismaInvoiceRepository();
@@ -25,10 +25,30 @@ export class InvoiceService {
   }
 
   create(data: CreateInvoiceDto) {
+    const hasClient = Boolean(data.clientId);
+    const hasStudent = Boolean(data.studentId);
+
+    if (hasClient === hasStudent) {
+      throw new Error("Exactly one of clientId or studentId is required");
+    }
+
     return this.repository.create(data);
   }
 
-  update(id: string, data: UpdateInvoiceDto) {
+  async update(id: string, data: UpdateInvoiceDto): Promise<Invoice> {
+    const existingInvoice = await this.repository.findById(id);
+
+    if (!existingInvoice) {
+      throw new Error("Invoice not found");
+    }
+
+    if (
+      (data.clientId !== undefined && data.clientId !== existingInvoice.clientId) ||
+      (data.studentId !== undefined && data.studentId !== existingInvoice.studentId)
+    ) {
+      throw new Error("Cannot change invoice ownership type after creation.");
+    }
+
     return this.repository.update(id, data);
   }
 

@@ -1,12 +1,12 @@
 import Card from "@/components/cards/card";
+import { Student } from "@prisma/client";
 
 interface LatestInvoice {
   id: string;
   amount: number;
   createdAt: Date;
-  Client: {
-    name: string;
-  };
+  Client: { name: string } | null;
+  Student?: Student | null;
 }
 
 interface LatestInvoicesProps {
@@ -16,6 +16,14 @@ interface LatestInvoicesProps {
 export default function LatestInvoices({
   invoices,
 }: LatestInvoicesProps) {
+  function getDisplayName(invoice: LatestInvoice): string {
+    if (invoice.Client?.name) return invoice.Client.name;
+    if (invoice.Student) {
+      return `${invoice.Student.firstName} ${invoice.Student.lastName}`;
+    }
+    return "—";
+  }
+
   return (
     <Card>
       <div className="mb-6">
@@ -41,7 +49,7 @@ export default function LatestInvoices({
             >
               <div>
                 <p className="font-semibold text-slate-900">
-                  {invoice.Client.name}
+                  {getDisplayName(invoice)}
                 </p>
 
                 <p className="text-sm text-slate-500">

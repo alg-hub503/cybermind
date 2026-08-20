@@ -104,6 +104,7 @@ export async function getLatestInvoices(schoolId: string, limit = 5) {
     },
     include: {
       Client: true,
+      Student: true,
     },
   });
 }

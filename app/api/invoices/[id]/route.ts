@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-
+import { z } from "zod";
 import {
   requireResourceAccess,
   toApiError,
 } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getInvoice, updateInvoice, deleteInvoice } from "@/lib/features/invoices/invoice-actions";
-import { invoiceSchema } from "@/lib/features/invoices/schemas/invoice.schema";
 
-const updateInvoiceSchema = invoiceSchema.partial();
+const updateInvoiceSchema = z.object({
+  amount: z.number().positive().optional(),
+  schoolId: z.string().min(1).optional(),
+  clientId: z.string().min(1).optional(),
+  studentId: z.string().min(1).optional(),
+});
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -46,6 +50,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const updated = await updateInvoice(id, parsed.data);
     return NextResponse.json(updated);
   } catch (err: unknown) {
+    if (err instanceof Error && err.message === "Cannot change invoice ownership type after creation.") {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
     if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "P2003") {
       return NextResponse.json({ error: "Referenced client or school does not exist" }, { status: 400 });
     }

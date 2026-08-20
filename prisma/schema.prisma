@@ -28,26 +28,26 @@ model Subscription {
 }
 
 model User {
-  id                 String        @id @default(cuid())
-  name               String?
-  email              String        @unique
-  pendingEmail       String?       @unique
-  password           String?
-  role               String        @default("USER")
-  schoolId           String?
-  stripeCustomerId   String?       @unique
-  passwordChangedAt  DateTime?
-  emailChangedAt     DateTime?
-  School             School?       @relation(fields: [schoolId], references: [id])
-   passwordResetTokens  PasswordResetToken[]
-   emailChangeTokens   EmailChangeToken[]
-   emailChangeAttempts EmailChangeAttempt[]
-   reports             Report[]
-  contactMessages    ContactMessage[]
-  salesInquiries     SalesInquiry[]
-  teacherProfile     TeacherProfile?
-  staffProfile       StaffProfile?
-  userRoles          UserRole[]
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String               @unique
+  pendingEmail        String?              @unique
+  password            String?
+  role                String               @default("USER")
+  schoolId            String?
+  stripeCustomerId    String?              @unique
+  passwordChangedAt   DateTime?
+  emailChangedAt      DateTime?
+  School              School?              @relation(fields: [schoolId], references: [id])
+  passwordResetTokens PasswordResetToken[]
+  emailChangeTokens   EmailChangeToken[]
+  emailChangeAttempts EmailChangeAttempt[]
+  reports             Report[]
+  contactMessages     ContactMessage[]
+  salesInquiries      SalesInquiry[]
+  teacherProfile      TeacherProfile?
+  staffProfile        StaffProfile?
+  userRoles           UserRole[]
 }
 
 model PasswordResetToken {
@@ -127,18 +127,18 @@ model Client {
 }
 
 model Invoice {
-  id         String           @id
-  amount     Float
-  clientId   String
-  schoolId   String
-  studentId  String?
-  status     InvoiceStatus    @default(ISSUED)
-  dueDate    DateTime?
-  period     String?
-  createdAt  DateTime         @default(now())
-  Client     Client           @relation(fields: [clientId], references: [id])
-  School     School           @relation(fields: [schoolId], references: [id])
-  Student    Student?         @relation(fields: [studentId], references: [id])
+  id        String        @id
+  amount    Float
+  clientId  String?
+  schoolId  String
+  studentId String?
+  status    InvoiceStatus @default(ISSUED)
+  dueDate   DateTime?
+  period    String?
+  createdAt DateTime      @default(now())
+  Client    Client?       @relation(fields: [clientId], references: [id])
+  School    School        @relation(fields: [schoolId], references: [id])
+  Student   Student?      @relation(fields: [studentId], references: [id])
 
   @@index([schoolId])
   @@index([clientId])
@@ -147,26 +147,26 @@ model Invoice {
 }
 
 model School {
-  id               String        @id @default(cuid())
+  id               String          @id @default(cuid())
   name             String
-  stripeCustomerId String?       @unique
-  createdAt        DateTime      @default(now())
+  stripeCustomerId String?         @unique
+  createdAt        DateTime        @default(now())
   subscription     Subscription?
   settings         SchoolSettings?
 
-  Client               Client[]
-  Invoice              Invoice[]
-  User                 User[]
-  AcademicYear         AcademicYear[]
-  Grade                Grade[]
-  Class                Class[]
-  Student              Student[]
+  Client                Client[]
+  Invoice               Invoice[]
+  User                  User[]
+  AcademicYear          AcademicYear[]
+  Grade                 Grade[]
+  Class                 Class[]
+  Student               Student[]
   StudentAcademicRecord StudentAcademicRecord[]
-  contactMessages      ContactMessage[]
-  salesInquiries       SalesInquiry[]
-  teacherProfiles      TeacherProfile[]
-  staffProfiles        StaffProfile[]
-  userRoles            UserRole[]
+  contactMessages       ContactMessage[]
+  salesInquiries        SalesInquiry[]
+  teacherProfiles       TeacherProfile[]
+  staffProfiles         StaffProfile[]
+  userRoles             UserRole[]
 }
 
 model SchoolSettings {
@@ -176,47 +176,47 @@ model SchoolSettings {
   updatedAt DateTime @updatedAt
 
   // General
-  description   String?
+  description String?
 
   // Branding
-  logoUrl       String?
-  coverUrl      String?
-  faviconUrl    String?
-  primaryColor  String?   @default("#4F46E5")
-  secondaryColor String?  @default("#64748B")
+  logoUrl        String?
+  coverUrl       String?
+  faviconUrl     String?
+  primaryColor   String? @default("#4F46E5")
+  secondaryColor String? @default("#64748B")
 
   // Regional
-  locale        String?   @default("ar")
-  currency      String?   @default("SAR")
-  timezone      String?   @default("Asia/Riyadh")
-  dateFormat    String?   @default("DD/MM/YYYY")
+  locale     String? @default("ar")
+  currency   String? @default("SAR")
+  timezone   String? @default("Asia/Riyadh")
+  dateFormat String? @default("DD/MM/YYYY")
 
   // Contact
-  contactEmail  String?
-  phone         String?
-  website       String?
-  address       String?
+  contactEmail String?
+  phone        String?
+  website      String?
+  address      String?
 
   // Trial (data only — no logic in this phase)
-  trialStart    DateTime?
-  trialEnd      DateTime?
+  trialStart DateTime?
+  trialEnd   DateTime?
 
   // Invoicing
-  invoicePrefix   String?   @default("INV-")
-  invoiceNextNum  Int       @default(1)
-  invoiceNotes    String?
+  invoicePrefix  String? @default("INV-")
+  invoiceNextNum Int     @default(1)
+  invoiceNotes   String?
 
   // Billing (configuration only — no calculation logic in this phase)
-  taxRate         Float?
-  billingEmail    String?
+  taxRate      Float?
+  billingEmail String?
 
   // Legal / Tax (placeholders — no logic yet)
-  taxNumber      String?
-  crNumber       String?
-  legalNotes     String?
+  taxNumber  String?
+  crNumber   String?
+  legalNotes String?
 
   // Relations
-  school        School    @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 }
 
 model PlatformSettings {
@@ -225,17 +225,17 @@ model PlatformSettings {
   updatedAt DateTime @updatedAt
 
   // Platform Identity
-  platformName         String?  @default("CyberMind")
-  defaultLogoUrl       String?
-  defaultPrimaryColor  String?  @default("#4F46E5")
-  supportEmail         String?
+  platformName        String? @default("CyberMind")
+  defaultLogoUrl      String?
+  defaultPrimaryColor String? @default("#4F46E5")
+  supportEmail        String?
 
   // Trial Defaults
-  trialDurationDays    Int      @default(14)
-  trialWarningDays     Int      @default(3)
+  trialDurationDays Int @default(14)
+  trialWarningDays  Int @default(3)
 
   // Platform
-  maintenanceMode      Boolean  @default(false)
+  maintenanceMode Boolean @default(false)
 }
 
 model AcademicYear {
@@ -278,9 +278,9 @@ model Class {
   code           String
   createdAt      DateTime @default(now())
 
-  school       School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  grade        Grade         @relation(fields: [gradeId], references: [id], onDelete: Cascade)
-  academicYear AcademicYear  @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  school       School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  grade        Grade        @relation(fields: [gradeId], references: [id], onDelete: Cascade)
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
 
   StudentAcademicRecord StudentAcademicRecord[]
 
@@ -290,16 +290,16 @@ model Class {
 }
 
 model Student {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   schoolId    String
   code        String
   firstName   String
   lastName    String
   dateOfBirth DateTime?
-  enrolledAt  DateTime @default(now())
-  status      String   @default("ACTIVE")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  enrolledAt  DateTime  @default(now())
+  status      String    @default("ACTIVE")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
 
@@ -318,10 +318,10 @@ model StudentAcademicRecord {
   classId        String
   enrolledAt     DateTime @default(now())
 
-  school       School        @relation(fields: [schoolId], references: [id], onDelete: Cascade)
-  student      Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  academicYear AcademicYear  @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
-  class        Class         @relation(fields: [classId], references: [id], onDelete: Cascade)
+  school       School       @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  student      Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
+  class        Class        @relation(fields: [classId], references: [id], onDelete: Cascade)
 
   @@unique([studentId, academicYearId])
   @@index([schoolId])
@@ -330,16 +330,16 @@ model StudentAcademicRecord {
 }
 
 model TeacherProfile {
-  id             String   @id @default(cuid())
-  userId         String   @unique
+  id             String    @id @default(cuid())
+  userId         String    @unique
   schoolId       String
   phone          String?
   specialization String?
   qualifications String?
   hireDate       DateTime?
-  status         String   @default("ACTIVE")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  status         String    @default("ACTIVE")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
@@ -349,16 +349,16 @@ model TeacherProfile {
 }
 
 model StaffProfile {
-  id         String   @id @default(cuid())
-  userId     String   @unique
+  id         String    @id @default(cuid())
+  userId     String    @unique
   schoolId   String
   phone      String?
   position   String?
   department String?
   hireDate   DateTime?
-  status     String   @default("ACTIVE")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  status     String    @default("ACTIVE")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)

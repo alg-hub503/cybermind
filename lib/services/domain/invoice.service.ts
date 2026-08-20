@@ -35,6 +35,7 @@ export async function getLatestInvoicesBySchool(
     },
     include: {
       Client: true,
+      Student: true,
     },
   });
 }
