@@ -339,6 +339,7 @@
   "billing.statusIncompleteExpired": "Incomplete Expired",
   "billing.statusPaused": "Paused",
   "billing.statusUnknown": "Unknown",
+  "billing.upgradeNow": "Upgrade Now",
   "billing.pastDueBannerTitle": "Payment Required",
   "billing.pastDueBannerMessage": "Your subscription payment is past due. Please update your payment method to avoid service interruption.",
   "billing.updatePaymentMethod": "Update Payment Method",

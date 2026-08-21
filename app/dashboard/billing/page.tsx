@@ -18,6 +18,7 @@ import EmptyState from "@/components/ui/empty-state";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 import BillingActions from "./billing-actions";
 import PaymentBanner from "@/components/dashboard/payment-banner";
+import Link from "next/link";
 import { TrialAccessSetter } from "@/components/dashboard/trial-access-provider";
 import TrialWarningBanner from "@/components/dashboard/trial-warning-banner";
 
@@ -151,6 +152,11 @@ export default async function BillingPage() {
 
   const invoicePdfLabel = await t("billing.invoicePdf");
 
+  const showUpgradeButton =
+    !sub?.plan ||
+    sub.plan === "FREE" ||
+    subStatus !== "ACTIVE";
+
   const showPaymentBanner = (subStatus === "PAST_DUE" || subStatus === "UNPAID") && session.user.schoolId;
   const showTrialWarning =
     access.status === "TRIALING" &&
@@ -193,6 +199,14 @@ export default async function BillingPage() {
       </div>
 
       <BillingActions schoolId={session.user.schoolId!} />
+
+      {showUpgradeButton && (
+        <div className="flex justify-end">
+          <Link href="/upgrade" className="inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition">
+            {await t("billing.upgradeNow")}
+          </Link>
+        </div>
+      )}
 
       <Card>
         <h2 className="mb-4 text-lg font-semibold text-slate-900">
