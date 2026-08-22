@@ -9,10 +9,10 @@ import DeleteInvoiceButton from "./DeleteInvoiceButton";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function InvoicesPage() {
-  const [invoicesTitle, invoicesDescription, tableHeaderClient, tableHeaderAmount, tableHeaderDate, tableHeaderActions] = await Promise.all([
+  const [invoicesTitle, invoicesDescription, tableHeaderBilledTo, tableHeaderAmount, tableHeaderDate, tableHeaderActions] = await Promise.all([
     t("invoices.title"),
     t("invoices.description"),
-    t("invoices.tableHeaderClient"),
+    t("invoices.tableHeaderBilledTo"),
     t("invoices.tableHeaderAmount"),
     t("invoices.tableHeaderDate"),
     t("invoices.tableHeaderActions"),
@@ -35,7 +35,7 @@ export default async function InvoicesPage() {
     : [];
 
   const columns = [
-    { key: "client", header: tableHeaderClient, width: "30%" },
+    { key: "billedTo", header: tableHeaderBilledTo, width: "30%" },
     { key: "amount", header: tableHeaderAmount, width: "20%" },
     { key: "date", header: tableHeaderDate, width: "40%" },
     { key: "actions", header: tableHeaderActions, width: "10%", align: "center" as const },

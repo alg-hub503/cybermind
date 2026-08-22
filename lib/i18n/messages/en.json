@@ -578,7 +578,7 @@
 
   "invoices.title": "Invoices",
   "invoices.description": "Manage your invoices",
-  "invoices.tableHeaderClient": "Client",
+  "invoices.tableHeaderBilledTo": "Billed To",
   "invoices.tableHeaderAmount": "Amount",
   "invoices.tableHeaderDate": "Date",
   "invoices.tableHeaderActions": "Actions",
