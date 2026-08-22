@@ -80,6 +80,14 @@ Thumbs.db
 # =========================
 
 .agents/
+
+# =========================
+# Local dev scripts (useful, not tracked)
+# =========================
+
+scripts/list-perms.mjs
+scripts/test-db-state.mjs
+
 # =========================
 # Temporary Files
 # =========================
