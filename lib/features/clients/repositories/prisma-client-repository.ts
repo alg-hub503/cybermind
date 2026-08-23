@@ -5,6 +5,7 @@ export class PrismaClientRepository {
   findAll() {
     return prisma.client.findMany({
       orderBy: { name: "asc" },
+      include: { School: true },
     });
   }
 
@@ -14,11 +15,19 @@ export class PrismaClientRepository {
     });
   }
 
+  findByIdWithDetails(id: string) {
+    return prisma.client.findUnique({
+      where: { id },
+      include: { School: true, Invoice: { orderBy: { createdAt: "desc" } } },
+    });
+  }
+
   findBySchool(schoolId: string, limit?: number) {
     return prisma.client.findMany({
       where: { schoolId },
       take: limit,
       orderBy: { name: "asc" },
+      include: { School: true },
     });
   }
 

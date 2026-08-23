@@ -11,7 +11,6 @@
   "login.forgotPassword": "Forgot your password?",
   "login.noAccount": "Don't have an account?",
   "login.register": "Create account",
-
   "register.title": "Create Account",
   "register.subtitle": "Join CyberMind",
   "register.name": "Name",
@@ -26,7 +25,6 @@
   "register.error": "Something went wrong. Please try again.",
   "register.hasAccount": "Already have an account?",
   "register.login": "Log in",
-
   "forgot.title": "Forgot Password",
   "forgot.subtitle": "Enter your email and we'll send you a link to reset your password",
   "forgot.email": "Email",
@@ -35,7 +33,6 @@
   "forgot.loading": "Sending...",
   "forgot.sent": "If an account exists for this email, a reset link has been sent. Please check your inbox.",
   "forgot.backToLogin": "Back to Login",
-
   "reset.title": "Reset Password",
   "reset.subtitle": "Enter your new password",
   "reset.newPassword": "New Password",
@@ -54,9 +51,7 @@
   "reset.strong": "Strong",
   "reset.show": "Show",
   "reset.hide": "Hide",
-
   "common.languageToggle": "AR",
-
   "sidebar.dashboard": "Dashboard",
   "sidebar.clients": "Clients",
   "sidebar.invoices": "Invoices",
@@ -73,7 +68,6 @@
   "sidebar.hub": "Help",
   "sidebar.logout": "Logout",
   "sidebar.tagline": "AI SaaS Platform",
-
   "navbar.dashboard": "Dashboard",
   "navbar.users": "Users",
   "navbar.clients": "Clients",
@@ -86,7 +80,6 @@
   "navbar.admin": "Admin",
   "navbar.hub": "Help Center",
   "navbar.welcomeBack": "Welcome back to CyberMind",
-
   "dashboard.title": "CyberMind Dashboard",
   "dashboard.greetingMorning": "Good Morning",
   "dashboard.greetingAfternoon": "Good Afternoon",
@@ -107,9 +100,7 @@
   "dashboard.registered": "registered",
   "dashboard.active": "active",
   "dashboard.created": "created",
-
   "userMenu.logout": "Logout",
-
   "students.title": "Students",
   "students.description": "Manage student records",
   "students.code": "Code",
@@ -141,7 +132,6 @@
   "students.editPromptCode": "Code",
   "students.delete": "Delete",
   "students.confirmDelete": "Delete student? This will also delete all academic records for this student.",
-
   "classes.title": "Classes",
   "classes.description": "Manage classes and sections",
   "classes.name": "Name",
@@ -170,7 +160,6 @@
   "classes.editPromptCode": "Class code",
   "classes.delete": "Delete",
   "classes.confirmDelete": "Delete class? This will also delete all student records under this class.",
-
   "grades.title": "Grades",
   "grades.description": "Manage grade levels",
   "grades.name": "Name",
@@ -195,7 +184,6 @@
   "grades.editPromptOrder": "Order",
   "grades.delete": "Delete",
   "grades.confirmDelete": "Delete grade? This will also delete all classes and student records under this grade.",
-
   "academicYears.title": "Academic Years",
   "academicYears.description": "Manage academic years for your institution",
   "academicYears.name": "Name",
@@ -225,7 +213,6 @@
   "academicYears.editPromptName": "Academic year name",
   "academicYears.delete": "Delete",
   "academicYears.confirmDelete": "Delete academic year?",
-
   "schools.title": "Schools",
   "schools.description": "Manage schools",
   "schools.name": "Name",
@@ -251,7 +238,6 @@
   "schools.sortDesc": "Z Ã¢â€ â€™ A",
   "schools.sortNewest": "Newest",
   "schools.sortOldest": "Oldest",
-
   "clients.title": "Clients",
   "clients.description": "Manage your clients",
   "clients.name": "Name",
@@ -263,7 +249,6 @@
   "clients.editPrompt": "Client name",
   "clients.delete": "Delete",
   "clients.confirmDelete": "Delete client?",
-
   "admin.title": "Admin",
   "admin.description": "Manage platform users and roles",
   "admin.totalUsers": "Total Users",
@@ -442,17 +427,14 @@
   "hub.salesContactInfo": "Email",
   "hub.salesContactInfoValue": "sales@cybermind.app",
   "hub.salesNote": "Our team typically responds within 24 hours during business days.",
-
   "settings.save": "Save",
   "settings.saving": "Saving...",
   "settings.saveSuccess": "Settings saved successfully",
   "settings.saveError": "Failed to save settings. Please try again.",
-
   "settings.general": "General",
   "settings.generalDescription": "Basic information about your school.",
   "settings.schoolDescription": "School Description",
   "settings.descriptionPlaceholder": "Brief description of your school...",
-
   "settings.branding": "Branding",
   "settings.brandingDescription": "Customize your school's visual identity.",
   "settings.logoUrl": "Logo URL",
@@ -460,14 +442,12 @@
   "settings.faviconUrl": "Favicon URL",
   "settings.primaryColor": "Primary Color",
   "settings.secondaryColor": "Secondary Color",
-
   "settings.regional": "Regional",
   "settings.regionalDescription": "Language, currency, and regional preferences.",
   "settings.language": "Language",
   "settings.currency": "Currency",
   "settings.timezone": "Timezone",
   "settings.dateFormat": "Date Format",
-
   "settings.contact": "Contact",
   "settings.contactDescription": "How students and parents can reach you.",
   "settings.contactEmail": "Contact Email",
@@ -475,7 +455,6 @@
   "settings.website": "Website",
   "settings.address": "Address",
   "settings.addressPlaceholder": "School address...",
-
   "settings.billing": "Billing",
   "settings.billingDescription": "Invoice configuration for your school.",
   "settings.invoicePrefix": "Invoice Prefix",
@@ -488,7 +467,6 @@
   "settings.taxRateHint": "Percentage applied to invoices. For future use.",
   "settings.billingEmail": "Billing Email",
   "settings.billingEmailHint": "Email for invoice-related communications.",
-
   "settings.legal": "Legal",
   "settings.legalDescription": "Legal and tax information.",
   "settings.taxNumber": "Tax Number",
@@ -497,7 +475,6 @@
   "settings.crNumberPlaceholder": "Enter CR number",
   "settings.legalNotes": "Legal Notes",
   "settings.legalNotesPlaceholder": "Additional legal notes...",
-
   "platformSettings.title": "Platform Settings",
   "platformSettings.description": "Configure global platform settings, trial defaults, and maintenance options.",
   "platformSettings.platformIdentity": "Platform Identity",
@@ -518,7 +495,6 @@
   "platformSettings.saving": "Saving...",
   "platformSettings.saveSuccess": "Settings saved successfully",
   "platformSettings.saveError": "Failed to save settings",
-
   "schoolUsers.title": "School Users",
   "schoolUsers.description": "Manage all users assigned to this school.",
   "schoolUsers.addUser": "Add User",
@@ -532,7 +508,6 @@
   "schoolUsers.tableHeaderPlan": "Plan",
   "schoolUsers.tableHeaderActions": "Actions",
   "schoolUsers.unnamedUser": "Unnamed User",
-
   "schoolNewUser.title": "Add User",
   "schoolNewUser.failedCreate": "Failed to create user",
   "schoolNewUser.name": "Name",
@@ -543,7 +518,6 @@
   "schoolNewUser.roleAdmin": "ADMIN",
   "schoolNewUser.creating": "Creating...",
   "schoolNewUser.createUser": "Create User",
-
   "schoolOverview.quickActions": "Quick Actions",
   "schoolOverview.schoolUsers": "School Users",
   "schoolOverview.manageUsers": "Manage users",
@@ -551,21 +525,18 @@
   "schoolOverview.viewClients": "View clients",
   "schoolOverview.invoices": "Invoices",
   "schoolOverview.viewInvoices": "View invoices",
-
   "schoolAnalytics.title": "School Analytics",
   "schoolAnalytics.description": "Overview of this school's activity.",
   "schoolAnalytics.users": "Users",
   "schoolAnalytics.clients": "Clients",
   "schoolAnalytics.invoices": "Invoices",
   "schoolAnalytics.revenue": "Revenue",
-
   "schoolClients.title": "School Clients",
   "schoolClients.description": "Manage clients belonging to this school.",
   "schoolClients.emptyTitle": "No clients found",
   "schoolClients.emptyDescription": "There are no clients assigned to this school.",
   "schoolClients.tableHeaderClient": "Client",
   "schoolClients.tableHeaderClientId": "Client ID",
-
   "schoolInvoices.title": "School Invoices",
   "schoolInvoices.description": "Manage invoices belonging to this school.",
   "schoolInvoices.emptyTitle": "No invoices found",
@@ -573,9 +544,7 @@
   "schoolInvoices.tableHeaderInvoice": "Invoice",
   "schoolInvoices.tableHeaderAmount": "Amount",
   "schoolInvoices.tableHeaderCreated": "Created",
-
   "schoolSettings.description": "Manage school settings, branding, and preferences.",
-
   "invoices.title": "Invoices",
   "invoices.description": "Manage your invoices",
   "invoices.tableHeaderBilledTo": "Billed To",
@@ -591,10 +560,6 @@
   "invoices.form.billStudent": "Bill Student",
   "invoices.form.selectStudent": "Select Student",
   "invoices.form.selectStudentError": "Please select a student",
-  "invoices.form.billClient": "Bill Client",
-  "invoices.form.billStudent": "Bill Student",
-  "invoices.form.selectStudent": "Select Student",
-  "invoices.form.selectStudentError": "Please select a student",
   "invoices.form.amountError": "Amount must be greater than 0",
   "invoices.form.createFailed": "Failed to create invoice",
   "invoices.form.createSuccess": "Invoice created successfully",
@@ -605,44 +570,37 @@
   "invoices.delete.wentWrong": "Something went wrong",
   "invoices.delete.deleting": "Deleting...",
   "invoices.delete.delete": "Delete",
-
   "schoolHeader.badge": "School Workspace",
   "schoolHeader.description": "Manage users, clients, invoices and statistics for this school from one centralized workspace.",
   "schoolHeader.created": "Created",
   "schoolHeader.schoolId": "School ID",
   "schoolHeader.editSchool": "Edit School",
   "schoolHeader.deleteSchool": "Delete School",
-
   "schoolTabs.overview": "Overview",
   "schoolTabs.users": "Users",
   "schoolTabs.clients": "Clients",
   "schoolTabs.invoices": "Invoices",
   "schoolTabs.analytics": "Analytics",
   "schoolTabs.settings": "Settings",
-
   "schoolStats.title": "School Statistics",
   "schoolStats.description": "Live overview of this school's activity.",
   "schoolStats.users": "Users",
   "schoolStats.clients": "Clients",
   "schoolStats.invoices": "Invoices",
   "schoolStats.revenue": "Revenue",
-
   "schoolClientsCard.title": "Recent Clients",
   "schoolClientsCard.description": "Latest clients belonging to this school.",
   "schoolClientsCard.emptyTitle": "No clients found",
   "schoolClientsCard.emptyDescription": "This school doesn't have any clients yet.",
   "schoolClientsCard.clientId": "Client ID",
-
   "schoolAnalyticsCard.title": "Analytics",
   "schoolAnalyticsCard.description": "View school performance and statistics.",
   "schoolAnalyticsCard.openAnalytics": "Open Analytics",
-
   "recentInvoices.title": "Latest Invoices",
   "recentInvoices.description": "Recently generated invoices.",
   "recentInvoices.emptyTitle": "No invoices found",
   "recentInvoices.emptyDescription": "This school doesn't have any invoices yet.",
   "recentInvoices.paid": "Paid",
-
   "subscription.title": "Subscription",
   "subscription.description": "Your current subscription details",
   "subscription.currentPlan": "Current Plan",
@@ -663,10 +621,8 @@
   "subscription.billingPageLink": "Billing page",
   "subscription.trialDaysLeft": "Trial Period",
   "subscription.trialEndsAt": "days remaining Ã¢â‚¬â€ ends on",
-
   "trial.warningTitle": "Trial Ending Soon",
   "trial.warningMessage": "Your trial expires in {days} day(s). Upgrade now to keep full access.",
-
   "analytics.title": "Analytics",
   "analytics.description": "Monitor your business performance with real-time analytics.",
   "analytics.totalRevenue": "Total Revenue",
@@ -683,7 +639,6 @@
   "analytics.usersLabel": "Users",
   "analytics.clientsLabel": "Clients",
   "analytics.schoolPerformance": "School Performance",
-
   "profile.title": "Profile",
   "profile.description": "Manage your account settings",
   "profile.changeEmail": "Change Email",
@@ -699,7 +654,6 @@
   "profile.verificationSentDescription": "Please check your new email inbox and click the verification link.",
   "profile.emailSameAsCurrent": "New email must be different from current email",
   "profile.error": "Something went wrong. Please try again.",
-
   "verifyEmail.verifying": "Verifying your email...",
   "verifyEmail.success": "Email verified!",
   "verifyEmail.successDescription": "Your email address has been successfully changed. Please log in with your new email.",
@@ -708,17 +662,14 @@
   "verifyEmail.error": "Something went wrong. Please try again.",
   "verifyEmail.goToLogin": "Go to Login",
   "verifyEmail.backToProfile": "Back to Profile",
-
   "maintenance.title": "Platform Under Maintenance",
   "maintenance.description": "We're performing scheduled maintenance. Please try again later.",
   "maintenance.support": "Questions? Contact us at",
   "maintenance.login": "Login",
   "maintenance.home": "Back to Home",
-
   "sidebar.teachers": "Teachers",
   "sidebar.staff": "Staff",
   "sidebar.roles": "Roles",
-
   "teachers.title": "Teachers",
   "teachers.description": "Manage teacher profiles",
   "teachers.name": "Name",
@@ -760,7 +711,6 @@
   "teachers.editPromptSpecialization": "Enter specialization:",
   "teachers.editPromptQualifications": "Enter qualifications:",
   "teachers.editPromptHireDate": "Enter hire date (YYYY-MM-DD):",
-
   "staff.title": "Staff",
   "staff.description": "Manage staff profiles",
   "staff.name": "Name",
@@ -802,7 +752,6 @@
   "staff.editPromptPosition": "Enter position:",
   "staff.editPromptDepartment": "Enter department:",
   "staff.editPromptHireDate": "Enter hire date (YYYY-MM-DD):",
-
   "roles.title": "Roles",
   "roles.description": "Manage roles and permissions",
   "roles.name": "Name",
@@ -810,5 +759,13 @@
   "roles.permissions": "Permissions",
   "roles.default": "Default",
   "roles.noRecords": "No roles yet",
-  "roles.emptyDescription": "Roles are seeded automatically."
+  "roles.emptyDescription": "Roles are seeded automatically.",
+  "clients.detail.invoices": "Invoices",
+  "clients.detail.amount": "Amount",
+  "clients.detail.status": "Status",
+  "clients.detail.dueDate": "Due Date",
+  "clients.detail.created": "Created",
+  "clients.detail.noInvoices": "No invoices for this client.",
+  "clients.detail.school": "School:",
+  "clients.detail.backToClients": "Back to Clients"
 }

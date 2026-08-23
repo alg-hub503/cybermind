@@ -12,6 +12,10 @@ export class ClientService {
     return this.repository.findById(id);
   }
 
+  getByIdWithDetails(id: string) {
+    return this.repository.findByIdWithDetails(id);
+  }
+
   getBySchool(schoolId: string, limit?: number) {
     return this.repository.findBySchool(schoolId, limit);
   }

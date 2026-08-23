@@ -10,6 +10,10 @@ export async function getClient(id: string) {
   return service.getById(id);
 }
 
+export async function getClientWithDetails(id: string) {
+  return service.getByIdWithDetails(id);
+}
+
 export async function getClientsBySchool(schoolId: string, limit?: number) {
   return service.getBySchool(schoolId, limit);
 }
