@@ -260,7 +260,7 @@ export default async function HomePage({
               {steps.map((item) => (
                 <div
                   key={item.step}
-                  className="relative flex items-start gap-6 md:pl-16"
+                  className={`relative flex items-start gap-6 ${dir === "rtl" ? "md:pr-16" : "md:pl-16"}`}
                 >
                   <div
                     className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-blue-200 bg-blue-50 text-xl font-bold text-blue-600 ${
