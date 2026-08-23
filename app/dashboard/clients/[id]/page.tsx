@@ -75,31 +75,31 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
             {noInvoices}
           </p>
         ) : (
-          <div className="mt-3 overflow-hidden rounded-xl border border-slate-100">
-            <table className="w-full text-sm">
+          <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full min-w-[640px] table-fixed text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50 text-left text-xs font-medium uppercase text-slate-500">
-                  <th className="px-4 py-3">{amountLabel}</th>
-                  <th className="px-4 py-3">{statusLabel}</th>
-                  <th className="px-4 py-3">{dueDateLabel}</th>
-                  <th className="px-4 py-3">{createdLabel}</th>
+                <tr className="border-b border-slate-200 bg-slate-50 text-xs font-medium text-slate-500">
+                  <th className="w-1/4 px-4 py-3 text-start">{amountLabel}</th>
+                  <th className="w-1/4 px-4 py-3 text-start">{statusLabel}</th>
+                  <th className="w-1/4 px-4 py-3 text-start">{dueDateLabel}</th>
+                  <th className="w-1/4 px-4 py-3 text-start">{createdLabel}</th>
                 </tr>
               </thead>
               <tbody>
                 {client.Invoice.map((invoice) => (
                   <tr key={invoice.id} className="border-b border-slate-50 last:border-0">
-                    <td className="px-4 py-3 font-medium">
+                    <td className="px-4 py-4 font-semibold text-slate-900">
                       {invoice.amount.toLocaleString()}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4">
                       <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColor(invoice.status)}`}>
                         {invoice.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-500">
+                    <td className="px-4 py-4 text-slate-500">
                       {renderDate(invoice.dueDate) ?? "—"}
                     </td>
-                    <td className="px-4 py-3 text-slate-500">
+                    <td className="px-4 py-4 text-slate-500">
                       {renderDate(invoice.createdAt)}
                     </td>
                   </tr>
