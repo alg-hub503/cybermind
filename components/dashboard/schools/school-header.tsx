@@ -1,4 +1,6 @@
 import { t } from "@/lib/i18n/server";
+import EditSchoolButton from "./edit-school-button";
+import DeleteSchoolButton from "./delete-school-button";
 
 interface SchoolHeaderProps {
   school: {
@@ -15,8 +17,6 @@ export default async function SchoolHeader({
   const description = await t("schoolHeader.description");
   const created = await t("schoolHeader.created");
   const schoolIdLabel = await t("schoolHeader.schoolId");
-  const editSchool = await t("schoolHeader.editSchool");
-  const deleteSchool = await t("schoolHeader.deleteSchool");
 
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -58,13 +58,8 @@ export default async function SchoolHeader({
         </div>
 
         <div className="flex flex-col gap-3 lg:w-64">
-          <button className="rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white transition hover:bg-indigo-700">
-            {editSchool}
-          </button>
-
-          <button className="rounded-xl border border-red-200 bg-red-50 px-5 py-3 font-semibold text-red-600 transition hover:bg-red-100">
-            {deleteSchool}
-          </button>
+          <EditSchoolButton id={school.id} currentName={school.name} />
+          <DeleteSchoolButton id={school.id} schoolName={school.name} />
         </div>
       </div>
     </section>
