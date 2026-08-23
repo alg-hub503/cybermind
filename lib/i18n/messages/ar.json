@@ -766,5 +766,11 @@
   "clients.detail.backToClients": "العودة إلى العملاء",
   "schoolHeader.editPrompt": "اسم المدرسة الجديد",
   "schoolHeader.confirmDelete": "هل أنت متأكد من حذف المدرسة \"{name}\"؟ سيؤدي هذا إلى حذف جميع الطلاب والفواتير والمستخدمين والصفوف المرتبطة بهذه المدرسة بشكل دائم.",
-  "schoolHeader.confirmDeleteFinal": "تنبيه نهائي: هذا الإجراء لا يمكن التراجع عنه. اكتب \"DELETE\" للتأكيد."
+  "schoolHeader.confirmDeleteFinal": "تنبيه نهائي: هذا الإجراء لا يمكن التراجع عنه. اكتب \"DELETE\" للتأكيد.",
+  "userDetail.backToUsers": "العودة إلى المستخدمين",
+  "userDetail.name": "الاسم",
+  "userDetail.email": "البريد الإلكتروني",
+  "userDetail.role": "الدور",
+  "userDetail.school": "المدرسة",
+  "userDetail.userId": "معرف المستخدم"
 }

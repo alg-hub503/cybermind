@@ -770,5 +770,11 @@
   "clients.detail.backToClients": "Back to Clients",
   "schoolHeader.editPrompt": "New school name",
   "schoolHeader.confirmDelete": "Are you sure you want to delete school \"{name}\"? This will permanently delete ALL students, invoices, users, and classes associated with this school.",
-  "schoolHeader.confirmDeleteFinal": "Final warning: This action cannot be undone. Type \"DELETE\" to confirm."
+  "schoolHeader.confirmDeleteFinal": "Final warning: This action cannot be undone. Type \"DELETE\" to confirm.",
+  "userDetail.backToUsers": "Back to Users",
+  "userDetail.name": "Name",
+  "userDetail.email": "Email",
+  "userDetail.role": "Role",
+  "userDetail.school": "School",
+  "userDetail.userId": "User ID"
 }

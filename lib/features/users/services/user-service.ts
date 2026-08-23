@@ -7,6 +7,10 @@ export class UserService {
     return this.repository.findBySchool(schoolId);
   }
 
+  getById(id: string) {
+    return this.repository.findById(id);
+  }
+
   countBySchool(schoolId: string) {
     return this.repository.countBySchool(schoolId);
   }

@@ -17,6 +17,16 @@ export class PrismaUserRepository {
     });
   }
 
+  findById(id: string) {
+    return prisma.user.findUnique({
+      where: { id },
+      select: {
+        ...userSelect,
+        School: { select: { id: true, name: true } },
+      },
+    });
+  }
+
   countBySchool(schoolId: string) {
     return prisma.user.count({
       where: { schoolId },
