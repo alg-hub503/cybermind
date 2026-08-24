@@ -19,6 +19,17 @@ export class PrismaInvoiceRepository {
     });
   }
 
+  findByIdWithDetails(id: string) {
+    return prisma.invoice.findUnique({
+      where: { id },
+      include: {
+        Client: true,
+        School: true,
+        Student: true,
+      },
+    });
+  }
+
   findBySchool(schoolId: string, limit?: number) {
     return prisma.invoice.findMany({
       where: { schoolId },
@@ -75,6 +86,34 @@ export class PrismaInvoiceRepository {
       where: { id },
       data: updateData,
     });
+  }
+
+  async findDuplicate(params: {
+    schoolId: string;
+    amount: number;
+    clientId?: string | null;
+    studentId?: string | null;
+    excludeId?: string;
+  }) {
+    const where: Record<string, unknown> = {
+      schoolId: params.schoolId,
+      amount: params.amount,
+      status: { not: "CANCELED" },
+    };
+
+    if (params.clientId) {
+      where.clientId = params.clientId;
+      where.studentId = null;
+    } else if (params.studentId) {
+      where.studentId = params.studentId;
+      where.clientId = null;
+    }
+
+    if (params.excludeId) {
+      where.id = { not: params.excludeId };
+    }
+
+    return prisma.invoice.findFirst({ where });
   }
 
   delete(id: string) {

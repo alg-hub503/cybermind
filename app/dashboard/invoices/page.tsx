@@ -6,6 +6,8 @@ import { getStudentsBySchool } from "@/lib/features/students/student-actions";
 import { t } from "@/lib/i18n/server";
 import InvoiceForm from "./InvoiceForm";
 import DeleteInvoiceButton from "./DeleteInvoiceButton";
+import ViewInvoiceButton from "./ViewInvoiceButton";
+import EditInvoiceButton from "./EditInvoiceButton";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function InvoicesPage() {
@@ -37,8 +39,8 @@ export default async function InvoicesPage() {
   const columns = [
     { key: "billedTo", header: tableHeaderBilledTo, width: "30%" },
     { key: "amount", header: tableHeaderAmount, width: "20%" },
-    { key: "date", header: tableHeaderDate, width: "40%" },
-    { key: "actions", header: tableHeaderActions, width: "10%", align: "center" as const },
+    { key: "date", header: tableHeaderDate, width: "30%" },
+    { key: "actions", header: tableHeaderActions, width: "20%", align: "center" as const },
   ];
 
   return (
@@ -64,7 +66,9 @@ export default async function InvoicesPage() {
               <DataTableCell>${invoice.amount.toFixed(2)}</DataTableCell>
               <DataTableCell className="text-slate-500">{invoice.createdAt.toLocaleDateString()}</DataTableCell>
               <DataTableCell align="center">
-                <div className="flex justify-center">
+                <div className="flex justify-center gap-1">
+                  <ViewInvoiceButton id={invoice.id} />
+                  <EditInvoiceButton id={invoice.id} />
                   <DeleteInvoiceButton id={invoice.id} />
                 </div>
               </DataTableCell>

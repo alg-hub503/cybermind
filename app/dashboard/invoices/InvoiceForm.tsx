@@ -95,7 +95,10 @@ export default function InvoiceForm({
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.error ?? t("createFailed"));
+        const errorMsg = data.error === "DUPLICATE_INVOICE"
+          ? t("duplicateError")
+          : (data.error ?? t("createFailed"));
+        toast.error(errorMsg);
         return;
       }
 
@@ -198,18 +201,28 @@ export default function InvoiceForm({
         />
       )}
 
-      {mode === "create" && (
-        <Button onClick={submit} disabled={loading}>
-          {loading ? (
-            <span className="flex items-center gap-2">
-              <Spinner size={16} />
-              {t("creating")}
-            </span>
-          ) : (
-            t("createInvoice")
-          )}
-        </Button>
+      {mode === "edit" && (
+        <input
+          type="number"
+          min="1"
+          placeholder={t("amountPlaceholder")}
+          value={amount}
+          disabled={loading}
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-32 rounded-lg border border-slate-300 px-4 py-2"
+        />
       )}
+
+      <Button onClick={submit} disabled={loading}>
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <Spinner size={16} />
+            {mode === "create" ? t("creating") : t("saving")}
+          </span>
+        ) : (
+          mode === "create" ? t("createInvoice") : t("saveChanges")
+        )}
+      </Button>
     </div>
   );
 }

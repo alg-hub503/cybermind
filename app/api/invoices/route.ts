@@ -51,6 +51,9 @@ export async function POST(req: Request) {
     if (err instanceof Error && err.message === "Exactly one of clientId or studentId is required") {
       return NextResponse.json({ error: err.message }, { status: 400 });
     }
+    if (err instanceof Error && err.name === "DUPLICATE_INVOICE") {
+      return NextResponse.json({ error: "DUPLICATE_INVOICE" }, { status: 409 });
+    }
     if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "P2003") {
       return NextResponse.json({ error: "Referenced client or school does not exist" }, { status: 400 });
     }
