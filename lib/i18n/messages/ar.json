@@ -800,5 +800,6 @@
   "upgrade.upgradeToPro": "الترقية إلى PRO",
   "upgrade.unlockFeatures": "فتح جميع ميزات SaaS",
   "upgrade.upgradeNow": "ترقية الآن",
-  "upgrade.loading": "جارٍ التحميل..."
+  "upgrade.loading": "جارٍ التحميل...",
+  "upgrade.login": "تسجيل الدخول"
 }

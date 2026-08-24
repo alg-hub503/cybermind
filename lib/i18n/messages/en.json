@@ -804,5 +804,6 @@
   "upgrade.upgradeToPro": "Upgrade To PRO",
   "upgrade.unlockFeatures": "Unlock full SaaS features",
   "upgrade.upgradeNow": "Upgrade Now",
-  "upgrade.loading": "Loading..."
+  "upgrade.loading": "Loading...",
+  "upgrade.login": "Log in"
 }

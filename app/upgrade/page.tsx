@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/get-server-session";
 import { t } from "@/lib/i18n/server";
+import Link from "next/link";
 
 import { prisma } from "@/lib/prisma";
 import { hasActiveAccess } from "@/lib/subscription-status";
@@ -10,9 +11,20 @@ export default async function UpgradePage() {
   const session = await getServerSession();
 
   if (!session?.user?.schoolId) {
+    const loginPrompt = await t("upgrade.loginPrompt");
+    const loginLabel = await t("upgrade.login");
+
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <p className="text-gray-400">{await t("upgrade.loginPrompt")}</p>
+        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-2xl">
+          <p className="text-gray-400">{loginPrompt}</p>
+          <Link
+            href="/login?callbackUrl=%2Fupgrade"
+            className="mt-6 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-3 font-bold text-white transition hover:bg-indigo-700"
+          >
+            {loginLabel}
+          </Link>
+        </div>
       </div>
     );
   }
