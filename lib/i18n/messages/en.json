@@ -795,5 +795,14 @@
   "invoices.detail.backToInvoice": "Back to Invoice",
   "invoices.detail.editInvoice": "Edit Invoice",
   "invoices.form.saving": "Saving...",
-  "invoices.form.saveChanges": "Save Changes"
+  "invoices.form.saveChanges": "Save Changes",
+  "upgrade.loginPrompt": "Please log in to upgrade.",
+  "upgrade.subscriptionStatus": "Subscription Status",
+  "upgrade.plan": "Plan",
+  "upgrade.status": "Status",
+  "upgrade.paymentPending": "Your subscription is not yet active. Complete payment to continue.",
+  "upgrade.upgradeToPro": "Upgrade To PRO",
+  "upgrade.unlockFeatures": "Unlock full SaaS features",
+  "upgrade.upgradeNow": "Upgrade Now",
+  "upgrade.loading": "Loading..."
 }

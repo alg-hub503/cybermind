@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "@/lib/i18n/use-translations";
 
-export default function UpgradeClient() {
+export default function UpgradeClient({ label }: { label?: string }) {
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslations("upgrade");
 
   const handleUpgrade = async () => {
     try {
@@ -22,13 +24,15 @@ export default function UpgradeClient() {
     }
   };
 
+  const buttonText = loading ? t("loading") : (label ?? t("upgradeNow"));
+
   return (
     <button
       onClick={handleUpgrade}
       disabled={loading}
       className="mt-6 w-full rounded-xl bg-blue-600 px-6 py-3 font-bold text-white hover:bg-blue-500 disabled:opacity-50"
     >
-      {loading ? "Loading..." : "Upgrade Now"}
+      {buttonText}
     </button>
   );
 }

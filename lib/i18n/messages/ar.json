@@ -791,5 +791,14 @@
   "invoices.detail.backToInvoice": "العودة للفاتورة",
   "invoices.detail.editInvoice": "تعديل الفاتورة",
   "invoices.form.saving": "جاري الحفظ...",
-  "invoices.form.saveChanges": "حفظ التغييرات"
+  "invoices.form.saveChanges": "حفظ التغييرات",
+  "upgrade.loginPrompt": "يرجى تسجيل الدخول للترقية.",
+  "upgrade.subscriptionStatus": "حالة الاشتراك",
+  "upgrade.plan": "الخطة",
+  "upgrade.status": "الحالة",
+  "upgrade.paymentPending": "اشتراكك غير نشط بعد. أكمل الدفع للمتابعة.",
+  "upgrade.upgradeToPro": "الترقية إلى PRO",
+  "upgrade.unlockFeatures": "فتح جميع ميزات SaaS",
+  "upgrade.upgradeNow": "ترقية الآن",
+  "upgrade.loading": "جارٍ التحميل..."
 }

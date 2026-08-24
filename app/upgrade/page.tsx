@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/get-server-session";
+import { t } from "@/lib/i18n/server";
 
 import { prisma } from "@/lib/prisma";
 import { hasActiveAccess } from "@/lib/subscription-status";
@@ -11,7 +12,7 @@ export default async function UpgradePage() {
   if (!session?.user?.schoolId) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <p className="text-gray-400">Please log in to upgrade.</p>
+        <p className="text-gray-400">{await t("upgrade.loginPrompt")}</p>
       </div>
     );
   }
@@ -31,32 +32,40 @@ export default async function UpgradePage() {
   const status = sub?.status ?? null;
   const plan = sub?.plan ?? null;
 
+  const upgradeToPro = await t("upgrade.upgradeToPro");
+  const unlockFeatures = await t("upgrade.unlockFeatures");
+  const subscriptionStatus = await t("upgrade.subscriptionStatus");
+  const planLabel = await t("upgrade.plan");
+  const statusLabel = await t("upgrade.status");
+  const paymentPending = await t("upgrade.paymentPending");
+  const upgradeNow = await t("upgrade.upgradeNow");
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-black">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-2xl">
         {status && plan ? (
           <>
-            <h1 className="text-3xl font-black text-white">Subscription Status</h1>
+            <h1 className="text-3xl font-black text-white">{subscriptionStatus}</h1>
             <div className="mt-6 space-y-3 text-left">
               <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <p className="text-sm text-gray-400">Plan</p>
+                <p className="text-sm text-gray-400">{planLabel}</p>
                 <p className="text-lg font-bold text-white">{plan}</p>
               </div>
               <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <p className="text-sm text-gray-400">Status</p>
+                <p className="text-sm text-gray-400">{statusLabel}</p>
                 <p className="text-lg font-bold text-yellow-400">{status}</p>
               </div>
             </div>
             <p className="mt-4 text-sm text-gray-400">
-              Your subscription is not yet active. Complete payment to continue.
+              {paymentPending}
             </p>
-            <UpgradeClient />
+            <UpgradeClient label={upgradeNow} />
           </>
         ) : (
           <>
-            <h1 className="text-3xl font-black text-white">Upgrade To PRO</h1>
-            <p className="mt-2 text-gray-400">Unlock full SaaS features</p>
-            <UpgradeClient />
+            <h1 className="text-3xl font-black text-white">{upgradeToPro}</h1>
+            <p className="mt-2 text-gray-400">{unlockFeatures}</p>
+            <UpgradeClient label={upgradeNow} />
           </>
         )}
       </div>
