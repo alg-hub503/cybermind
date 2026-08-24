@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -9,7 +9,15 @@ import Input from "@/components/ui/input";
 import { useTranslations } from "@/lib/i18n/use-translations";
 import { LanguageSwitcher } from "@/app/_components/language-switcher";
 
-export default function LoginPage() {
+function sanitizeCallbackUrl(raw: string | null): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/") || raw.startsWith("//") || raw.includes("://")) {
+    return null;
+  }
+  return raw;
+}
+
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t, locale, dir } = useTranslations("login");
@@ -18,14 +26,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  function sanitizeCallbackUrl(raw: string | null): string | null {
-    if (!raw) return null;
-    if (!raw.startsWith("/") || raw.startsWith("//") || raw.includes("://")) {
-      return null;
-    }
-    return raw;
-  }
 
   const callbackUrl = sanitizeCallbackUrl(searchParams.get("callbackUrl"));
 
@@ -119,5 +119,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4">
+          <div className="text-sm text-slate-500">Loading...</div>
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }
