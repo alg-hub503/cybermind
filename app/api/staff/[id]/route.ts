@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireSession, requirePermission, toApiError } from "@/lib/authorization";
+import { requireAuth, requirePermission, toApiError } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getStaffMember, updateStaffMember, deleteStaffMember } from "@/lib/features/staff/staff-actions";
 import { updateStaffSchema } from "@/lib/features/staff/schemas/staff.schema";
@@ -8,7 +8,7 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const access = await requireSession().catch(toApiError);
+  const access = await requireAuth().catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }

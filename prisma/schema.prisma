@@ -197,9 +197,10 @@ model SchoolSettings {
   website      String?
   address      String?
 
-  // Trial (data only — no logic in this phase)
-  trialStart DateTime?
-  trialEnd   DateTime?
+  // Trial
+  trialStart              DateTime?
+  trialEnd                DateTime?
+  trialExpiryEmailSentAt  DateTime?
 
   // Invoicing
   invoicePrefix  String? @default("INV-")

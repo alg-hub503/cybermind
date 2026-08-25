@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { requireSession, toApiError } from "@/lib/authorization";
+import { requireAuth, toApiError } from "@/lib/authorization";
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getSchools, createSchool } from "@/lib/features/schools/school-actions";
 import { schoolSchema } from "@/lib/features/schools/schemas/school.schema";
 
 export async function GET() {
-  const access = await requireSession().catch(toApiError);
+  const access = await requireAuth().catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }
@@ -26,7 +26,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const access = await requireSession().catch(toApiError);
+  const access = await requireAuth().catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }

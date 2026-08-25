@@ -3,6 +3,8 @@ import { getServerSession } from "@/lib/get-server-session";
 import { getUserByEmail } from "@/lib/services/domain/user.service";
 import { getPlatformSettings } from "@/lib/features/platform/platform-settings-actions";
 import { prisma } from "@/lib/prisma";
+import { resolveTrialStatus, toAccessString } from "@/lib/trial-status";
+import { hasActiveAccess } from "@/lib/subscription-status";
 
 export async function requireSession() {
   const session = await getServerSession();
@@ -21,7 +23,10 @@ export async function requireSession() {
   return { session };
 }
 
-export async function requireAuth() {
+// Routes that remain accessible even with expired trial (support/retention)
+const RETENTION_PATHS = ["/api/contact-messages", "/api/sales-inquiries", "/api/reports"];
+
+export async function requireAuth(requestPath?: string) {
   const session = await getServerSession();
 
   if (!session?.user?.email) {
@@ -39,6 +44,31 @@ export async function requireAuth() {
 
   if (!user) {
     throw new Error("UNAUTHORIZED");
+  }
+
+  // Skip trial check for admin, retention routes, and users without a school
+  if (user.role === ADMIN_ROLE) return { session, user };
+  if (!user.schoolId) return { session, user };
+  if (requestPath && RETENTION_PATHS.some((p) => requestPath.startsWith(p))) {
+    return { session, user };
+  }
+
+  // Trial/subscription gate
+  const school = await prisma.school.findUnique({
+    where: { id: user.schoolId },
+    include: { subscription: true, settings: true },
+  });
+
+  if (school) {
+    const platformSettings = await getPlatformSettings();
+    const access = resolveTrialStatus(school, platformSettings);
+    const accessStr = toAccessString(access);
+    const subStatus = school.subscription?.status ?? null;
+    const isPastDueOrUnpaid = subStatus === "PAST_DUE" || subStatus === "UNPAID";
+
+    if (!hasActiveAccess(accessStr) && !isPastDueOrUnpaid) {
+      throw new Error("TRIAL_EXPIRED");
+    }
   }
 
   return {
@@ -92,7 +122,7 @@ export async function requireResourceAccess<T extends { schoolId: string }>(
 
 export function toApiError(
   error: unknown
-): { error: string; status: 401 | 403 | 404 | 503 } {
+): { error: string; status: 401 | 402 | 403 | 404 | 503 } {
   if (error instanceof Error) {
     if (error.message === "FORBIDDEN") {
       return { error: "Forbidden", status: 403 };
@@ -102,6 +132,9 @@ export function toApiError(
     }
     if (error.message === "MAINTENANCE") {
       return { error: "Maintenance mode", status: 503 };
+    }
+    if (error.message === "TRIAL_EXPIRED") {
+      return { error: "Trial expired", status: 403 };
     }
   }
   return { error: "Unauthorized", status: 401 };

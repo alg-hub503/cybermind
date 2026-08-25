@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { requireSession, requirePermission, toApiError } from "@/lib/authorization";
+import { requireAuth, requirePermission, toApiError } from "@/lib/authorization";
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getStudents, getStudentsBySchool, createStudent } from "@/lib/features/students/student-actions";
 import { studentSchema } from "@/lib/features/students/schemas/student.schema";
 
 export async function GET() {
-  const access = await requireSession().catch(toApiError);
+  const access = await requireAuth().catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }

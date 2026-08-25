@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireSession, requirePermission, toApiError } from "@/lib/authorization";
+import { requireAuth, requirePermission, toApiError } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getTeacher, updateTeacher, deleteTeacher } from "@/lib/features/teachers/teacher-actions";
 import { updateTeacherSchema } from "@/lib/features/teachers/schemas/teacher.schema";
@@ -8,7 +8,7 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const access = await requireSession().catch(toApiError);
+  const access = await requireAuth().catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }

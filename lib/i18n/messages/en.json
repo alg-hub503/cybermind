@@ -805,5 +805,8 @@
   "upgrade.unlockFeatures": "Unlock full SaaS features",
   "upgrade.upgradeNow": "Upgrade Now",
   "upgrade.loading": "Loading...",
-  "upgrade.login": "Log in"
+  "upgrade.login": "Log in",
+  "upgrade.trialEnded": "Your free trial has ended",
+  "upgrade.trialEndedDesc": "It looks like your account is no longer active. Please click the button below and follow the steps to reactivate it.",
+  "upgrade.contactSupport": "For more information, contact our support team."
 }

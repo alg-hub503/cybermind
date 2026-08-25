@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import { prisma } from "@/lib/prisma";
 import { hasActiveAccess } from "@/lib/subscription-status";
+import { resolveTrialStatus, toAccessString } from "@/lib/trial-status";
+import { getPlatformSettings } from "@/lib/features/platform/platform-settings-actions";
 import UpgradeClient from "./upgrade-client";
 
 export default async function UpgradePage() {
@@ -31,7 +33,7 @@ export default async function UpgradePage() {
 
   const school = await prisma.school.findUnique({
     where: { id: session.user.schoolId },
-    include: { subscription: true },
+    include: { subscription: true, settings: true },
   });
 
   const sub = school?.subscription;
@@ -41,6 +43,33 @@ export default async function UpgradePage() {
     redirect("/dashboard");
   }
 
+  // Check if trial is expired
+  const platformSettings = await getPlatformSettings();
+  const access = school
+    ? resolveTrialStatus(school, platformSettings)
+    : null;
+  const accessStr = access ? toAccessString(access) : null;
+  const isTrialExpired = accessStr === "EXPIRED";
+
+  if (isTrialExpired) {
+    const trialEnded = await t("upgrade.trialEnded");
+    const trialEndedDesc = await t("upgrade.trialEndedDesc");
+    const upgradeNow = await t("upgrade.upgradeNow");
+    const contactSupport = await t("upgrade.contactSupport");
+
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-2xl">
+          <h1 className="text-3xl font-black text-white">{trialEnded}</h1>
+          <p className="mt-4 text-gray-400">{trialEndedDesc}</p>
+          <UpgradeClient label={upgradeNow} />
+          <p className="mt-6 text-sm text-gray-500">{contactSupport}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Default: subscription inactive (not expired trial)
   const status = sub?.status ?? null;
   const plan = sub?.plan ?? null;
 

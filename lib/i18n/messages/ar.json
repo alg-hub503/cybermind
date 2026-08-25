@@ -801,5 +801,8 @@
   "upgrade.unlockFeatures": "فتح جميع ميزات SaaS",
   "upgrade.upgradeNow": "ترقية الآن",
   "upgrade.loading": "جارٍ التحميل...",
-  "upgrade.login": "تسجيل الدخول"
+  "upgrade.login": "تسجيل الدخول",
+  "upgrade.trialEnded": "انتهت الفترة التجريبية المجانية الخاصة بك",
+  "upgrade.trialEndedDesc": "يبدو أن حسابك لم يعد نشطًا. يرجى النقر على الزر أدناه واتباع الخطوات لإعادة تنشيطه.",
+  "upgrade.contactSupport": "للمزيد من المعلومات تواصل مع فريق الدعم."
 }

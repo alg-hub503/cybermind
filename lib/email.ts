@@ -234,3 +234,39 @@ export async function sendEmailChangeNotification(oldEmail: string, newEmail: st
     throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
   }
 }
+
+export async function sendTrialExpiredEmail(email: string, schoolName: string): Promise<void> {
+  const resend = getResend();
+  const upgradeUrl = `${getAppUrl()}/upgrade`;
+
+  if (!resend || process.env.NODE_ENV !== "production") {
+    console.log("=== DEV: Trial Expired Email ===");
+    console.log(`  To: ${email}`);
+    console.log(`  School: ${schoolName}`);
+    console.log(`  Upgrade URL: ${upgradeUrl}`);
+    console.log("=================================");
+    return;
+  }
+
+  const { error } = await resend.emails.send({
+    from: getFromAddress(),
+    to: email,
+    subject: "Your CyberMind trial has ended",
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto;">
+        <h1 style="color: #1e1e1e;">CyberMind</h1>
+        <p style="color: #475569;">Your free trial for <strong>${schoolName}</strong> has ended.</p>
+        <p style="color: #475569;">Your account is no longer active. To continue using CyberMind, please upgrade to a PRO plan.</p>
+        <a href="${upgradeUrl}" style="display: inline-block; background-color: #6366f1; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500; margin: 16px 0;">
+          Upgrade to PRO
+        </a>
+        <p style="color: #94a3b8; font-size: 14px;">If you have any questions, contact our support team.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("Failed to send trial expired email:", JSON.stringify(error));
+    throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
+  }
+}
