@@ -60,7 +60,7 @@ export default async function DashboardPage() {
   const isPastDueOrUnpaid = subStatus === "PAST_DUE" || subStatus === "UNPAID";
 
   if (!hasActiveAccess(accessStr) && !isPastDueOrUnpaid) {
-    redirect("/upgrade");
+    redirect("/account-suspended");
   }
 
   const {

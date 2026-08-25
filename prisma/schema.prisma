@@ -198,9 +198,8 @@ model SchoolSettings {
   address      String?
 
   // Trial
-  trialStart              DateTime?
-  trialEnd                DateTime?
-  trialExpiryEmailSentAt  DateTime?
+  trialStart DateTime?
+  trialEnd   DateTime?
 
   // Invoicing
   invoicePrefix  String? @default("INV-")

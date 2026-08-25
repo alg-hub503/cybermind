@@ -1,7 +1,3 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "@/lib/get-server-session";
-
-import { cookies } from "next/headers";
 import {
   GraduationCap,
   Users,
@@ -16,6 +12,7 @@ import {
   Lock,
   Sparkles,
 } from "lucide-react";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { translations, type Locale } from "@/lib/i18n/landing";
 import { LanguageSwitcher, LangCookieSetter } from "@/app/_components/language-switcher";
@@ -32,11 +29,6 @@ export default async function HomePage({
 }: {
   searchParams?: Promise<{ lang?: string }>;
 }) {
-  const session = await getServerSession();
-  if (session?.user) {
-    redirect("/dashboard");
-  }
-
   const params = await searchParams;
   const urlLang = params?.lang;
   const cookieLang = await getLocale();

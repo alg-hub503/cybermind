@@ -808,5 +808,9 @@
   "upgrade.login": "Log in",
   "upgrade.trialEnded": "Your free trial has ended",
   "upgrade.trialEndedDesc": "It looks like your account is no longer active. Please click the button below and follow the steps to reactivate it.",
-  "upgrade.contactSupport": "For more information, contact our support team."
+  "upgrade.contactSupport": "For more information, contact our support team.",
+  "accountSuspended.title": "Your account has been suspended",
+  "accountSuspended.description": "It looks like your account is no longer active. Please upgrade to reactivate your account.",
+  "accountSuspended.upgradeNow": "Upgrade Now",
+  "accountSuspended.contactSupport": "For more information, contact our support team."
 }

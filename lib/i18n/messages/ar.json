@@ -804,5 +804,9 @@
   "upgrade.login": "تسجيل الدخول",
   "upgrade.trialEnded": "انتهت الفترة التجريبية المجانية الخاصة بك",
   "upgrade.trialEndedDesc": "يبدو أن حسابك لم يعد نشطًا. يرجى النقر على الزر أدناه واتباع الخطوات لإعادة تنشيطه.",
-  "upgrade.contactSupport": "للمزيد من المعلومات تواصل مع فريق الدعم."
+  "upgrade.contactSupport": "للمزيد من المعلومات تواصل مع فريق الدعم.",
+  "accountSuspended.title": "تم تعليق حسابك",
+  "accountSuspended.description": "يبدو أن حسابك لم يعد نشطًا. يرجى الترقية لإعادة تنشيط حسابك.",
+  "accountSuspended.upgradeNow": "ترقية الآن",
+  "accountSuspended.contactSupport": "للمزيد من المعلومات تواصل مع فريق الدعم."
 }
