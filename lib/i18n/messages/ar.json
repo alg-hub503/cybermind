@@ -754,6 +754,7 @@
   "roles.default": "افتراضي",
   "roles.noRecords": "لا توجد أدوار بعد",
   "roles.emptyDescription": "يتم إنشاء الأدوار تلقائياً.",
+  "roles.selectSchool": "اختر مدرسة لإدارة أدوارها",
   "billing.upgradeNow": "Upgrade Now",
   "invoices.tableHeaderBilledTo": "الجهة المفوترة",
   "clients.detail.invoices": "الفواتير",

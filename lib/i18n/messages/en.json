@@ -760,6 +760,7 @@
   "roles.default": "Default",
   "roles.noRecords": "No roles yet",
   "roles.emptyDescription": "Roles are seeded automatically.",
+  "roles.selectSchool": "Select a school to manage its roles",
   "clients.detail.invoices": "Invoices",
   "clients.detail.amount": "Amount",
   "clients.detail.status": "Status",
