@@ -26,6 +26,17 @@ export async function requireSession() {
 // Routes that remain accessible even with expired trial (support/retention)
 const RETENTION_PATHS = ["/api/contact-messages", "/api/sales-inquiries", "/api/reports"];
 
+// Routes accessible without phone verification
+const PHONE_VERIFICATION_EXEMPT_PATHS = [
+  "/api/auth/verify-phone",
+  "/api/register",
+  "/api/auth/signin",
+  "/api/auth/csrf",
+  "/api/auth/callback",
+  "/api/auth/session",
+  "/api/auth/providers",
+];
+
 export async function requireAuth(requestPath?: string) {
   const session = await getServerSession();
 
@@ -44,6 +55,15 @@ export async function requireAuth(requestPath?: string) {
 
   if (!user) {
     throw new Error("UNAUTHORIZED");
+  }
+
+  // Phone verification enforcement: if user has phone but hasn't verified, block access
+  // Existing users have phone=null so they pass through unchanged
+  if (user.phone && !user.phoneVerifiedAt) {
+    const isExempt = requestPath && PHONE_VERIFICATION_EXEMPT_PATHS.some((p) => requestPath.startsWith(p));
+    if (!isExempt) {
+      throw new Error("PHONE_VERIFICATION_REQUIRED");
+    }
   }
 
   // Skip trial check for admin, retention routes, and users without a school
@@ -135,6 +155,9 @@ export function toApiError(
     }
     if (error.message === "TRIAL_EXPIRED") {
       return { error: "Trial expired", status: 403 };
+    }
+    if (error.message === "PHONE_VERIFICATION_REQUIRED") {
+      return { error: "Phone verification required", status: 403 };
     }
   }
   return { error: "Unauthorized", status: 401 };

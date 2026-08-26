@@ -35,6 +35,8 @@ model User {
   password            String?
   role                String               @default("USER")
   schoolId            String?
+  phone               String?
+  phoneVerifiedAt     DateTime?
   stripeCustomerId    String?              @unique
   passwordChangedAt   DateTime?
   emailChangedAt      DateTime?
@@ -48,6 +50,7 @@ model User {
   teacherProfile      TeacherProfile?
   staffProfile        StaffProfile?
   userRoles           UserRole[]
+  phoneVerifications  PhoneVerification[]
 }
 
 model PasswordResetToken {
@@ -418,6 +421,22 @@ model UserRole {
 
   @@unique([userId, roleId, schoolId])
   @@index([schoolId])
+}
+
+model PhoneVerification {
+  id        String   @id @default(cuid())
+  userId    String
+  phone     String
+  codeHash  String
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([phone])
+  @@index([expiresAt])
 }
 
 model playing_with_neon {
