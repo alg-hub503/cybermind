@@ -48,6 +48,40 @@ export async function sendPasswordResetEmail(email: string, token: string): Prom
   }
 }
 
+export async function sendVerificationEmail(email: string, token: string): Promise<void> {
+  const resend = getResend();
+  const verifyUrl = `${getAppUrl()}/verify-email?token=${token}`;
+
+  if (!resend || process.env.NODE_ENV !== "production") {
+    console.log("=== DEV: Email Verification Link ===");
+    console.log(`  To: ${email}`);
+    console.log(`  URL: ${verifyUrl}`);
+    console.log("=====================================");
+    return;
+  }
+
+  const { error } = await resend.emails.send({
+    from: getFromAddress(),
+    to: email,
+    subject: "Verify your CyberMind account",
+    html: `
+      <div style="font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto;">
+        <h1 style="color: #1e1e1e;">CyberMind</h1>
+        <p style="color: #475569;">Welcome to CyberMind! Click the button below to verify your email address and activate your account.</p>
+        <a href="${verifyUrl}" style="display: inline-block; background-color: #6366f1; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500; margin: 16px 0;">
+          Verify Email
+        </a>
+        <p style="color: #94a3b8; font-size: 14px;">This link expires in 24 hours. If you didn't create an account, you can safely ignore this email.</p>
+      </div>
+    `,
+  });
+
+  if (error) {
+    console.error("Failed to send verification email:", JSON.stringify(error));
+    throw new Error(typeof error === "object" && error !== null ? (error as { message?: string }).message ?? "Resend API error" : "Resend API error");
+  }
+}
+
 interface ContactNotificationParams {
   name: string;
   email: string;

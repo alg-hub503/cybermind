@@ -25,6 +25,12 @@ export async function requireCurrentUser() {
     redirect("/login");
   }
 
+  // Email verification gate: block dashboard access until verified
+  // Existing users have emailVerifiedAt backfilled by migration
+  if (!user.emailVerifiedAt) {
+    redirect("/verify-email");
+  }
+
   return {
     session,
     user,

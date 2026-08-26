@@ -1,26 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { NextResponse } from "next/server";
-import { sendSms, generateOtp } from "@/lib/sms";
+import { sendVerificationEmail } from "@/lib/email";
 
-const OTP_EXPIRY_MINUTES = 5;
-const RESEND_COOLDOWN_SECONDS = 60;
+const TOKEN_EXPIRY_HOURS = 24;
+
+function sha256(token: string): string {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    if (!body.email || !body.password || !body.phone) {
+    if (!body.email || !body.password) {
       return NextResponse.json(
         { error: "Invalid input" },
-        { status: 400 }
-      );
-    }
-
-    const phone = String(body.phone).trim();
-    if (!/^\+?[1-9]\d{6,14}$/.test(phone)) {
-      return NextResponse.json(
-        { error: "Invalid phone number" },
         { status: 400 }
       );
     }
@@ -65,7 +61,7 @@ export async function POST(req: Request) {
           name: body.name ?? null,
           password: hashedPassword,
           schoolId: school.id,
-          phone,
+          phone: body.phone ? String(body.phone).trim() : null,
           role: "USER",
         },
       });
@@ -129,51 +125,29 @@ export async function POST(req: Request) {
       return { user, school };
     });
 
-    // Check cooldown: prevent rapid resend
-    const lastVerification = await prisma.phoneVerification.findFirst({
-      where: { userId: result.user.id },
-      orderBy: { createdAt: "desc" },
-    });
+    // Generate email verification token
+    const token = crypto.randomBytes(32).toString("hex");
+    const tokenHash = sha256(token);
+    const expiresAt = new Date(Date.now() + TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
 
-    if (lastVerification) {
-      const secondsSinceLastSend = Math.floor(
-        (Date.now() - lastVerification.createdAt.getTime()) / 1000
-      );
-      if (secondsSinceLastSend < RESEND_COOLDOWN_SECONDS) {
-        return NextResponse.json({
-          userId: result.user.id,
-          schoolId: result.school.id,
-          schoolName: result.school.name,
-          phone,
-          message: "OTP sent. Please wait before requesting a new code.",
-          cooldownSeconds: RESEND_COOLDOWN_SECONDS - secondsSinceLastSend,
-        });
-      }
-    }
-
-    // Generate and store OTP
-    const otp = generateOtp();
-    const codeHash = await bcrypt.hash(otp, 10);
-    const expiresAt = new Date(Date.now() + OTP_EXPIRY_MINUTES * 60 * 1000);
-
-    await prisma.phoneVerification.create({
+    await prisma.emailVerification.create({
       data: {
         userId: result.user.id,
-        phone,
-        codeHash,
+        email: result.user.email,
+        tokenHash,
         expiresAt,
       },
     });
 
-    // Send OTP via SMS
-    await sendSms(phone, `Your CyberMind verification code is: ${otp}. Valid for ${OTP_EXPIRY_MINUTES} minutes.`);
+    // Send verification email (logs to console in dev, sends via Resend in production)
+    await sendVerificationEmail(result.user.email, token);
 
     return NextResponse.json({
       userId: result.user.id,
       schoolId: result.school.id,
       schoolName: result.school.name,
-      phone,
-      message: "OTP sent to your phone",
+      email: result.user.email,
+      message: "Verification email sent",
     });
   } catch (error) {
     console.error(error);
