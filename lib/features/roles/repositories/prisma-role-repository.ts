@@ -13,6 +13,18 @@ export class PrismaRoleRepository {
     });
   }
 
+  async findBySchoolId(schoolId: string) {
+    return prisma.role.findMany({
+      where: { schoolId },
+      include: {
+        RolePermission: {
+          include: { permission: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async findById(id: string) {
     return prisma.role.findUnique({
       where: { id },
@@ -24,9 +36,9 @@ export class PrismaRoleRepository {
     });
   }
 
-  async findByName(name: string) {
-    return prisma.role.findUnique({
-      where: { name },
+  async findByName(name: string, schoolId: string) {
+    return prisma.role.findFirst({
+      where: { name, schoolId },
     });
   }
 

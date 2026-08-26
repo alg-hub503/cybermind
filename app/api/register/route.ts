@@ -57,18 +57,64 @@ export async function POST(req: Request) {
         },
       });
 
-      const adminRole = await tx.role.findUnique({
-        where: { name: "ADMIN" },
-      });
+      // Create school-scoped default roles
+      const defaultRoles = [
+        { name: "ADMIN", systemKey: "SCHOOL_ADMIN", description: "School administrator with full access", isDefault: true, schoolId: school.id },
+        { name: "TEACHER", systemKey: "TEACHER", description: "Teacher with student management access", isDefault: true, schoolId: school.id },
+        { name: "STAFF", systemKey: "STAFF", description: "Staff member with limited access", isDefault: true, schoolId: school.id },
+      ];
 
-      if (!adminRole) {
-        throw new Error("ADMIN role is not seeded; run scripts/seed-roles-permissions.ts");
+      const roleMap: Record<string, string> = {};
+
+      for (const roleDef of defaultRoles) {
+        const created = await tx.role.create({ data: roleDef });
+        roleMap[roleDef.name] = created.id;
       }
 
+      // Assign permissions to school roles
+      const permissions = await tx.permission.findMany();
+      const permMap: Record<string, string> = {};
+      for (const p of permissions) {
+        permMap[p.code] = p.id;
+      }
+
+      // ADMIN gets all permissions
+      const adminPermCodes = [
+        "MANAGE_STUDENTS", "MANAGE_TEACHERS", "MANAGE_STAFF",
+        "MANAGE_CLASSES", "MANAGE_GRADES", "MANAGE_ACADEMIC_YEARS",
+        "VIEW_REPORTS", "MANAGE_SCHOOL_SETTINGS", "MANAGE_BILLING",
+      ];
+      for (const code of adminPermCodes) {
+        if (permMap[code]) {
+          await tx.rolePermission.create({
+            data: { roleId: roleMap["ADMIN"], permissionId: permMap[code] },
+          });
+        }
+      }
+
+      // TEACHER gets MANAGE_STUDENTS + VIEW_REPORTS
+      for (const code of ["MANAGE_STUDENTS", "VIEW_REPORTS"]) {
+        if (permMap[code]) {
+          await tx.rolePermission.create({
+            data: { roleId: roleMap["TEACHER"], permissionId: permMap[code] },
+          });
+        }
+      }
+
+      // STAFF gets VIEW_REPORTS + MANAGE_SCHOOL_SETTINGS
+      for (const code of ["VIEW_REPORTS", "MANAGE_SCHOOL_SETTINGS"]) {
+        if (permMap[code]) {
+          await tx.rolePermission.create({
+            data: { roleId: roleMap["STAFF"], permissionId: permMap[code] },
+          });
+        }
+      }
+
+      // Link registrant to school's ADMIN role
       await tx.userRole.create({
         data: {
           userId: user.id,
-          roleId: adminRole.id,
+          roleId: roleMap["ADMIN"],
           schoolId: school.id,
         },
       });

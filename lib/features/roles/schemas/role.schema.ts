@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 export const createRoleSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+  name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be at most 50 characters"),
   description: z.string().nullable().optional(),
   permissionIds: z.array(z.string()).optional(),
 });
 
 export const updateRoleSchema = z.object({
-  name: z.string().min(1, "Name is required").optional(),
+  name: z.string().min(2, "Name must be at least 2 characters").max(50, "Name must be at most 50 characters").optional(),
   description: z.string().nullable().optional(),
   permissionIds: z.array(z.string()).optional(),
 });

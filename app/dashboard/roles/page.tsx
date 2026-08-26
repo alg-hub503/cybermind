@@ -1,6 +1,5 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
-import { ADMIN_ROLE } from "@/lib/constants";
-import { getRoles } from "@/lib/features/roles/role-actions";
+import { getRolesBySchoolId } from "@/lib/features/roles/role-actions";
 import { t } from "@/lib/i18n/server";
 import EmptyState from "@/components/ui/empty-state";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
@@ -8,18 +7,18 @@ import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-tab
 export default async function RolesPage() {
   const { user } = await requireCurrentUser();
 
-  if (user.role !== ADMIN_ROLE) {
+  if (!user.schoolId) {
     return (
       <main className="p-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-gray-500">You do not have permission to view this page.</p>
+          <p className="text-gray-500">You do not have a school assigned.</p>
         </div>
       </main>
     );
   }
 
-  const roles = await getRoles();
+  const roles = await getRolesBySchoolId(user.schoolId);
 
   const title = await t("roles.title");
   const description = await t("roles.description");

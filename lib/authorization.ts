@@ -186,3 +186,31 @@ export async function requirePermission(permissionCode: string) {
 
   return { user };
 }
+
+export async function requireSchoolAdmin(schoolId: string) {
+  const { user } = await requireAuth();
+
+  // Platform Admin bypasses all school checks
+  if (user.role === ADMIN_ROLE) {
+    return { user };
+  }
+
+  // Check if user has ADMIN role in this specific school (via systemKey)
+  const adminRole = await prisma.role.findFirst({
+    where: { systemKey: "SCHOOL_ADMIN", schoolId },
+  });
+
+  if (!adminRole) {
+    throw new Error("FORBIDDEN");
+  }
+
+  const userRole = await prisma.userRole.findFirst({
+    where: { userId: user.id, roleId: adminRole.id, schoolId },
+  });
+
+  if (!userRole) {
+    throw new Error("FORBIDDEN");
+  }
+
+  return { user };
+}
