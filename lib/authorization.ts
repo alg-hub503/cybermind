@@ -23,21 +23,7 @@ export async function requireSession() {
   return { session };
 }
 
-// Routes that remain accessible even with expired trial (support/retention)
-const RETENTION_PATHS = ["/api/contact-messages", "/api/sales-inquiries", "/api/reports"];
-
-// Routes accessible without email verification
-const EMAIL_VERIFICATION_EXEMPT_PATHS = [
-  "/api/auth/verify-email",
-  "/api/register",
-  "/api/auth/signin",
-  "/api/auth/csrf",
-  "/api/auth/callback",
-  "/api/auth/session",
-  "/api/auth/providers",
-];
-
-export async function requireAuth(requestPath?: string) {
+export async function requireAuth() {
   const session = await getServerSession();
 
   if (!session?.user?.email) {
@@ -57,21 +43,9 @@ export async function requireAuth(requestPath?: string) {
     throw new Error("UNAUTHORIZED");
   }
 
-  // Email verification enforcement: block access until email is verified
-  // Existing users have emailVerifiedAt backfilled by migration, so they pass through
-  if (!user.emailVerifiedAt) {
-    const isExempt = requestPath && EMAIL_VERIFICATION_EXEMPT_PATHS.some((p) => requestPath.startsWith(p));
-    if (!isExempt) {
-      throw new Error("EMAIL_VERIFICATION_REQUIRED");
-    }
-  }
-
-  // Skip trial check for admin, retention routes, and users without a school
+  // Skip trial check for admin and users without a school
   if (user.role === ADMIN_ROLE) return { session, user };
   if (!user.schoolId) return { session, user };
-  if (requestPath && RETENTION_PATHS.some((p) => requestPath.startsWith(p))) {
-    return { session, user };
-  }
 
   // Trial/subscription gate
   const school = await prisma.school.findUnique({
@@ -142,7 +116,7 @@ export async function requireResourceAccess<T extends { schoolId: string }>(
 
 export function toApiError(
   error: unknown
-): { error: string; status: 401 | 402 | 403 | 404 | 503 } {
+): { error: string; status: 401 | 403 | 404 | 503 } {
   if (error instanceof Error) {
     if (error.message === "FORBIDDEN") {
       return { error: "Forbidden", status: 403 };
@@ -155,9 +129,6 @@ export function toApiError(
     }
     if (error.message === "TRIAL_EXPIRED") {
       return { error: "Trial expired", status: 403 };
-    }
-    if (error.message === "EMAIL_VERIFICATION_REQUIRED") {
-      return { error: "Email verification required", status: 403 };
     }
   }
   return { error: "Unauthorized", status: 401 };

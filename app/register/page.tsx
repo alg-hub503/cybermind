@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { useTranslations } from "@/lib/i18n/use-translations";
 import { LanguageSwitcher } from "@/app/_components/language-switcher";
+import { toast, Toaster } from "sonner";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const { t, locale, dir } = useTranslations("register");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [submittedEmail, setSubmittedEmail] = useState("");
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -28,7 +28,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, phone: phone || undefined }),
+        body: JSON.stringify({ name, email, password }),
       });
 
       const data = await res.json();
@@ -38,8 +38,8 @@ export default function RegisterPage() {
         return;
       }
 
-      setSubmittedEmail(data.email);
-      setSubmitted(true);
+      toast.success(t("success"));
+      setTimeout(() => router.push("/login"), 1500);
     } catch {
       setError(t("error"));
     } finally {
@@ -47,40 +47,9 @@ export default function RegisterPage() {
     }
   }
 
-  // Step 2: Check your email
-  if (submitted) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4" dir={dir}>
-        <div className="w-full max-w-sm">
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-lg text-center">
-            <div className="mb-4 text-4xl">📧</div>
-            <h1 className="text-2xl font-bold text-slate-900">{t("checkEmail")}</h1>
-            <p className="mt-2 text-sm text-slate-600">
-              {t("checkEmailMessage")}
-            </p>
-            <p className="mt-1 font-medium text-indigo-600">{submittedEmail}</p>
-
-            <div className="mt-6 rounded-lg bg-slate-50 p-3">
-              <p className="text-xs text-slate-500">
-                {t("checkSpam")}
-              </p>
-            </div>
-
-            <Link
-              href="/login"
-              className="mt-6 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700"
-            >
-              {t("backToLogin")}
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Step 1: Registration form
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4" dir={dir}>
+      <Toaster richColors />
       <div className="w-full max-w-sm">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-lg">
           <div className="mb-6 flex items-center justify-between">
@@ -131,19 +100,6 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="mb-1 block text-sm font-medium text-slate-700">
-                {t("phoneOptional")}
-              </label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder={t("phonePlaceholder")}
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
 

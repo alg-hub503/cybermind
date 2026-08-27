@@ -1,14 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { NextResponse } from "next/server";
-import { sendVerificationEmail } from "@/lib/email";
-
-const TOKEN_EXPIRY_HOURS = 24;
-
-function sha256(token: string): string {
-  return crypto.createHash("sha256").update(token).digest("hex");
-}
 
 export async function POST(req: Request) {
   try {
@@ -61,7 +53,6 @@ export async function POST(req: Request) {
           name: body.name ?? null,
           password: hashedPassword,
           schoolId: school.id,
-          phone: body.phone ? String(body.phone).trim() : null,
           role: "USER",
         },
       });
@@ -125,37 +116,11 @@ export async function POST(req: Request) {
       return { user, school };
     });
 
-    // Generate email verification token
-    const token = crypto.randomBytes(32).toString("hex");
-    const tokenHash = sha256(token);
-    const expiresAt = new Date(Date.now() + TOKEN_EXPIRY_HOURS * 60 * 60 * 1000);
-
-    await prisma.emailVerification.create({
-      data: {
-        userId: result.user.id,
-        email: result.user.email,
-        tokenHash,
-        expiresAt,
-      },
-    });
-
-    // Send verification email — non-blocking so Resend failure doesn't kill registration
-    let emailSent = false;
-    try {
-      await sendVerificationEmail(result.user.email, token);
-      emailSent = true;
-    } catch (emailError) {
-      console.error("Failed to send verification email:", emailError);
-    }
-
     return NextResponse.json({
-      userId: result.user.id,
-      schoolId: result.school.id,
-      schoolName: result.school.name,
+      id: result.user.id,
       email: result.user.email,
-      message: emailSent
-        ? "Verification email sent"
-        : "Account created. Please contact support to verify your email.",
+      schoolId: result.school.id,
+      message: "User and School created successfully",
     });
   } catch (error) {
     console.error(error);

@@ -28,29 +28,26 @@ model Subscription {
 }
 
 model User {
-  id                  String               @id @default(cuid())
-  name                String?
-  email               String               @unique
-  pendingEmail        String?              @unique
-  password            String?
-  role                String               @default("USER")
-  schoolId            String?
-  phone               String?
-  emailVerifiedAt     DateTime?
-  stripeCustomerId    String?              @unique
-  passwordChangedAt   DateTime?
-  emailChangedAt      DateTime?
-  School              School?              @relation(fields: [schoolId], references: [id])
-  passwordResetTokens PasswordResetToken[]
+  id                 String        @id @default(cuid())
+  name               String?
+  email              String        @unique
+  pendingEmail       String?       @unique
+  password           String?
+  role               String        @default("USER")
+  schoolId           String?
+  stripeCustomerId   String?       @unique
+  passwordChangedAt  DateTime?
+  emailChangedAt     DateTime?
+  School             School?       @relation(fields: [schoolId], references: [id])
+  passwordResetTokens  PasswordResetToken[]
   emailChangeTokens   EmailChangeToken[]
   emailChangeAttempts EmailChangeAttempt[]
   reports             Report[]
-  contactMessages     ContactMessage[]
-  salesInquiries      SalesInquiry[]
-  teacherProfile      TeacherProfile?
-  staffProfile        StaffProfile?
-  userRoles           UserRole[]
-  emailVerifications  EmailVerification[]
+  contactMessages    ContactMessage[]
+  salesInquiries     SalesInquiry[]
+  teacherProfile     TeacherProfile?
+  staffProfile       StaffProfile?
+  userRoles          UserRole[]
 }
 
 model PasswordResetToken {
@@ -421,20 +418,6 @@ model UserRole {
 
   @@unique([userId, roleId, schoolId])
   @@index([schoolId])
-}
-
-model EmailVerification {
-  id        String   @id @default(cuid())
-  userId    String
-  email     String
-  tokenHash String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([expiresAt])
 }
 
 model playing_with_neon {
