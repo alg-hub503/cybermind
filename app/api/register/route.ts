@@ -139,15 +139,23 @@ export async function POST(req: Request) {
       },
     });
 
-    // Send verification email (logs to console in dev, sends via Resend in production)
-    await sendVerificationEmail(result.user.email, token);
+    // Send verification email — non-blocking so Resend failure doesn't kill registration
+    let emailSent = false;
+    try {
+      await sendVerificationEmail(result.user.email, token);
+      emailSent = true;
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
 
     return NextResponse.json({
       userId: result.user.id,
       schoolId: result.school.id,
       schoolName: result.school.name,
       email: result.user.email,
-      message: "Verification email sent",
+      message: emailSent
+        ? "Verification email sent"
+        : "Account created. Please contact support to verify your email.",
     });
   } catch (error) {
     console.error(error);
