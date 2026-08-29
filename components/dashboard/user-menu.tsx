@@ -1,6 +1,7 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 import Button from "@/components/ui/button";
 import { useTranslations } from "@/lib/i18n/use-translations";
@@ -32,6 +33,10 @@ export default function UserMenu() {
           <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">{subscription}</span>
         </div>
       </div>
+
+      <Link href="/dashboard/profile" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+        {t("profile.title")}
+      </Link>
 
       <Button variant="outline" onClick={() => signOut({ callbackUrl: "/login" })}>
         {t("logout")}
