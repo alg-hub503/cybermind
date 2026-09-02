@@ -29,10 +29,11 @@ export default function Sidebar() {
 
   const isAdmin = session?.user?.role === "ADMIN";
   const schoolId = session?.user?.schoolId;
+  const base = locale === "en" ? "/en" : "";
 
   return (
     <aside
-      className={`hidden min-h-screen w-64 flex-col border-slate-800 bg-slate-900 lg:flex ${
+      className={`fixed inset-y-0 z-40 hidden w-64 flex-col border-slate-800 bg-slate-900 lg:flex ${
         dir === "rtl" ? "border-l" : "border-r"
       }`}
       dir={dir}
@@ -47,29 +48,29 @@ export default function Sidebar() {
         <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
       </div>
 
-      <nav className="flex flex-1 flex-col gap-2 p-4">
-        <NavItem href="/dashboard" label={t("dashboard")} icon={<LayoutDashboard size={20} />} />
-        <NavItem href="/dashboard/clients" label={t("clients")} icon={<Users size={20} />} />
-        <NavItem href="/dashboard/invoices" label={t("invoices")} icon={<FileText size={20} />} />
-        <NavItem href="/dashboard/schools" label={t("schools")} icon={<GraduationCap size={20} />} />
-        <NavItem href="/dashboard/academic-years" label={t("academicYears")} icon={<CalendarDays size={20} />} />
-        <NavItem href="/dashboard/grades" label={t("grades")} icon={<Layers size={20} />} />
-        <NavItem href="/dashboard/classes" label={t("classes")} icon={<BookOpen size={20} />} />
-        <NavItem href="/dashboard/students" label={t("students")} icon={<GraduationCap size={20} />} />
-        <NavItem href="/dashboard/teachers" label={t("teachers")} icon={<Users size={20} />} />
-        <NavItem href="/dashboard/staff" label={t("staff")} icon={<Users size={20} />} />
-        <NavItem href="/dashboard/stats" label={t("stats")} icon={<BarChart3 size={20} />} />
-        <NavItem href="/dashboard/subscription" label={t("subscription")} icon={<Crown size={20} />} />
-        <NavItem href="/dashboard/billing" label={t("billing")} icon={<CreditCard size={20} />} />
-        <NavItem href="/dashboard/hub" label={t("hub")} icon={<HelpCircle size={20} />} />
+      <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
+        <NavItem href={`${base}/dashboard`} label={t("dashboard")} icon={<LayoutDashboard size={20} />} />
+        <NavItem href={`${base}/dashboard/clients`} label={t("clients")} icon={<Users size={20} />} />
+        <NavItem href={`${base}/dashboard/invoices`} label={t("invoices")} icon={<FileText size={20} />} />
+        <NavItem href={`${base}/dashboard/schools`} label={t("schools")} icon={<GraduationCap size={20} />} />
+        <NavItem href={`${base}/dashboard/academic-years`} label={t("academicYears")} icon={<CalendarDays size={20} />} />
+        <NavItem href={`${base}/dashboard/grades`} label={t("grades")} icon={<Layers size={20} />} />
+        <NavItem href={`${base}/dashboard/classes`} label={t("classes")} icon={<BookOpen size={20} />} />
+        <NavItem href={`${base}/dashboard/students`} label={t("students")} icon={<GraduationCap size={20} />} />
+        <NavItem href={`${base}/dashboard/teachers`} label={t("teachers")} icon={<Users size={20} />} />
+        <NavItem href={`${base}/dashboard/staff`} label={t("staff")} icon={<Users size={20} />} />
+        <NavItem href={`${base}/dashboard/stats`} label={t("stats")} icon={<BarChart3 size={20} />} />
+        <NavItem href={`${base}/dashboard/subscription`} label={t("subscription")} icon={<Crown size={20} />} />
+        <NavItem href={`${base}/dashboard/billing`} label={t("billing")} icon={<CreditCard size={20} />} />
+        <NavItem href={`${base}/dashboard/hub`} label={t("hub")} icon={<HelpCircle size={20} />} />
         {!isAdmin && schoolId && (
-          <NavItem href={`/dashboard/schools/${schoolId}/settings`} label={t("settings")} icon={<Settings size={20} />} />
+          <NavItem href={`${base}/dashboard/schools/${schoolId}/settings`} label={t("settings")} icon={<Settings size={20} />} />
         )}
         {isAdmin && (
           <>
-            <NavItem href="/dashboard/admin" label={t("admin")} icon={<Shield size={20} />} />
-            <NavItem href="/dashboard/roles" label={t("roles")} icon={<Shield size={20} />} />
-            <NavItem href="/dashboard/platform-settings" label={t("platformSettings")} icon={<Settings size={20} />} />
+            <NavItem href={`${base}/dashboard/admin`} label={t("admin")} icon={<Shield size={20} />} />
+            <NavItem href={`${base}/dashboard/roles`} label={t("roles")} icon={<Shield size={20} />} />
+            <NavItem href={`${base}/dashboard/platform-settings`} label={t("platformSettings")} icon={<Settings size={20} />} />
           </>
         )}
       </nav>
@@ -85,7 +86,7 @@ export default function Sidebar() {
           </span>
         </div>
         <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
+          onClick={() => signOut({ callbackUrl: locale === "en" ? "/en/login" : "/login" })}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
         >
           <LogOut size={16} />
