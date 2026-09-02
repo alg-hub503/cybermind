@@ -33,10 +33,10 @@ export default async function StudentsPage() {
   const emptyDescription = await t("students.emptyDescription");
 
   const columns = [
-    { key: "code", header: codeLabel, width: "10%" },
-    { key: "name", header: nameLabel, width: "45%" },
-    { key: "status", header: statusLabel, width: "35%" },
-    { key: "actions", header: actionsLabel, width: "10%", align: "center" as const },
+    { key: "code", header: codeLabel, width: "15%" },
+    { key: "name", header: nameLabel, width: "40%" },
+    { key: "status", header: statusLabel, width: "25%" },
+    { key: "actions", header: actionsLabel, width: "20%", align: "center" as const },
   ];
 
   return (
