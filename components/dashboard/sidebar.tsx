@@ -34,7 +34,7 @@ export default function Sidebar() {
   return (
     <aside
       className={`fixed inset-y-0 z-40 hidden w-64 flex-col border-slate-800 bg-slate-900 lg:flex ${
-        dir === "rtl" ? "border-l" : "border-r"
+        dir === "rtl" ? "right-0 left-auto border-l" : "left-0 right-auto border-r"
       }`}
       dir={dir}
     >
