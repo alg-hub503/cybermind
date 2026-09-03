@@ -109,3 +109,4 @@ notepad middleware.ts
 .env.vercel
 .vercel
 .env*
+!.env.example

@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import type { CreateStaffDto, UpdateStaffDto } from "../types/staff";
 
@@ -33,12 +34,13 @@ export class PrismaStaffRepository {
 
   async create(data: CreateStaffDto) {
     const { hireDate, schoolId, name, email, password, phone, position, department } = data;
+    const hashedPassword = await bcrypt.hash(String(password), 12);
     return prisma.$transaction(async (tx) => {
       const user = await tx.user.create({
         data: {
           name,
           email,
-          password,
+          password: hashedPassword,
           role: "STAFF",
           schoolId,
         },

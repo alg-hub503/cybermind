@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAuth, toApiError } from "@/lib/authorization";
+import { requireAuth, requirePermission, toApiError } from "@/lib/authorization";
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getClients, getClientsBySchool, createClient } from "@/lib/features/clients/client-actions";
@@ -26,11 +26,11 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const access = await requireAuth().catch(toApiError);
+  const access = await requirePermission("MANAGE_BILLING").catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }
-  const { session } = access;
+  const { user } = access;
 
   const body = await req.json();
   const parsed = clientSchema.safeParse(body);
@@ -42,15 +42,15 @@ export async function POST(req: Request) {
   // Security: School Users MUST use their own schoolId from session
   // Only ADMIN can specify schoolId from the request body
   let schoolId: string;
-  if (session.user.role === ADMIN_ROLE) {
+  if (user.role === ADMIN_ROLE) {
     // ADMIN: accept schoolId from body, but verify it's a real school
     schoolId = parsed.data.schoolId;
   } else {
     // School User: IGNORE body schoolId, force use session schoolId
-    if (!session.user.schoolId) {
+    if (!user.schoolId) {
       return NextResponse.json({ error: "No school assigned" }, { status: 403 });
     }
-    schoolId = session.user.schoolId;
+    schoolId = user.schoolId;
   }
 
   try {
