@@ -46,7 +46,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-3">
-          <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
+          <LanguageSwitcher currentLang={locale} />
 
           <Button variant="ghost" aria-label="Notifications" className="hidden p-2 sm:inline-flex">
             <Bell size={20} />

@@ -50,7 +50,7 @@ function VerifyEmailContent() {
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-lg text-center">
           <div className="mb-4 flex items-center justify-between">
             <div />
-            <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
+            <LanguageSwitcher currentLang={locale} />
           </div>
 
           {status === "verifying" && (

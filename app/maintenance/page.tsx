@@ -19,7 +19,6 @@ export default function MaintenancePage() {
             <div />
             <LanguageSwitcher
               currentLang={locale}
-              label={locale === "ar" ? "EN" : "AR"}
             />
           </div>
 

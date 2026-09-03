@@ -45,7 +45,7 @@ export default function Sidebar() {
           </h1>
           <p className="mt-1 text-sm text-slate-400">{t("tagline")}</p>
         </div>
-        <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
+        <LanguageSwitcher currentLang={locale} />
       </div>
 
       <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">

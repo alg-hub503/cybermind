@@ -20,7 +20,7 @@ import { LanguageSwitcher, LangCookieSetter } from "@/app/_components/language-s
 async function getLocale(): Promise<Locale> {
   const store = await cookies();
   const lang = store.get("lang")?.value;
-  if (lang === "ar" || lang === "en") return lang;
+  if (lang === "ar" || lang === "en" || lang === "fr") return lang;
   return "en";
 }
 
@@ -33,7 +33,7 @@ export default async function HomePage({
   const urlLang = params?.lang;
   const cookieLang = await getLocale();
   const lang: Locale =
-    urlLang === "ar" || urlLang === "en" ? urlLang : cookieLang;
+    urlLang === "ar" || urlLang === "en" || urlLang === "fr" ? urlLang : cookieLang;
   const t = translations[lang];
   const dir = lang === "ar" ? "rtl" : "ltr";
 
@@ -63,7 +63,7 @@ export default async function HomePage({
           <a href="#pricing" className="transition hover:text-white">
             {t.nav.pricing}
           </a>
-          <LanguageSwitcher currentLang={lang} label={t.nav.langLabel} />
+          <LanguageSwitcher currentLang={lang} />
           <Link
             href="/login"
             className="rounded-xl border border-white/10 px-4 py-2 text-white transition hover:bg-white/5"
@@ -78,7 +78,7 @@ export default async function HomePage({
           </Link>
         </nav>
         <div className="flex items-center gap-3 md:hidden">
-          <LanguageSwitcher currentLang={lang} label={t.nav.langLabel} />
+          <LanguageSwitcher currentLang={lang} />
           <a
             href="/register"
             className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"

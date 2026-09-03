@@ -70,7 +70,7 @@ export default function MobileNavigation({ open, onClose }: MobileNavigationProp
           </div>
 
           <div className="flex items-center gap-2">
-            <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
+            <LanguageSwitcher currentLang={locale} />
             <button
               type="button"
               onClick={onClose}

@@ -60,7 +60,7 @@ function LoginForm() {
               <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
               <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
             </div>
-            <LanguageSwitcher currentLang={locale} label={locale === "ar" ? "EN" : "AR"} />
+            <LanguageSwitcher currentLang={locale} />
           </div>
 
           <form onSubmit={handleLogin} className="flex flex-col gap-4">
