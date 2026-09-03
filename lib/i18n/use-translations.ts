@@ -4,8 +4,9 @@ import { useCallback, useSyncExternalStore } from "react";
 import { defaultLocale, locales, type Locale } from "./config";
 import ar from "./messages/ar.json";
 import en from "./messages/en.json";
+import fr from "./messages/fr.json";
 
-const messages: Record<string, Record<string, string>> = { ar, en };
+const messages: Record<string, Record<string, string>> = { ar, en, fr };
 
 function getCookie(name: string): string | null {
   if (typeof document === "undefined") return null;

@@ -29,7 +29,7 @@ export default function Sidebar() {
 
   const isAdmin = session?.user?.role === "ADMIN";
   const schoolId = session?.user?.schoolId;
-  const base = locale === "en" ? "/en" : "";
+  const base = locale === "en" ? "/en" : locale === "fr" ? "/fr" : "";
 
   return (
     <aside

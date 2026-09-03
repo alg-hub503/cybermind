@@ -6,7 +6,7 @@
  * Full app-wide i18n is planned for v1.2.0 using a dedicated i18n library.
  */
 
-export type Locale = "en" | "ar";
+export type Locale = "en" | "ar" | "fr";
 
 export interface Translation {
   nav: {
@@ -494,6 +494,214 @@ export const translations: Record<Locale, Translation> = {
       terms: "الشروط",
       contact: "اتصل بنا",
       copyright: "CyberMind. جميع الحقوق محفوظة.",
+    },
+  },
+
+  fr: {
+    nav: {
+      features: "Fonctionnalités",
+      howItWorks: "Comment ça marche",
+      pricing: "Tarifs",
+      logIn: "Connexion",
+      startFree: "Commencer gratuitement",
+      langLabel: "AR",
+    },
+    hero: {
+      badge: "Plateforme SaaS prête pour la production",
+      headline: "Votre école, gérée depuis un seul endroit. Pas dix.",
+      subheadline:
+        "Une plateforme. Un workflow. Une seule source de vérité — pour tout ce dont votre établissement a besoin aujourd'hui, et tout ce qu'il aura besoin demain.",
+      startFree: "Commencer gratuitement",
+      logIn: "Connexion",
+    },
+    features: {
+      title: "Pourquoi CyberMind ?",
+      description: "Tout ce dont vous avez besoin pour gérer votre plateforme scolaire.",
+      items: [
+        {
+          title: "Gestion des écoles",
+          description:
+            "Créez et gérez les écoles avec un CRUD complet. Organisez vos établissements éducatifs dans un seul tableau de bord.",
+        },
+        {
+          title: "Gestion des utilisateurs et des rôles",
+          description:
+            "Contrôle d'accès basé sur les rôles avec les rôles ADMIN et USER. Gérez qui voit quoi.",
+        },
+        {
+          title: "Gestion des clients",
+          description:
+            "Suivez les clients par école. Ajoutez, modifiez et supprimez les enregistrements clients facilement.",
+        },
+        {
+          title: "Gestion des factures",
+          description:
+            "Créez et gérez les factures par école. Suivez les paiements et les revenus.",
+        },
+        {
+          title: "Facturation et abonnements",
+          description:
+            "Facturation d'abonnements par Stripe avec portail client, factures et synchronisation webhook.",
+        },
+        {
+          title: "Tableau de bord admin sécurisé",
+          description:
+            "Vue d'ensemble complète du système avec gestion des utilisateurs, statut des abonnements et statistiques globales.",
+        },
+      ],
+    },
+    preview: {
+      title: "Aperçu de la plateforme",
+      description: "Découvrez CyberMind en action.",
+      items: [
+        {
+          title: "Tableau de bord",
+          description:
+            "Vue d'ensemble des écoles, utilisateurs, clients et statut des abonnements en un coup d'œil.",
+        },
+        {
+          title: "Écoles",
+          description:
+            "Gérez plusieurs établissements éducatifs depuis une seule interface.",
+        },
+        {
+          title: "Clients",
+          description:
+            "Suivez et gérez les clients par école avec des opérations CRUD complètes.",
+        },
+        {
+          title: "Factures",
+          description:
+            "Créez, suivez et gérez les factures avec surveillance de l'état des paiements.",
+        },
+        {
+          title: "Facturation",
+          description:
+            "Gestion des abonnements par Stripe avec accès au portail client.",
+        },
+      ],
+    },
+    howItWorks: {
+      title: "Comment ça marche",
+      description: "Commencez en quelques minutes.",
+      steps: [
+        {
+          step: "1",
+          title: "Créez votre compte",
+          description:
+            "Inscrivez-vous avec votre email et mot de passe. Aucune carte de crédit requise pour commencer.",
+        },
+        {
+          step: "2",
+          title: "Créez une école",
+          description:
+            "Configurez votre premier établissement scolaire. Ajoutez les détails et configurez les paramètres.",
+        },
+        {
+          step: "3",
+          title: "Invitez des utilisateurs",
+          description:
+            "Ajoutez des membres de l'équipe avec les rôles appropriés. ADMIN pour l'accès complet, USER pour l'accès limité.",
+        },
+        {
+          step: "4",
+          title: "Gérez les clients et les factures",
+          description:
+            "Ajoutez des clients à vos écoles, créez des factures et suivez les paiements.",
+        },
+        {
+          step: "5",
+          title: "Surveillez tout",
+          description:
+            "Utilisez le tableau de bord pour surveiller les écoles, utilisateurs, clients, factures et le statut des abonnements.",
+        },
+      ],
+    },
+    pricing: {
+      title: "Tarifs simples",
+      description: "Commencez gratuitement, passez à la version supérieure quand vous en avez besoin.",
+      free: {
+        name: "Gratuit",
+        description: "Commencez avec les fonctionnalités de base.",
+        price: "0 $",
+        period: "/mois",
+        features: [
+          "Gestion des écoles",
+          "Gestion des utilisateurs",
+          "Gestion des clients",
+          "Gestion des factures",
+          "Tableau de bord de base",
+        ],
+        cta: "Commencer",
+      },
+      pro: {
+        name: "Pro",
+        description: "Fonctionnalités complètes pour les équipes en croissance.",
+        price: "29 $",
+        period: "/mois",
+        badge: "Le plus populaire",
+        features: [
+          "Tout le forfait Gratuit",
+          "Facturation d'abonnements Stripe",
+          "Accès au portail client",
+          "Téléchargement des factures PDF",
+          "Historique de facturation et export",
+          "Support premium",
+        ],
+        cta: "Passer à la version Pro",
+      },
+    },
+    security: {
+      title: "Sécurité et fiabilité",
+      description: "Conçu pour la production dès le premier jour.",
+      items: [
+        {
+          title: "Accès basé sur les rôles",
+          description:
+            "Permissions granulaires avec les rôles ADMIN et USER. Chaque action est autorisée.",
+        },
+        {
+          title: "Authentification sécurisée",
+          description:
+            "Propulsé par NextAuth.js avec des sessions chiffrées et une gestion sécurisée des mots de passe.",
+        },
+        {
+          title: "Facturation Stripe",
+          description:
+            "Traitement des paiements par Stripe. Aucune donnée financière sensible ne touche nos serveurs.",
+        },
+        {
+          title: "Hébergement cloud",
+          description:
+            "Déployé sur le réseau mondial de Vercel. Infrastructure de niveau entreprise.",
+        },
+        {
+          title: "Prêt pour la production",
+          description:
+            "TypeScript, ESLint et vérification stricte des types appliqués lors de la compilation.",
+        },
+        {
+          title: "Confidentialité d'abord",
+          description:
+            "Vos données vous appartiennent. Conçu avec isolation des données entre les écoles et les utilisateurs.",
+        },
+      ],
+    },
+    cta: {
+      title: "Prêt à commencer ?",
+      description:
+        "Créez votre compte maintenant et commencez à gérer vos écoles en quelques minutes.",
+      startFree: "Commencer gratuitement",
+      logIn: "Connexion",
+    },
+    footer: {
+      tagline: "Plateforme de gestion scolaire intelligente",
+      features: "Fonctionnalités",
+      pricing: "Tarifs",
+      privacy: "Confidentialité",
+      terms: "Conditions",
+      contact: "Contact",
+      copyright: "CyberMind. Tous droits réservés.",
     },
   },
 };

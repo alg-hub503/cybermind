@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const match = pathname.match(/^\/(en|ar)(\/.*)?$/);
+  const match = pathname.match(/^\/(en|ar|fr)(\/.*)?$/);
   if (match) {
     const locale = match[1];
     const rest = match[2] || "/";

@@ -15,7 +15,7 @@ export default function Navbar() {
   const [isMobileNavigationOpen, setIsMobileNavigationOpen] = useState(false);
   const { t, locale, dir } = useTranslations("navbar");
 
-  const base = locale === "en" ? "/en" : "";
+  const base = locale === "en" ? "/en" : locale === "fr" ? "/fr" : "";
   const titles: Record<string, string> = {
     [`${base}/dashboard`]: t("dashboard"),
     [`${base}/dashboard/users`]: t("users"),

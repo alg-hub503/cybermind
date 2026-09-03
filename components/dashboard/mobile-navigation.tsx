@@ -21,7 +21,7 @@ export default function MobileNavigation({ open, onClose }: MobileNavigationProp
   const isAdmin = session?.user?.role === "ADMIN";
   const schoolId = session?.user?.schoolId;
   const name = session?.user?.name ?? session?.user?.email?.split("@")[0] ?? "User";
-  const base = locale === "en" ? "/en" : "";
+  const base = locale === "en" ? "/en" : locale === "fr" ? "/fr" : "";
   const items = [
     [`${base}/dashboard`, t("dashboard")],
     [`${base}/dashboard/clients`, t("clients")],
