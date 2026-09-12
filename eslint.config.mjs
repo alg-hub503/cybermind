@@ -16,6 +16,12 @@ const eslintConfig = defineConfig([
     "lib/domain/billing/entities",
     "lib/domain/billing/repositories",
   ]),
+  {
+    files: ["scripts/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;
