@@ -61,13 +61,6 @@ Implement Teachers, Staff, Roles, and Permissions infrastructure.
 
 ---
 
-## Pending Verification
-
-- School Admin production verification (after password reset)
-- Schools page direct navigation improvement
-
----
-
 ## Notes
 
 - P2 complete: 14/14 (commit `5318321`).
