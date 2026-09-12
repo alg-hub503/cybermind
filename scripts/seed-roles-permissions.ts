@@ -9,6 +9,7 @@ const PERMISSIONS = [
   { code: "MANAGE_CLASSES", description: "Create, edit, delete classes" },
   { code: "MANAGE_GRADES", description: "Create, edit, delete grades" },
   { code: "MANAGE_ACADEMIC_YEARS", description: "Create, edit academic years" },
+  { code: "MANAGE_SUBJECT_ASSIGNMENTS", description: "Assign teachers to classes and subjects" },
   { code: "VIEW_REPORTS", description: "View analytics and reports" },
   { code: "MANAGE_SCHOOL_SETTINGS", description: "Edit school settings" },
   { code: "MANAGE_BILLING", description: "View and manage billing" },

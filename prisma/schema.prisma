@@ -167,6 +167,7 @@ model School {
   teacherProfiles       TeacherProfile[]
   staffProfiles         StaffProfile[]
   userRoles             UserRole[]
+  subjectAssignments    SubjectAssignment[]
 }
 
 model SchoolSettings {
@@ -283,6 +284,7 @@ model Class {
   academicYear AcademicYear @relation(fields: [academicYearId], references: [id], onDelete: Cascade)
 
   StudentAcademicRecord StudentAcademicRecord[]
+  SubjectAssignment     SubjectAssignment[]
 
   @@unique([schoolId, gradeId, academicYearId, name])
   @@unique([schoolId, code])
@@ -329,6 +331,24 @@ model StudentAcademicRecord {
   @@index([academicYearId])
 }
 
+model SubjectAssignment {
+  id        String   @id @default(cuid())
+  schoolId  String
+  classId   String
+  teacherId String
+  subject   String
+  createdAt DateTime @default(now())
+
+  school  School         @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+  class   Class          @relation(fields: [classId], references: [id], onDelete: Cascade)
+  teacher TeacherProfile @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@unique([classId, teacherId, subject])
+  @@index([schoolId])
+  @@index([classId])
+  @@index([teacherId])
+}
+
 model TeacherProfile {
   id             String    @id @default(cuid())
   userId         String    @unique
@@ -343,6 +363,8 @@ model TeacherProfile {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   school School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  SubjectAssignment SubjectAssignment[]
 
   @@index([schoolId])
   @@index([status])
