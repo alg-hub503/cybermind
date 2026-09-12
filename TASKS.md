@@ -48,15 +48,11 @@ Implement Teachers, Staff, Roles, and Permissions infrastructure.
 
 ---
 
-## Completed — P3 Phase 2 (partial)
+## Completed — P3 Phase 2
 
 - Permission enforcement on existing routes — `requirePermission` now guards `PUT`/`DELETE` on Teachers, Staff, Students (already had it), plus Classes, Academic Years, Grades, and Clients (`MANAGE_CLASSES`, `MANAGE_ACADEMIC_YEARS`, `MANAGE_GRADES`, `MANAGE_BILLING`). `GET` routes unchanged (tenant-scoped via `requireResourceAccess` only, no permission gate).
-
-## Next — P3 Phase 2
-
-- Subject Assignment
-- Teacher-Class linking
-- Student-Teacher relationships
+- Subject Assignment + Teacher-Class linking — single `SubjectAssignment` model (`classId` + `teacherId` + `subject`, unique per combination), covers both roadmap items as one entity per the no-duplicate-entities principle. `MANAGE_SUBJECT_ASSIGNMENTS` permission gates create/delete. UI: assign/remove panel on the Class detail page.
+- Student-Teacher relationships — intentionally not a stored entity; derived via `Student → StudentAcademicRecord.classId → SubjectAssignment.teacherId`, matching the existing Student↔Class derivation pattern.
 
 ### Backlog
 
