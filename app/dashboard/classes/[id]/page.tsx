@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireResourceAccess } from "@/lib/authorization";
 import { getClassWithDetails } from "@/lib/features/classes/class-actions";
+import SubjectAssignmentsPanel from "@/components/dashboard/classes/subject-assignments-panel";
 import Link from "next/link";
 
 interface ClassDetailPageProps {
@@ -66,6 +67,10 @@ export default async function ClassDetailPage({ params }: ClassDetailPageProps) 
             ))}
           </ul>
         )}
+      </div>
+
+      <div className="mt-6">
+        <SubjectAssignmentsPanel classId={cls.id} schoolId={cls.schoolId} />
       </div>
     </main>
   );
