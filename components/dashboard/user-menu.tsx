@@ -20,8 +20,8 @@ export default function UserMenu() {
   const initial = name.charAt(0).toUpperCase();
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2 shadow-sm" dir={dir}>
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
+    <div className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm sm:gap-3 sm:px-4 sm:py-2" dir={dir}>
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white sm:h-10 sm:w-10">
         {initial}
       </div>
 
@@ -34,11 +34,11 @@ export default function UserMenu() {
         </div>
       </div>
 
-      <Link href="/dashboard/profile" className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
+      <Link href="/dashboard/profile" className="hidden text-sm font-medium text-indigo-600 hover:text-indigo-700 sm:inline">
         {t("profile.title")}
       </Link>
 
-      <Button variant="outline" onClick={() => signOut({ callbackUrl: "/login" })}>
+      <Button variant="outline" className="hidden sm:inline-flex" onClick={() => signOut({ callbackUrl: "/login" })}>
         {t("logout")}
       </Button>
     </div>

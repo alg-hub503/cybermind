@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import Sidebar from "@/components/dashboard/sidebar";
 import Navbar from "@/components/dashboard/navbar";
+import Sidebar from "@/components/dashboard/sidebar";
 import TrialAccessProvider from "@/components/dashboard/trial-access-provider";
 
 interface DashboardLayoutProps {
@@ -13,13 +13,13 @@ export default function DashboardLayout({
 }: DashboardLayoutProps) {
   return (
     <TrialAccessProvider>
-      <div className="flex min-h-screen bg-slate-100">
+      <div className="min-h-screen min-w-0 bg-slate-100">
         <Sidebar />
 
-        <div className="flex min-h-screen flex-1 flex-col lg:ms-64">
+        <div className="min-w-0 lg:ms-64">
           <Navbar />
 
-          <main className="flex-1 p-6">
+          <main className="min-w-0 p-4 sm:p-6">
             {children}
           </main>
         </div>

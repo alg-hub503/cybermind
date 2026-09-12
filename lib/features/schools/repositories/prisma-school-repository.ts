@@ -11,7 +11,7 @@ export class PrismaSchoolRepository {
   findById(id: string) {
     return prisma.school.findUnique({
       where: { id },
-      include: { subscription: true },
+      include: { subscription: true, settings: true },
     });
   }
 

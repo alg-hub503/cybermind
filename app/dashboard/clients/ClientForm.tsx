@@ -35,17 +35,17 @@ export default function ClientForm({ schoolId }: ClientFormProps) {
   }
 
   return (
-    <div className="flex gap-3">
+    <div className="flex flex-col gap-3 sm:flex-row">
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder={t("namePlaceholder")}
-        className="rounded-xl border px-4 py-2"
+        className="w-full flex-1 rounded-xl border px-4 py-2"
       />
 
       <button
         onClick={addClient}
-        className="rounded-xl bg-blue-600 px-4 py-2 text-white"
+        className="w-full rounded-xl bg-blue-600 px-4 py-2 text-white sm:w-auto"
       >
         {t("add")}
       </button>

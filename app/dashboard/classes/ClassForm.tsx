@@ -105,19 +105,19 @@ export default function ClassForm({ schoolId, schools, grades, academicYears }: 
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
       <div className="mb-4">
         <h2 className="text-lg font-semibold">{t("formTitle")}</h2>
         <p className="text-sm text-slate-500">{t("formDescription")}</p>
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row md:flex-wrap">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {isAdmin && (
           <select
             value={selectedSchoolId}
             onChange={(e) => setSelectedSchoolId(e.target.value)}
             disabled={loading}
-            className="rounded-lg border border-slate-300 px-4 py-2"
+            className="w-full rounded-lg border border-slate-300 px-4 py-2"
           >
             <option value="">{t("selectSchool")}</option>
             {schools?.map((s) => (
@@ -132,7 +132,7 @@ export default function ClassForm({ schoolId, schools, grades, academicYears }: 
           value={selectedGradeId}
           onChange={(e) => setSelectedGradeId(e.target.value)}
           disabled={loading}
-          className="rounded-lg border border-slate-300 px-4 py-2"
+          className="w-full rounded-lg border border-slate-300 px-4 py-2"
         >
           <option value="">{t("selectGrade")}</option>
           {grades.map((g) => (
@@ -146,7 +146,7 @@ export default function ClassForm({ schoolId, schools, grades, academicYears }: 
           value={selectedAcademicYearId}
           onChange={(e) => setSelectedAcademicYearId(e.target.value)}
           disabled={loading}
-          className="rounded-lg border border-slate-300 px-4 py-2"
+          className="w-full rounded-lg border border-slate-300 px-4 py-2"
         >
           <option value="">{t("selectAcademicYear")}</option>
           {academicYears.map((ay) => (
@@ -170,7 +170,7 @@ export default function ClassForm({ schoolId, schools, grades, academicYears }: 
           disabled={loading}
         />
 
-        <Button onClick={createClass} disabled={loading}>
+        <Button className="w-full md:w-auto" onClick={createClass} disabled={loading}>
           {loading ? (
             <span className="flex items-center gap-2">
               <Spinner size={18} />

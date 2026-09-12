@@ -120,7 +120,7 @@ export default function InvoiceForm({
   }
 
   return (
-    <div className="mb-6 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 md:flex-row">
+    <div className="mb-6 flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-4 sm:p-6 md:flex-row">
       {mode === "edit" && existing ? (
         <div className="flex-1 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2">
           <span className="text-sm text-slate-500">
@@ -132,7 +132,7 @@ export default function InvoiceForm({
         </div>
       ) : (
         <>
-          <div className="flex gap-2 rounded-lg border border-slate-200 p-1">
+          <div className="flex w-full gap-2 rounded-lg border border-slate-200 p-1 md:w-auto">
             <button
               type="button"
               onClick={() => setOwnerType("client")}
@@ -162,7 +162,7 @@ export default function InvoiceForm({
               value={clientId}
               onChange={(e) => setClientId(e.target.value)}
               disabled={loading}
-              className="flex-1 rounded-lg border border-slate-300 px-4 py-2"
+              className="w-full flex-1 rounded-lg border border-slate-300 px-4 py-2"
             >
               <option value="">{t("selectClient")}</option>
               {clients.map((client) => (
@@ -176,7 +176,7 @@ export default function InvoiceForm({
               value={studentId}
               onChange={(e) => setStudentId(e.target.value)}
               disabled={loading}
-              className="flex-1 rounded-lg border border-slate-300 px-4 py-2"
+              className="w-full flex-1 rounded-lg border border-slate-300 px-4 py-2"
             >
               <option value="">{t("selectStudent")}</option>
               {students.map((student) => (
@@ -197,7 +197,7 @@ export default function InvoiceForm({
           value={amount}
           disabled={loading}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-32 rounded-lg border border-slate-300 px-4 py-2"
+          className="w-full rounded-lg border border-slate-300 px-4 py-2 md:w-32"
         />
       )}
 
@@ -209,11 +209,11 @@ export default function InvoiceForm({
           value={amount}
           disabled={loading}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-32 rounded-lg border border-slate-300 px-4 py-2"
+          className="w-full rounded-lg border border-slate-300 px-4 py-2 md:w-32"
         />
       )}
 
-      <Button onClick={submit} disabled={loading}>
+      <Button className="w-full md:w-auto" onClick={submit} disabled={loading}>
         {loading ? (
           <span className="flex items-center gap-2">
             <Spinner size={16} />
