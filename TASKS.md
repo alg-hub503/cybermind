@@ -1,12 +1,17 @@
 # Current Sprint — P3: Core School Features
 
+
 ## Sprint Goal
+
 
 Implement Teachers, Staff, Roles, and Permissions infrastructure.
 
+
 ---
 
+
 ## Completed — P1 (Frozen)
+
 
 - Localization
 - UX polish
@@ -15,7 +20,9 @@ Implement Teachers, Staff, Roles, and Permissions infrastructure.
 - Authorization UI work
 - Personal account pages
 
+
 ## Completed — P2 (14/14)
+
 
 - Customer Hub
 - Report Issue
@@ -32,9 +39,12 @@ Implement Teachers, Staff, Roles, and Permissions infrastructure.
 - Billing Settings
 - Maintenance Mode Enforcement
 
+
 ---
 
+
 ## In Progress — P3 Phase 1
+
 
 - Teachers (profiles + CRUD)
 - Staff (profiles + CRUD)
@@ -46,22 +56,30 @@ Implement Teachers, Staff, Roles, and Permissions infrastructure.
 - UI pages + sidebar
 - i18n
 
+
 ---
 
+
 ## Completed — P3 Phase 2
+
 
 - Permission enforcement on existing routes — `requirePermission` now guards `PUT`/`DELETE` on Teachers, Staff, Students (already had it), plus Classes, Academic Years, Grades, and Clients (`MANAGE_CLASSES`, `MANAGE_ACADEMIC_YEARS`, `MANAGE_GRADES`, `MANAGE_BILLING`). `GET` routes unchanged (tenant-scoped via `requireResourceAccess` only, no permission gate).
 - Subject Assignment + Teacher-Class linking — single `SubjectAssignment` model (`classId` + `teacherId` + `subject`, unique per combination), covers both roadmap items as one entity per the no-duplicate-entities principle. `MANAGE_SUBJECT_ASSIGNMENTS` permission gates create/delete. UI: assign/remove panel on the Class detail page.
 - Student-Teacher relationships — intentionally not a stored entity; derived via `Student → StudentAcademicRecord.classId → SubjectAssignment.teacherId`, matching the existing Student↔Class derivation pattern.
 
+
 ### Backlog
+
 
 - Profile photos/avatar system
 - Teacher/Staff self-service profile editing
 
+
 ---
 
+
 ## Notes
+
 
 - P2 complete: 14/14 (commit `5318321`).
 - Maintenance Mode Enforcement is live on `origin/main`.
