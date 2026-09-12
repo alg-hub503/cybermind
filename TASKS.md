@@ -48,9 +48,12 @@ Implement Teachers, Staff, Roles, and Permissions infrastructure.
 
 ---
 
+## Completed — P3 Phase 2 (partial)
+
+- Permission enforcement on existing routes — `requirePermission` now guards `PUT`/`DELETE` on Teachers, Staff, Students (already had it), plus Classes, Academic Years, Grades, and Clients (`MANAGE_CLASSES`, `MANAGE_ACADEMIC_YEARS`, `MANAGE_GRADES`, `MANAGE_BILLING`). `GET` routes unchanged (tenant-scoped via `requireResourceAccess` only, no permission gate).
+
 ## Next — P3 Phase 2
 
-- Permission enforcement on existing routes
 - Subject Assignment
 - Teacher-Class linking
 - Student-Teacher relationships
