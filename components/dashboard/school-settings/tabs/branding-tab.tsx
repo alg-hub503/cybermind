@@ -6,6 +6,7 @@ import type { SchoolSettings } from "@/lib/features/schools/types/school-setting
 import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
+import LiveBrandPreview from "@/components/dashboard/school-settings/branding-preview/live-brand-preview";
 
 function isWebUrl(value: string): boolean {
   if (!value) return false;
@@ -47,6 +48,13 @@ export default function BrandingTab({ settings, onSave, saving }: TabProps) {
 
   const logoValid = isWebUrl(logoUrl) && !logoError;
   const coverValid = isWebUrl(coverUrl) && !coverError;
+
+  const isDirty =
+    logoUrl !== (settings.logoUrl ?? "") ||
+    coverUrl !== (settings.coverUrl ?? "") ||
+    faviconUrl !== (settings.faviconUrl ?? "") ||
+    primaryColor !== (settings.primaryColor ?? "#4F46E5") ||
+    secondaryColor !== (settings.secondaryColor ?? "#64748B");
 
   async function handleSave() {
     await onSave({
@@ -168,85 +176,18 @@ export default function BrandingTab({ settings, onSave, saving }: TabProps) {
         </Button>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-6">
-        <p className="mb-4 text-sm font-medium text-slate-700">Preview</p>
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          {/* Header band */}
-          <div
-            className="relative px-5 pt-5 pb-4 sm:px-8 sm:pt-6 sm:pb-5"
-            style={{
-              background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd)`,
-            }}
-          >
-            <div className="flex flex-col sm:flex-row sm:items-end gap-4">
-              {/* Logo */}
-              {logoValid ? (
-                <img
-                  src={logoUrl}
-                  alt="Logo preview"
-                  className="h-16 w-16 flex-shrink-0 rounded-2xl object-contain ring-4 ring-white/20 sm:h-20 sm:w-20"
-                  onError={() => setLogoError(true)}
-                />
-              ) : (
-                <div
-                  className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl text-2xl font-bold text-white ring-4 ring-white/20 sm:h-20 sm:w-20 sm:text-3xl"
-                  style={{ backgroundColor: secondaryColor }}
-                >
-                  {schoolName.charAt(0).toUpperCase()}
-                </div>
-              )}
-
-              {/* Name + badge */}
-              <div className="flex-1 min-w-0">
-                <span
-                  className="inline-block rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-white"
-                >
-                  School
-                </span>
-                <h2 className="mt-1 truncate text-xl font-bold text-white sm:text-2xl">
-                  {schoolName}
-                </h2>
-              </div>
-            </div>
-
-            {/* Color identity bar */}
-            <div className="mt-4 flex items-center gap-2">
-              <span
-                className="h-2.5 w-8 rounded-full"
-                style={{ backgroundColor: primaryColor }}
-                title={`Primary: ${primaryColor}`}
-              />
-              <span
-                className="h-2.5 w-8 rounded-full"
-                style={{ backgroundColor: secondaryColor }}
-                title={`Secondary: ${secondaryColor}`}
-              />
-              <span className="ml-1 text-[10px] font-medium text-white/70">
-                Brand Colors
-              </span>
-            </div>
-          </div>
-
-          {/* Cover image */}
-          {coverValid ? (
-            <div className="relative w-full" style={{ aspectRatio: "21/7" }}>
-              <img
-                src={coverUrl}
-                alt="Cover preview"
-                className="absolute inset-0 h-full w-full object-cover"
-                onError={() => setCoverError(true)}
-              />
-            </div>
-          ) : (
-            <div
-              className="flex w-full items-center justify-center bg-slate-100 text-sm text-slate-400"
-              style={{ aspectRatio: "21/7" }}
-            >
-              Cover image
-            </div>
-          )}
-        </div>
-      </div>
+      <LiveBrandPreview
+        schoolName={schoolName}
+        logoUrl={logoUrl}
+        coverUrl={coverUrl}
+        primaryColor={primaryColor}
+        secondaryColor={secondaryColor}
+        logoValid={logoValid}
+        coverValid={coverValid}
+        onLogoError={() => setLogoError(true)}
+        onCoverError={() => setCoverError(true)}
+        isDirty={isDirty}
+      />
     </div>
   );
 }
