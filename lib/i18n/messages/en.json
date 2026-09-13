@@ -667,6 +667,8 @@
   "profile.save": "Save",
   "profile.saving": "Saving...",
   "profile.profileSaved": "Profile saved successfully.",
+  "profile.avatar": "Profile Picture",
+  "profile.avatarDescription": "Add a link to an image to use as your profile picture.",
   "verifyEmail.verifying": "Verifying your email...",
   "verifyEmail.success": "Email changed successfully!",
   "verifyEmail.successDescription": "Your email has been updated. Please log in with your new email.",

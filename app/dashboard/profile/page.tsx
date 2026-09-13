@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useTranslations } from "@/lib/i18n/use-translations";
 import SelfServiceProfileSection from "./self-service-profile-section";
+import AvatarSection from "./avatar-section";
 
 type Status = "idle" | "submitting" | "verification-sent" | "error";
 
@@ -17,6 +18,8 @@ export default function ProfilePage() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const currentEmail = session?.user?.email ?? "";
+  const displayName = session?.user?.name ?? currentEmail.split("@")[0] ?? "";
+  const fallbackInitial = displayName.charAt(0).toUpperCase() || "?";
 
   const handleSubmit = async () => {
     if (!newEmail.trim() || !currentPassword.trim()) return;
@@ -60,6 +63,8 @@ export default function ProfilePage() {
         <h1 className="text-2xl font-bold text-slate-900">{t("title")}</h1>
         <p className="mt-1 text-sm text-slate-500">{t("description")}</p>
       </div>
+
+      <AvatarSection fallbackInitial={fallbackInitial} />
 
       <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">{t("changeEmail")}</h2>

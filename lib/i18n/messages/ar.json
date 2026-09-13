@@ -661,6 +661,8 @@
   "profile.save": "حفظ",
   "profile.saving": "جارٍ الحفظ...",
   "profile.profileSaved": "تم حفظ الملف الشخصي بنجاح.",
+  "profile.avatar": "الصورة الشخصية",
+  "profile.avatarDescription": "أضف رابط صورة لاستخدامها كصورتك الشخصية.",
   "verifyEmail.verifying": "جاري التحقق من بريدك الإلكتروني...",
   "verifyEmail.success": "تم تغيير البريد الإلكتروني بنجاح!",
   "verifyEmail.successDescription": "تم تحديث بريدك الإلكتروني. يرجى تسجيل الدخول بالبريد الجديد.",

@@ -38,6 +38,7 @@ model User {
   stripeCustomerId   String?       @unique
   passwordChangedAt  DateTime?
   emailChangedAt     DateTime?
+  avatarUrl          String?
   School             School?       @relation(fields: [schoolId], references: [id])
   passwordResetTokens  PasswordResetToken[]
   emailChangeTokens   EmailChangeToken[]

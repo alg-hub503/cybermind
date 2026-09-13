@@ -667,6 +667,8 @@
   "profile.save": "Enregistrer",
   "profile.saving": "Enregistrement...",
   "profile.profileSaved": "Profil enregistré avec succès.",
+  "profile.avatar": "Photo de profil",
+  "profile.avatarDescription": "Ajoutez un lien vers une image à utiliser comme photo de profil.",
   "verifyEmail.verifying": "Vérification de votre email...",
   "verifyEmail.success": "Email modifié avec succès !",
   "verifyEmail.successDescription": "Votre email a été mis à jour. Veuillez vous connecter avec votre nouvel email.",
