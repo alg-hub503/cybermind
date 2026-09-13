@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useTranslations } from "@/lib/i18n/use-translations";
+import SelfServiceProfileSection from "./self-service-profile-section";
 
 type Status = "idle" | "submitting" | "verification-sent" | "error";
 
@@ -121,6 +122,8 @@ export default function ProfilePage() {
           )}
         </div>
       </div>
+
+      <SelfServiceProfileSection onNameUpdated={() => update()} />
     </div>
   );
 }
