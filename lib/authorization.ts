@@ -5,6 +5,7 @@ import { getPlatformSettings } from "@/lib/features/platform/platform-settings-a
 import { prisma } from "@/lib/prisma";
 import { resolveTrialStatus, toAccessString } from "@/lib/trial-status";
 import { hasActiveAccess } from "@/lib/subscription-status";
+import { redirect } from "next/navigation";
 
 export async function requireSession() {
   const session = await getServerSession();
@@ -204,6 +205,32 @@ export async function requireSchoolAdmin(schoolId: string) {
 
   if (!userRole) {
     throw new Error("FORBIDDEN");
+  }
+
+  return { user };
+}
+
+/**
+ * Server-component permission guard: redirects to /dashboard if the user
+ * lacks the given permission. ADMIN bypasses automatically.
+ *
+ * Use in page.tsx files (server components) instead of requirePermission().
+ */
+export async function requirePagePermission(permissionCode: string) {
+  const { user } = await requireAuth();
+
+  if (user.role === ADMIN_ROLE) {
+    return { user };
+  }
+
+  if (!user.schoolId) {
+    redirect("/dashboard");
+  }
+
+  const permissions = await resolvePermissions(user.id, user.schoolId);
+
+  if (!permissions.includes(permissionCode)) {
+    redirect("/dashboard");
   }
 
   return { user };

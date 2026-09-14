@@ -1,28 +1,28 @@
 import { NextResponse } from "next/server";
-import { requireAuth, requirePermission, toApiError } from "@/lib/authorization";
+import { requirePermission, toApiError } from "@/lib/authorization";
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getInvoices, createInvoice } from "@/lib/features/invoices/invoice-actions";
 import { invoiceSchema } from "@/lib/features/invoices/schemas/invoice.schema";
 
 export async function GET() {
-  const access = await requireAuth().catch(toApiError);
+  const access = await requirePermission("VIEW_BILLING").catch(toApiError);
   if ("error" in access) {
     return NextResponse.json(access, { status: access.status });
   }
-  const { session } = access;
+  const { user } = access;
 
-  if (session.user.role === ADMIN_ROLE) {
+  if (user.role === ADMIN_ROLE) {
     const invoices = await getInvoices();
     return NextResponse.json(invoices);
   }
 
-  if (!session.user.schoolId) {
+  if (!user.schoolId) {
     return NextResponse.json({ error: "No school assigned" }, { status: 403 });
   }
 
   const { getInvoicesBySchool } = await import("@/lib/features/invoices/invoice-actions");
-  const invoices = await getInvoicesBySchool(session.user.schoolId);
+  const invoices = await getInvoicesBySchool(user.schoolId);
   return NextResponse.json(invoices);
 }
 

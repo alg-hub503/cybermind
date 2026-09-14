@@ -29,6 +29,8 @@ export default function Sidebar() {
 
   const isAdmin = session?.user?.role === "ADMIN";
   const schoolId = session?.user?.schoolId;
+  const permissions = session?.user?.permissions ?? [];
+  const hasBillingAccess = isAdmin || permissions.includes("VIEW_BILLING");
   const base = locale === "en" ? "/en" : locale === "fr" ? "/fr" : "";
 
   return (
@@ -50,8 +52,12 @@ export default function Sidebar() {
 
       <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-4">
         <NavItem href={`${base}/dashboard`} label={t("dashboard")} icon={<LayoutDashboard size={20} />} />
-        <NavItem href={`${base}/dashboard/clients`} label={t("clients")} icon={<Users size={20} />} />
-        <NavItem href={`${base}/dashboard/invoices`} label={t("invoices")} icon={<FileText size={20} />} />
+        {hasBillingAccess && (
+          <>
+            <NavItem href={`${base}/dashboard/clients`} label={t("clients")} icon={<Users size={20} />} />
+            <NavItem href={`${base}/dashboard/invoices`} label={t("invoices")} icon={<FileText size={20} />} />
+          </>
+        )}
         <NavItem href={`${base}/dashboard/schools`} label={t("schools")} icon={<GraduationCap size={20} />} />
         <NavItem href={`${base}/dashboard/academic-years`} label={t("academicYears")} icon={<CalendarDays size={20} />} />
         <NavItem href={`${base}/dashboard/grades`} label={t("grades")} icon={<Layers size={20} />} />
@@ -61,7 +67,9 @@ export default function Sidebar() {
         <NavItem href={`${base}/dashboard/staff`} label={t("staff")} icon={<Users size={20} />} />
         <NavItem href={`${base}/dashboard/stats`} label={t("stats")} icon={<BarChart3 size={20} />} />
         <NavItem href={`${base}/dashboard/subscription`} label={t("subscription")} icon={<Crown size={20} />} />
-        <NavItem href={`${base}/dashboard/billing`} label={t("billing")} icon={<CreditCard size={20} />} />
+        {hasBillingAccess && (
+          <NavItem href={`${base}/dashboard/billing`} label={t("billing")} icon={<CreditCard size={20} />} />
+        )}
         <NavItem href={`${base}/dashboard/hub`} label={t("hub")} icon={<HelpCircle size={20} />} />
         {!isAdmin && schoolId && (
           <NavItem href={`${base}/dashboard/schools/${schoolId}/settings`} label={t("settings")} icon={<Settings size={20} />} />

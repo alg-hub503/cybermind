@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ADMIN_ROLE } from "@/lib/constants";
-import { requireCurrentUser } from "@/lib/require-current-user";
+import { requirePagePermission } from "@/lib/authorization";
 import { getInvoicesBySchool } from "@/lib/features/invoices/invoice-actions";
 import { t } from "@/lib/i18n/server";
 
@@ -22,7 +22,7 @@ export default async function InvoicesPage({
 }: InvoicesPageProps) {
   const { id } = await params;
 
-  const { user } = await requireCurrentUser();
+  const { user } = await requirePagePermission("VIEW_BILLING");
   if (user.role !== ADMIN_ROLE && user.schoolId !== id) {
     notFound();
   }

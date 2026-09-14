@@ -12,7 +12,8 @@ const PERMISSIONS = [
   { code: "MANAGE_SUBJECT_ASSIGNMENTS", description: "Assign teachers to classes and subjects" },
   { code: "VIEW_REPORTS", description: "View analytics and reports" },
   { code: "MANAGE_SCHOOL_SETTINGS", description: "Edit school settings" },
-  { code: "MANAGE_BILLING", description: "View and manage billing" },
+  { code: "VIEW_BILLING", description: "View invoices, clients, and financial data" },
+  { code: "MANAGE_BILLING", description: "Create, edit, delete invoices and clients" },
 ];
 
 async function main() {

@@ -1,4 +1,4 @@
-import { requireCurrentUser } from "@/lib/require-current-user";
+import { requirePagePermission } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getInvoices, getInvoicesBySchool } from "@/lib/features/invoices/invoice-actions";
 import { getClientsBySchool } from "@/lib/features/clients/client-actions";
@@ -20,7 +20,7 @@ export default async function InvoicesPage() {
     t("invoices.tableHeaderActions"),
   ]);
 
-  const { user } = await requireCurrentUser();
+  const { user } = await requirePagePermission("VIEW_BILLING");
 
   const invoices = user.role === ADMIN_ROLE
     ? await getInvoices()

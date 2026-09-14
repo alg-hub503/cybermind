@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       const adminPermCodes = [
         "MANAGE_STUDENTS", "MANAGE_TEACHERS", "MANAGE_STAFF",
         "MANAGE_CLASSES", "MANAGE_GRADES", "MANAGE_ACADEMIC_YEARS",
-        "VIEW_REPORTS", "MANAGE_SCHOOL_SETTINGS", "MANAGE_BILLING",
+        "VIEW_REPORTS", "MANAGE_SCHOOL_SETTINGS", "VIEW_BILLING", "MANAGE_BILLING",
       ];
       for (const code of adminPermCodes) {
         if (permMap[code]) {

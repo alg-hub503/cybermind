@@ -20,6 +20,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: access.error }, { status: access.status });
   }
 
+  const permCheck = await requirePermission("VIEW_BILLING").catch(toApiError);
+  if ("error" in permCheck) {
+    return NextResponse.json({ error: permCheck.error }, { status: permCheck.status });
+  }
+
   return NextResponse.json(client);
 }
 

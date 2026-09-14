@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "@/lib/get-server-session";
+import { requirePagePermission } from "@/lib/authorization";
 
 import { hasActiveAccess } from "@/lib/subscription-status";
 import { getSchoolById } from "@/lib/services/domain/school.service";
@@ -69,19 +69,15 @@ function invoiceStatusKey(status: string): string | null {
 }
 
 export default async function BillingPage() {
-  const session = await getServerSession();
+  const { user } = await requirePagePermission("VIEW_BILLING");
 
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const isAdmin = user.role === "ADMIN";
 
-  const isAdmin = session.user.role === "ADMIN";
-
-  if (!isAdmin && !session.user.schoolId) {
+  if (!isAdmin && !user.schoolId) {
     redirect("/dashboard/schools");
   }
 
-  if (isAdmin && !session.user.schoolId) {
+  if (isAdmin && !user.schoolId) {
     return (
       <div className="space-y-8">
         <PageTitle
@@ -97,7 +93,7 @@ export default async function BillingPage() {
   }
 
   const [school, platformSettings] = await Promise.all([
-    getSchoolById(session.user.schoolId!),
+    getSchoolById(user.schoolId!),
     getPlatformSettings(),
   ]);
 
@@ -119,19 +115,19 @@ export default async function BillingPage() {
   let exportData: Awaited<ReturnType<typeof exportBilling>> | null = null;
 
   try {
-    status = await getBillingStatus(session.user.schoolId!);
+    status = await getBillingStatus(user.schoolId!);
   } catch {
     // no stripe customer yet
   }
 
   if (status?.hasStripeCustomer) {
     try {
-      invoices = await listInvoices(session.user.schoolId!, { limit: 10 });
+      invoices = await listInvoices(user.schoolId!, { limit: 10 });
     } catch {
       // no invoices
     }
     try {
-      exportData = await exportBilling(session.user.schoolId!);
+      exportData = await exportBilling(user.schoolId!);
     } catch {
       // export unavailable
     }
@@ -157,7 +153,7 @@ export default async function BillingPage() {
     sub.plan === "FREE" ||
     subStatus !== "ACTIVE";
 
-  const showPaymentBanner = (subStatus === "PAST_DUE" || subStatus === "UNPAID") && session.user.schoolId;
+  const showPaymentBanner = (subStatus === "PAST_DUE" || subStatus === "UNPAID") && user.schoolId;
   const showTrialWarning =
     access.status === "TRIALING" &&
     access.daysLeft !== null &&
@@ -174,7 +170,7 @@ export default async function BillingPage() {
       />
 
       {showPaymentBanner && (
-        <PaymentBanner schoolId={session.user.schoolId!} />
+        <PaymentBanner schoolId={user.schoolId!} />
       )}
 
       {showTrialWarning && access.daysLeft !== null && (
@@ -198,7 +194,7 @@ export default async function BillingPage() {
         />
       </div>
 
-      <BillingActions schoolId={session.user.schoolId!} />
+      <BillingActions schoolId={user.schoolId!} />
 
       {showUpgradeButton && (
         <div className="flex justify-end">

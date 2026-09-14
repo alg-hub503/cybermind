@@ -174,6 +174,31 @@ export const authOptions: NextAuthOptions = {
 
           token.passwordChangedAt = dbUser.passwordChangedAt;
           token.emailChangedAt = dbUser.emailChangedAt;
+
+          // Load permissions for sidebar visibility
+          if (dbUser.schoolId) {
+            const userRoles = await prisma.userRole.findMany({
+              where: { userId: dbUser.id, schoolId: dbUser.schoolId },
+              include: {
+                role: {
+                  include: {
+                    RolePermission: {
+                      include: { permission: true },
+                    },
+                  },
+                },
+              },
+            });
+            const perms = new Set<string>();
+            for (const ur of userRoles) {
+              for (const rp of ur.role.RolePermission) {
+                perms.add(rp.permission.code);
+              }
+            }
+            token.permissions = Array.from(perms);
+          } else {
+            token.permissions = [];
+          }
         }
       }
 
@@ -212,6 +237,9 @@ export const authOptions: NextAuthOptions = {
 
       session.user.emailChangedAt =
         token.emailChangedAt;
+
+      session.user.permissions =
+        (token.permissions as string[]) ?? [];
 
 
       return session;

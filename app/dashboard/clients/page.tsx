@@ -1,4 +1,4 @@
-import { requireCurrentUser } from "@/lib/require-current-user";
+import { requirePagePermission } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getClients, getClientsBySchool } from "@/lib/features/clients/client-actions";
 import { t } from "@/lib/i18n/server";
@@ -9,7 +9,7 @@ import DeleteClientButton from "./DeleteClientButton";
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 
 export default async function ClientsPage() {
-  const { user } = await requireCurrentUser();
+  const { user } = await requirePagePermission("VIEW_BILLING");
 
   const isAdmin = user.role === ADMIN_ROLE;
 

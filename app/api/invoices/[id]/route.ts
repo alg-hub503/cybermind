@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
   requireResourceAccess,
+  requirePermission,
   toApiError,
 } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
@@ -23,6 +24,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: access.error }, { status: access.status });
   }
 
+  const permCheck = await requirePermission("VIEW_BILLING").catch(toApiError);
+  if ("error" in permCheck) {
+    return NextResponse.json({ error: permCheck.error }, { status: permCheck.status });
+  }
+
   return NextResponse.json(invoice);
 }
 
@@ -33,6 +39,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const access = await requireResourceAccess(invoice).catch(toApiError);
   if ("error" in access) {
     return NextResponse.json({ error: access.error }, { status: access.status });
+  }
+
+  const permCheck = await requirePermission("MANAGE_BILLING").catch(toApiError);
+  if ("error" in permCheck) {
+    return NextResponse.json({ error: permCheck.error }, { status: permCheck.status });
   }
 
   const body = await req.json();
@@ -70,6 +81,11 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const access = await requireResourceAccess(invoice).catch(toApiError);
   if ("error" in access) {
     return NextResponse.json({ error: access.error }, { status: access.status });
+  }
+
+  const permCheck = await requirePermission("MANAGE_BILLING").catch(toApiError);
+  if ("error" in permCheck) {
+    return NextResponse.json({ error: permCheck.error }, { status: permCheck.status });
   }
 
   await deleteInvoice(id);
