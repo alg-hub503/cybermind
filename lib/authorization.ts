@@ -235,3 +235,24 @@ export async function requirePagePermission(permissionCode: string) {
 
   return { user };
 }
+
+/**
+ * Non-throwing permission check for partial-page gating — e.g. hiding a
+ * single widget or "Add X" form on a page the user can otherwise see,
+ * without redirecting the whole page. ADMIN always returns true.
+ */
+export async function hasPermission(
+  user: { id: string; role: string; schoolId?: string | null },
+  permissionCode: string
+): Promise<boolean> {
+  if (user.role === ADMIN_ROLE) {
+    return true;
+  }
+
+  if (!user.schoolId) {
+    return false;
+  }
+
+  const permissions = await resolvePermissions(user.id, user.schoolId);
+  return permissions.includes(permissionCode);
+}

@@ -8,9 +8,10 @@ interface SchoolSummaryProps {
   totalUsers: number;
   totalClients: number;
   totalInvoices: number;
+  showBilling?: boolean;
 }
 
-export default function SchoolSummary({ schoolName, totalUsers, totalClients, totalInvoices }: SchoolSummaryProps) {
+export default function SchoolSummary({ schoolName, totalUsers, totalClients, totalInvoices, showBilling = true }: SchoolSummaryProps) {
   const { t, dir } = useTranslations("dashboard");
 
   return (
@@ -21,21 +22,25 @@ export default function SchoolSummary({ schoolName, totalUsers, totalClients, to
           <p className="mt-1 text-sm text-slate-500">{t("schoolOverview")}</p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className={`grid gap-4 ${showBilling ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
           <div className="rounded-xl bg-slate-50 p-4">
             <p className="text-sm text-slate-500">{t("users")}</p>
             <p className="mt-1 text-2xl font-bold text-slate-900">{totalUsers}</p>
           </div>
 
-          <div className="rounded-xl bg-slate-50 p-4">
-            <p className="text-sm text-slate-500">{t("clients")}</p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">{totalClients}</p>
-          </div>
+          {showBilling && (
+            <div className="rounded-xl bg-slate-50 p-4">
+              <p className="text-sm text-slate-500">{t("clients")}</p>
+              <p className="mt-1 text-2xl font-bold text-slate-900">{totalClients}</p>
+            </div>
+          )}
 
-          <div className="rounded-xl bg-slate-50 p-4">
-            <p className="text-sm text-slate-500">{t("invoices")}</p>
-            <p className="mt-1 text-2xl font-bold text-slate-900">{totalInvoices}</p>
-          </div>
+          {showBilling && (
+            <div className="rounded-xl bg-slate-50 p-4">
+              <p className="text-sm text-slate-500">{t("invoices")}</p>
+              <p className="mt-1 text-2xl font-bold text-slate-900">{totalInvoices}</p>
+            </div>
+          )}
         </div>
       </div>
     </Card>

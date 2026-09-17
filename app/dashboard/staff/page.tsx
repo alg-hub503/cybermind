@@ -1,4 +1,5 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
+import { hasPermission } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getStaff, getStaffBySchool } from "@/lib/features/staff/staff-actions";
 import { getSchools } from "@/lib/features/schools/school-actions";
@@ -18,6 +19,7 @@ export default async function StaffPage() {
       : [];
 
   const isAdmin = user.role === ADMIN_ROLE;
+  const canManageStaff = await hasPermission(user, "MANAGE_STAFF");
 
   const title = await t("staff.title");
   const description = await t("staff.description");
@@ -50,7 +52,7 @@ export default async function StaffPage() {
 
       {isAdmin ? (
         <StaffForm schools={await getSchools()} />
-      ) : user.schoolId ? (
+      ) : user.schoolId && canManageStaff ? (
         <StaffForm schoolId={user.schoolId} />
       ) : null}
 

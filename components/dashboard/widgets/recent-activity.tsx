@@ -7,15 +7,18 @@ interface RecentActivityProps {
   totalClients: number;
   totalUsers: number;
   totalInvoices: number;
+  showBilling?: boolean;
 }
 
-export default function RecentActivity({ totalClients, totalUsers, totalInvoices }: RecentActivityProps) {
+export default function RecentActivity({ totalClients, totalUsers, totalInvoices, showBilling = true }: RecentActivityProps) {
   const { t, dir } = useTranslations("dashboard");
 
   const activities = [
-    { title: t("clients"), value: `${totalClients} ${t("registered")}` },
     { title: t("users"), value: `${totalUsers} ${t("active")}` },
-    { title: t("invoices"), value: `${totalInvoices} ${t("created")}` },
+    ...(showBilling ? [
+      { title: t("clients"), value: `${totalClients} ${t("registered")}` },
+      { title: t("invoices"), value: `${totalInvoices} ${t("created")}` },
+    ] : []),
   ];
 
   return (

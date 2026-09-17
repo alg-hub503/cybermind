@@ -1,4 +1,5 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
+import { hasPermission } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getGrades, getGradesBySchool } from "@/lib/features/grades/grade-actions";
 import { getSchools } from "@/lib/features/schools/school-actions";
@@ -16,6 +17,7 @@ export default async function GradesPage() {
       : [];
 
   const isAdmin = user.role === ADMIN_ROLE;
+  const canManageGrades = await hasPermission(user, "MANAGE_GRADES");
 
   const title = await t("grades.title");
   const description = await t("grades.description");
@@ -31,7 +33,7 @@ export default async function GradesPage() {
 
       {isAdmin ? (
         <GradeForm schools={await getSchools()} />
-      ) : user.schoolId ? (
+      ) : user.schoolId && canManageGrades ? (
         <GradeForm schoolId={user.schoolId} />
       ) : null}
 

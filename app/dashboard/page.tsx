@@ -2,6 +2,7 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { hasActiveAccess } from "@/lib/subscription-status";
+import { hasPermission } from "@/lib/authorization";
 import { getSchoolById } from "@/lib/services/domain/school.service";
 import { getDashboardOverview } from "@/lib/services/application/dashboard.service";
 import { getAdminStats } from "@/lib/services/stats.service";
@@ -70,6 +71,7 @@ export default async function DashboardPage() {
     totalUsers,
     totalRevenue,
   } = await getDashboardOverview(user.schoolId);
+  const canViewBilling = await hasPermission(user, "VIEW_BILLING");
   const displaySchool = school ?? overviewSchool;
   const showPaymentBanner = subStatus === "PAST_DUE" || subStatus === "UNPAID";
   const showTrialWarning =
@@ -95,6 +97,7 @@ export default async function DashboardPage() {
           totalUsers={totalUsers}
           totalClients={totalClients}
           totalInvoices={totalInvoices}
+          showBilling={canViewBilling}
         />
       )}
       <StatsGrid
@@ -102,20 +105,26 @@ export default async function DashboardPage() {
         users={totalUsers}
         invoices={totalInvoices}
         revenue={totalRevenue}
+        showBilling={canViewBilling}
       />
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <RevenueChart
-            revenue={totalRevenue}
-            invoices={totalInvoices}
-          />
+        {canViewBilling && (
+          <div className="xl:col-span-2">
+            <RevenueChart
+              revenue={totalRevenue}
+              invoices={totalInvoices}
+            />
+          </div>
+        )}
+        <div className={canViewBilling ? "" : "xl:col-span-3"}>
+          <QuickActions showBilling={canViewBilling} />
         </div>
-        <QuickActions />
       </div>
       <RecentActivity
         totalClients={totalClients}
         totalUsers={totalUsers}
         totalInvoices={totalInvoices}
+        showBilling={canViewBilling}
       />
     </div>
   );

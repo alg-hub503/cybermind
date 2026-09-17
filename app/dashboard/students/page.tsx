@@ -1,4 +1,5 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
+import { hasPermission } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getStudents, getStudentsBySchool } from "@/lib/features/students/student-actions";
 import { getSchools } from "@/lib/features/schools/school-actions";
@@ -20,6 +21,7 @@ export default async function StudentsPage() {
       : [];
 
   const isAdmin = user.role === ADMIN_ROLE;
+  const canManageStudents = await hasPermission(user, "MANAGE_STUDENTS");
 
   const title = await t("students.title");
   const description = await t("students.description");
@@ -48,7 +50,7 @@ export default async function StudentsPage() {
 
       {isAdmin ? (
         <StudentForm schools={await getSchools()} />
-      ) : user.schoolId ? (
+      ) : user.schoolId && canManageStudents ? (
         <StudentForm schoolId={user.schoolId} />
       ) : null}
 

@@ -1,4 +1,5 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
+import { hasPermission } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getClasses, getClassesBySchool } from "@/lib/features/classes/class-actions";
 import { getSchools } from "@/lib/features/schools/school-actions";
@@ -18,6 +19,7 @@ export default async function ClassesPage() {
       : [];
 
   const isAdmin = user.role === ADMIN_ROLE;
+  const canManageClasses = await hasPermission(user, "MANAGE_CLASSES");
 
   const grades = user.role === ADMIN_ROLE ? await getGrades() : user.schoolId ? await getGradesBySchool(user.schoolId) : [];
   const academicYears = user.role === ADMIN_ROLE ? await getAcademicYears() : user.schoolId ? await getAcademicYearsBySchool(user.schoolId) : [];
@@ -36,7 +38,7 @@ export default async function ClassesPage() {
 
       {isAdmin ? (
         <ClassForm schools={await getSchools()} grades={grades} academicYears={academicYears} />
-      ) : user.schoolId ? (
+      ) : user.schoolId && canManageClasses ? (
         <ClassForm schoolId={user.schoolId} grades={grades} academicYears={academicYears} />
       ) : null}
 

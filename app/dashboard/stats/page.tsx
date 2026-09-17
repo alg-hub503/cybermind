@@ -1,7 +1,5 @@
-import { getServerSession } from "@/lib/get-server-session";
-import { redirect } from "next/navigation";
+import { requirePagePermission } from "@/lib/authorization";
 
-import { getUserByEmail } from "@/lib/services/user.service";
 import { getAdminStats, getSchoolStats } from "@/lib/services/stats.service";
 import { t } from "@/lib/i18n/server";
 
@@ -10,16 +8,10 @@ import StatCard from "@/components/ui/stat-card";
 import EmptyState from "@/components/ui/empty-state";
 
 export default async function StatsPage() {
-  const session = await getServerSession();
+  const { user } = await requirePagePermission("VIEW_BILLING");
+  const isAdmin = user.role === "ADMIN";
 
-  if (!session?.user?.email) {
-    redirect("/login");
-  }
-
-  const user = await getUserByEmail(session.user.email);
-  const isAdmin = user?.role === "ADMIN";
-
-  if (isAdmin && !user?.schoolId) {
+  if (isAdmin && !user.schoolId) {
     const stats = await getAdminStats();
 
     return (
@@ -39,7 +31,7 @@ export default async function StatsPage() {
     );
   }
 
-  if (!user?.schoolId) {
+  if (!user.schoolId) {
     return (
       <div className="space-y-8">
         <PageTitle title={await t("stats.titleDashboard")} />

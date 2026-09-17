@@ -1,4 +1,5 @@
 import { requireCurrentUser } from "@/lib/require-current-user";
+import { hasPermission } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getAcademicYears, getAcademicYearsBySchool } from "@/lib/features/academic-years/academic-year-actions";
 import { getSchools } from "@/lib/features/schools/school-actions";
@@ -16,6 +17,7 @@ export default async function AcademicYearsPage() {
       : [];
 
   const isAdmin = user.role === ADMIN_ROLE;
+  const canManageAcademicYears = await hasPermission(user, "MANAGE_ACADEMIC_YEARS");
 
   const title = await t("academicYears.title");
   const description = await t("academicYears.description");
@@ -31,7 +33,7 @@ export default async function AcademicYearsPage() {
 
       {isAdmin ? (
         <AcademicYearForm schools={await getSchools()} />
-      ) : user.schoolId ? (
+      ) : user.schoolId && canManageAcademicYears ? (
         <AcademicYearForm schoolId={user.schoolId} />
       ) : null}
 
