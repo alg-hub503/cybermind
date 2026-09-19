@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { requireResourceAccess } from "@/lib/authorization";
+import { requireResourceAccess, requirePermission } from "@/lib/authorization";
 import { getInvoiceWithDetails } from "@/lib/features/invoices/invoice-actions";
 import { getClientsBySchool } from "@/lib/features/clients/client-actions";
 import { getStudentsBySchool } from "@/lib/features/students/student-actions";
@@ -25,6 +25,7 @@ export default async function InvoiceDetailPage({ params, searchParams }: Invoic
 
   try {
     await requireResourceAccess(invoice);
+    await requirePermission("VIEW_BILLING");
   } catch {
     notFound();
   }

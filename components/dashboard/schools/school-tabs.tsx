@@ -6,10 +6,12 @@ import { useTranslations } from "@/lib/i18n/use-translations";
 
 interface SchoolTabsProps {
   schoolId: string;
+  showBilling?: boolean;
 }
 
 export default function SchoolTabs({
   schoolId,
+  showBilling = true,
 }: SchoolTabsProps) {
   const pathname = usePathname();
   const { t } = useTranslations("schoolTabs");
@@ -24,18 +26,22 @@ export default function SchoolTabs({
       label: t("users"),
       href: `/dashboard/schools/${schoolId}/users`,
     },
-    {
-      label: t("clients"),
-      href: `/dashboard/schools/${schoolId}/clients`,
-    },
-    {
-      label: t("invoices"),
-      href: `/dashboard/schools/${schoolId}/invoices`,
-    },
-    {
-      label: t("analytics"),
-      href: `/dashboard/schools/${schoolId}/analytics`,
-    },
+    ...(showBilling
+      ? [
+          {
+            label: t("clients"),
+            href: `/dashboard/schools/${schoolId}/clients`,
+          },
+          {
+            label: t("invoices"),
+            href: `/dashboard/schools/${schoolId}/invoices`,
+          },
+          {
+            label: t("analytics"),
+            href: `/dashboard/schools/${schoolId}/analytics`,
+          },
+        ]
+      : []),
     {
       label: t("settings"),
       href: `/dashboard/schools/${schoolId}/settings`,

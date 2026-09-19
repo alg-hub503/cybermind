@@ -12,6 +12,7 @@ interface SchoolStatsProps {
   totalClients: number;
   totalInvoices: number;
   totalRevenue: number;
+  showBilling?: boolean;
 }
 
 export default async function SchoolStats({
@@ -19,6 +20,7 @@ export default async function SchoolStats({
   totalClients,
   totalInvoices,
   totalRevenue,
+  showBilling = true,
 }: SchoolStatsProps) {
   const title = await t("schoolStats.title");
   const description = await t("schoolStats.description");
@@ -39,35 +41,38 @@ export default async function SchoolStats({
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className={`grid gap-6 md:grid-cols-2 ${showBilling ? "xl:grid-cols-4" : "xl:grid-cols-1"}`}>
         <StatCard
           title={usersLabel}
           value={totalUsers}
           icon={<Users size={22} />}
         />
 
-        <StatCard
-          title={clientsLabel}
-          value={totalClients}
-          icon={<Building2 size={22} />}
-        />
+        {showBilling && (
+          <>
+            <StatCard
+              title={clientsLabel}
+              value={totalClients}
+              icon={<Building2 size={22} />}
+            />
 
-        <StatCard
-          title={invoicesLabel}
-          value={totalInvoices}
-          icon={<FileText size={22} />}
-        />
+            <StatCard
+              title={invoicesLabel}
+              value={totalInvoices}
+              icon={<FileText size={22} />}
+            />
 
-        <StatCard
-          title={revenueLabel}
-          value={`$${totalRevenue.toLocaleString(undefined, {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}`}
-          icon={<DollarSign size={22} />}
-        />
+            <StatCard
+              title={revenueLabel}
+              value={`$${totalRevenue.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`}
+              icon={<DollarSign size={22} />}
+            />
+          </>
+        )}
       </div>
     </section>
   );
 }
-

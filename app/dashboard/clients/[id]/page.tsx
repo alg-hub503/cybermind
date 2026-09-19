@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { requireResourceAccess } from "@/lib/authorization";
+import { requireResourceAccess, requirePermission } from "@/lib/authorization";
 import { getClientWithDetails } from "@/lib/features/clients/client-actions";
 import { t } from "@/lib/i18n/server";
 import Link from "next/link";
@@ -14,6 +14,7 @@ export default async function ClientDetailPage({ params }: ClientDetailPageProps
 
   try {
     await requireResourceAccess(client);
+    await requirePermission("VIEW_BILLING");
   } catch {
     notFound();
   }

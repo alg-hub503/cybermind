@@ -8,6 +8,7 @@ import {
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { requireCurrentUser } from "@/lib/require-current-user";
+import { hasPermission } from "@/lib/authorization";
 import { getSchool } from "@/lib/features/schools/school-actions";
 import { countClientsBySchool, getClientsBySchool } from "@/lib/features/clients/client-actions";
 import { countInvoicesBySchool, getInvoicesBySchool, getRevenueBySchool } from "@/lib/features/invoices/invoice-actions";
@@ -43,6 +44,8 @@ export default async function SchoolPage({
     notFound();
   }
 
+  const canViewBilling = await hasPermission(user, "VIEW_BILLING");
+
   const [
     totalUsers,
     totalClients,
@@ -71,25 +74,28 @@ export default async function SchoolPage({
     <div className="space-y-8">
       <SchoolHeader school={school} />
 
-      <SchoolTabs schoolId={school.id} />
+      <SchoolTabs schoolId={school.id} showBilling={canViewBilling} />
 
       <SchoolStats
         totalUsers={totalUsers}
         totalClients={totalClients}
         totalInvoices={totalInvoices}
         totalRevenue={revenue._sum.amount ?? 0}
+        showBilling={canViewBilling}
       />
 
-      <SchoolAnalyticsCard
-        schoolId={school.id}
-      />
+      {canViewBilling && (
+        <SchoolAnalyticsCard
+          schoolId={school.id}
+        />
+      )}
 
       <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="mb-6 text-xl font-bold text-slate-900">
           {quickActions}
         </h2>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className={`grid gap-4 ${canViewBilling ? "md:grid-cols-3" : "md:grid-cols-1"}`}>
           <Link
             href={`/dashboard/schools/${id}/users`}
             className="flex items-center gap-4 rounded-xl border border-slate-200 p-5 transition hover:border-indigo-300 hover:bg-slate-50"
@@ -110,53 +116,59 @@ export default async function SchoolPage({
             </div>
           </Link>
 
-          <Link
-            href="/dashboard/clients"
-            className="flex items-center gap-4 rounded-xl border border-slate-200 p-5 transition hover:border-emerald-300 hover:bg-slate-50"
-          >
-            <UserPlus
-              className="text-emerald-600"
-              size={24}
-            />
+          {canViewBilling && (
+            <>
+              <Link
+                href="/dashboard/clients"
+                className="flex items-center gap-4 rounded-xl border border-slate-200 p-5 transition hover:border-emerald-300 hover:bg-slate-50"
+              >
+                <UserPlus
+                  className="text-emerald-600"
+                  size={24}
+                />
 
-            <div>
-              <p className="font-semibold">
-                {clientsLabel}
-              </p>
+                <div>
+                  <p className="font-semibold">
+                    {clientsLabel}
+                  </p>
 
-              <p className="text-sm text-slate-500">
-                {viewClients}
-              </p>
-            </div>
-          </Link>
+                  <p className="text-sm text-slate-500">
+                    {viewClients}
+                  </p>
+                </div>
+              </Link>
 
-          <Link
-            href="/dashboard/invoices"
-            className="flex items-center gap-4 rounded-xl border border-slate-200 p-5 transition hover:border-amber-300 hover:bg-slate-50"
-          >
-            <ReceiptText
-              className="text-amber-600"
-              size={24}
-            />
+              <Link
+                href="/dashboard/invoices"
+                className="flex items-center gap-4 rounded-xl border border-slate-200 p-5 transition hover:border-amber-300 hover:bg-slate-50"
+              >
+                <ReceiptText
+                  className="text-amber-600"
+                  size={24}
+                />
 
-            <div>
-              <p className="font-semibold">
-                {invoicesLabel}
-              </p>
+                <div>
+                  <p className="font-semibold">
+                    {invoicesLabel}
+                  </p>
 
-              <p className="text-sm text-slate-500">
-                {viewInvoices}
-              </p>
-            </div>
-          </Link>
+                  <p className="text-sm text-slate-500">
+                    {viewInvoices}
+                  </p>
+                </div>
+              </Link>
+            </>
+          )}
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <SchoolClients clients={clients} />
+      {canViewBilling && (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <SchoolClients clients={clients} />
 
-        <RecentInvoices invoices={invoices} />
-      </div>
+          <RecentInvoices invoices={invoices} />
+        </div>
+      )}
     </div>
   );
 }

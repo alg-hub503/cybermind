@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ADMIN_ROLE } from "@/lib/constants";
-import { requireCurrentUser } from "@/lib/require-current-user";
+import { requirePagePermission } from "@/lib/authorization";
 import { countClientsBySchool } from "@/lib/features/clients/client-actions";
 import { countInvoicesBySchool, getRevenueBySchool } from "@/lib/features/invoices/invoice-actions";
 import { countUsersBySchool } from "@/lib/features/users/user-actions";
@@ -23,7 +23,7 @@ export default async function AnalyticsPage({
 }: AnalyticsPageProps) {
   const { id } = await params;
 
-  const { user } = await requireCurrentUser();
+  const { user } = await requirePagePermission("VIEW_BILLING");
   if (user.role !== ADMIN_ROLE && user.schoolId !== id) {
     notFound();
   }
