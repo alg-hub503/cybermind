@@ -182,6 +182,41 @@ export async function requirePermission(permissionCode: string) {
   return { user };
 }
 
+/**
+ * Same permission rule as requirePermission(), but WITHOUT the trial /
+ * subscription gate.
+ *
+ * Use it only for billing actions that must stay reachable when the trial has
+ * expired or the subscription is inactive (start checkout, open the billing
+ * portal, cancel). It still enforces: a valid session, maintenance mode, and
+ * the permission itself. Platform ADMIN bypasses the permission check.
+ */
+export async function requireSessionPermission(permissionCode: string) {
+  const { session } = await requireSession();
+
+  const user = await getUserByEmail(session.user.email);
+
+  if (!user) {
+    throw new Error("UNAUTHORIZED");
+  }
+
+  if (user.role === ADMIN_ROLE) {
+    return { session, user };
+  }
+
+  if (!user.schoolId) {
+    throw new Error("FORBIDDEN");
+  }
+
+  const permissions = await resolvePermissions(user.id, user.schoolId);
+
+  if (!permissions.includes(permissionCode)) {
+    throw new Error("FORBIDDEN");
+  }
+
+  return { session, user };
+}
+
 export async function requireSchoolAdmin(schoolId: string) {
   const { user } = await requireAuth();
 

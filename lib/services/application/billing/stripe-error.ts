@@ -37,3 +37,25 @@ export function translateStripeError(error: unknown, defaultCode: string): never
 
   throw new BillingError(defaultCode, defaultCode, error);
 }
+
+// Codes whose messages are written by us (not passed through from Stripe),
+// so they are safe to show to a school user.
+const USER_SAFE_BILLING_CODES = new Set([
+  "NO_SUBSCRIPTION",
+  "NO_STRIPE_SUBSCRIPTION",
+  "NO_STRIPE_CUSTOMER",
+]);
+
+/**
+ * Maps an error thrown by a billing route to an HTTP status + optional
+ * user-facing message. Anything else (raw Stripe errors, bugs) gets a bare
+ * 500 with no message: details stay in the server log, and the UI falls back
+ * to its own translated text.
+ */
+export function toBillingHttpError(error: unknown): { status: number; error?: string } {
+  if (error instanceof BillingError && USER_SAFE_BILLING_CODES.has(error.code)) {
+    return { status: 404, error: error.message };
+  }
+
+  return { status: 500 };
+}
