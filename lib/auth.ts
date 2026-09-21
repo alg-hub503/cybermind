@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
 import { prisma } from "@/lib/prisma";
+import { findUserByLoginEmail } from "@/lib/services/domain/user.service";
 
 export const authOptions: NextAuthOptions = {
 
@@ -36,11 +37,9 @@ export const authOptions: NextAuthOptions = {
 
 
         const user =
-          await prisma.user.findUnique({
-            where: {
-              email: credentials.email,
-            },
-          });
+          await findUserByLoginEmail(
+            credentials.email
+          );
 
 
         if (!user || !user.password) {

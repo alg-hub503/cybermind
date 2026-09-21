@@ -7,11 +7,12 @@ import { toast, Toaster } from "sonner";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { useTranslations } from "@/lib/i18n/use-translations";
+import { MIN_PASSWORD_LENGTH } from "@/lib/auth-input";
 import { LanguageSwitcher } from "@/app/_components/language-switcher";
 
 function getStrength(password: string): { label: string; color: string; score: number } {
   let score = 0;
-  if (password.length >= 6) score++;
+  if (password.length >= MIN_PASSWORD_LENGTH) score++;
   if (password.length >= 10) score++;
   if (/[A-Z]/.test(password)) score++;
   if (/[a-z]/.test(password)) score++;
@@ -38,7 +39,7 @@ function ResetForm() {
 
   const strength = getStrength(password);
   const passwordsMatch = password === confirmPassword;
-  const isValid = password.length >= 6 && passwordsMatch;
+  const isValid = password.length >= MIN_PASSWORD_LENGTH && passwordsMatch;
 
   const strengthLabel = t(strength.label);
 
@@ -118,7 +119,7 @@ function ResetForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={MIN_PASSWORD_LENGTH}
                   className="flex-1"
                 />
                 <Button type="button" variant="outline" onClick={() => setShowPassword(!showPassword)}>
@@ -155,7 +156,7 @@ function ResetForm() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  minLength={6}
+                  minLength={MIN_PASSWORD_LENGTH}
                   className="flex-1"
                 />
                 <Button type="button" variant="outline" onClick={() => setShowConfirm(!showConfirm)}>

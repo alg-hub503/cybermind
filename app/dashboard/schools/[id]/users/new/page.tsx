@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useState } from "react";
 import { createSchoolUser } from "@/lib/actions/school-user-actions";
 import { useTranslations } from "@/lib/i18n/use-translations";
+import { MIN_PASSWORD_LENGTH } from "@/lib/auth-input";
 
 export default function NewUserPage() {
   const router = useRouter();
@@ -82,7 +83,7 @@ export default function NewUserPage() {
             className="w-full rounded-xl border p-3"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            minLength={6}
+            minLength={MIN_PASSWORD_LENGTH}
             required
           />
         </div>

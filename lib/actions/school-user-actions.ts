@@ -3,9 +3,10 @@
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 
+import { MIN_PASSWORD_LENGTH, normalizeEmail } from "@/lib/auth-input";
 import { requireAdmin } from "@/lib/authorization";
-import { ADMIN_ROLE } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
+import { findUserByLoginEmail } from "@/lib/services/domain/user.service";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -29,19 +30,17 @@ export async function createSchoolUserCore(data: CreateSchoolUserInput) {
     throw new Error("INVALID_INPUT");
   }
 
-  if (!EMAIL_PATTERN.test(data.email)) {
+  const email = normalizeEmail(data.email);
+
+  if (!EMAIL_PATTERN.test(email)) {
     throw new Error("INVALID_INPUT");
   }
 
-  if (!data.password || data.password.length < 6) {
+  if (!data.password || data.password.length < MIN_PASSWORD_LENGTH) {
     throw new Error("INVALID_INPUT");
   }
 
-  const existingUser = await prisma.user.findUnique({
-    where: {
-      email: data.email,
-    },
-  });
+  const existingUser = await findUserByLoginEmail(email);
 
   if (existingUser) {
     throw new Error("USER_EXISTS");
@@ -52,7 +51,7 @@ export async function createSchoolUserCore(data: CreateSchoolUserInput) {
   return prisma.user.create({
     data: {
       name: data.name.trim(),
-      email: data.email,
+      email,
       password: hashedPassword,
       role: data.role,
       schoolId: data.schoolId,

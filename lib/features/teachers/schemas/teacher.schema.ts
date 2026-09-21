@@ -1,10 +1,12 @@
 import { z } from "zod";
 
+import { emailSchema, passwordSchema } from "@/lib/auth-schemas";
+
 export const createTeacherSchema = z.object({
   schoolId: z.string().min(1, "School is required"),
   name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: emailSchema,
+  password: passwordSchema,
   phone: z.string().nullable().optional(),
   specialization: z.string().nullable().optional(),
   qualifications: z.string().nullable().optional(),

@@ -6,6 +6,7 @@ import Link from "next/link";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/input";
 import { useTranslations } from "@/lib/i18n/use-translations";
+import { MIN_PASSWORD_LENGTH } from "@/lib/auth-input";
 import { LanguageSwitcher } from "@/app/_components/language-switcher";
 import { toast, Toaster } from "sonner";
 
@@ -99,7 +100,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={MIN_PASSWORD_LENGTH}
               />
             </div>
 

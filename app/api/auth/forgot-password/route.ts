@@ -2,14 +2,16 @@ import { NextResponse } from "next/server";
 import { randomBytes, createHash } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { normalizeEmail } from "@/lib/auth-input";
+import { findUserByLoginEmail } from "@/lib/services/domain/user.service";
 
 const GENERIC_MESSAGE = "If an account exists for this email, a reset link has been sent.";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const email = String(body.email ?? "").toLowerCase().trim();
-    const user = email ? await prisma.user.findUnique({ where: { email } }) : null;
+    const email = normalizeEmail(body.email);
+    const user = email ? await findUserByLoginEmail(email) : null;
 
     if (!user) {
 
@@ -41,7 +43,7 @@ export async function POST(req: Request) {
         },
       });
 
-      await sendPasswordResetEmail(email, rawToken);
+      await sendPasswordResetEmail(user.email, rawToken);
     }
 
     return NextResponse.json({ message: GENERIC_MESSAGE }, { status: 200 });

@@ -1,35 +1,54 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { z } from "zod";
+
+import { emailSchema, passwordSchema } from "@/lib/auth-schemas";
+import { findUserByLoginEmail } from "@/lib/services/domain/user.service";
+
+const registerSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+  name: z.string().trim().max(100).nullish(),
+});
+
+const USER_EXISTS_ERROR = "User already exists";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    const parsed = registerSchema.safeParse(body);
 
-    if (!body.email || !body.password) {
+    if (!parsed.success) {
+      // The register form shows `error` as-is, so surface the first
+      // human-readable reason (e.g. "Password must be at least 8 characters").
       return NextResponse.json(
-        { error: "Invalid input" },
+        {
+          error: parsed.error.issues[0]?.message ?? "Invalid input",
+          details: parsed.error.flatten(),
+        },
         { status: 400 }
       );
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email: body.email },
-    });
+    // `email` is already trimmed + lower-cased by emailSchema.
+    const { email, password, name } = parsed.data;
+
+    const existingUser = await findUserByLoginEmail(email);
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "User already exists" },
+        { error: USER_EXISTS_ERROR },
         { status: 400 }
       );
     }
 
-    const hashedPassword = await bcrypt.hash(String(body.password), 12);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await prisma.$transaction(async (tx) => {
       const school = await tx.school.create({
         data: {
-          name: `${body.email.split("@")[0]} School`,
+          name: `${email.split("@")[0]} School`,
         },
       });
 
@@ -49,8 +68,8 @@ export async function POST(req: Request) {
 
       const user = await tx.user.create({
         data: {
-          email: body.email,
-          name: body.name ?? null,
+          email,
+          name: name || null,
           password: hashedPassword,
           schoolId: school.id,
           role: "USER",
@@ -123,6 +142,19 @@ export async function POST(req: Request) {
       message: "User and School created successfully",
     });
   } catch (error) {
+    // Two simultaneous sign-ups with the same email: the unique index wins.
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code: string }).code === "P2002"
+    ) {
+      return NextResponse.json(
+        { error: USER_EXISTS_ERROR },
+        { status: 400 }
+      );
+    }
+
     console.error(error);
     return NextResponse.json(
       { error: "Register failed" },

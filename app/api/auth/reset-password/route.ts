@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { passwordSchema } from "@/lib/auth-schemas";
 
 export async function POST(req: Request) {
   try {
@@ -14,9 +15,11 @@ export async function POST(req: Request) {
       );
     }
 
-    if (body.password.length < 6) {
+    const passwordCheck = passwordSchema.safeParse(body.password);
+
+    if (!passwordCheck.success) {
       return NextResponse.json(
-        { error: "Password must be at least 6 characters." },
+        { error: `${passwordCheck.error.issues[0]?.message ?? "Invalid password"}.` },
         { status: 400 }
       );
     }
