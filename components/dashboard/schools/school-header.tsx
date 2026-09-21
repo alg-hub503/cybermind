@@ -2,6 +2,7 @@ import Image from "next/image";
 import { t } from "@/lib/i18n/server";
 import EditSchoolButton from "./edit-school-button";
 import DeleteSchoolButton from "./delete-school-button";
+import { hasPermission } from "@/lib/authorization";
 
 interface SchoolHeaderProps {
   school: {
@@ -15,10 +16,12 @@ interface SchoolHeaderProps {
       secondaryColor?: string | null;
     } | null;
   };
+  isSchoolAdmin?: boolean;
 }
 
 export default async function SchoolHeader({
   school,
+  isSchoolAdmin = false,
 }: SchoolHeaderProps) {
   const badge = await t("schoolHeader.badge");
   const description = await t("schoolHeader.description");
@@ -100,10 +103,12 @@ export default async function SchoolHeader({
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 lg:w-64">
-            <EditSchoolButton id={school.id} currentName={school.name} />
-            <DeleteSchoolButton id={school.id} schoolName={school.name} />
-          </div>
+          {isSchoolAdmin && (
+            <div className="flex flex-col gap-3 lg:w-64">
+              <EditSchoolButton id={school.id} currentName={school.name} />
+              <DeleteSchoolButton id={school.id} schoolName={school.name} />
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   requireSchoolAccess,
+  hasPermission,
   toApiError,
 } from "@/lib/authorization";
 import {
@@ -49,6 +50,11 @@ export async function PUT(
       { error: "Validation failed", details: parsed.error.flatten() },
       { status: 400 }
     );
+  }
+
+  const canManageSettings = await hasPermission(access.user, "MANAGE_SCHOOL_SETTINGS");
+  if (!canManageSettings) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const settings = await updateSchoolSettings(id, parsed.data);

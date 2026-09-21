@@ -8,7 +8,7 @@ import {
 
 import { ADMIN_ROLE } from "@/lib/constants";
 import { requireCurrentUser } from "@/lib/require-current-user";
-import { hasPermission } from "@/lib/authorization";
+import { hasPermission, requireSchoolAdmin } from "@/lib/authorization";
 import { getSchool } from "@/lib/features/schools/school-actions";
 import { countClientsBySchool, getClientsBySchool } from "@/lib/features/clients/client-actions";
 import { countInvoicesBySchool, getInvoicesBySchool, getRevenueBySchool } from "@/lib/features/invoices/invoice-actions";
@@ -46,6 +46,10 @@ export default async function SchoolPage({
 
   const canViewBilling = await hasPermission(user, "VIEW_BILLING");
 
+  const isSchoolAdmin = await requireSchoolAdmin(id)
+    .then(() => true)
+    .catch(() => false);
+
   const [
     totalUsers,
     totalClients,
@@ -72,9 +76,9 @@ export default async function SchoolPage({
 
   return (
     <div className="space-y-8">
-      <SchoolHeader school={school} />
+      <SchoolHeader school={school} isSchoolAdmin={isSchoolAdmin} />
 
-      <SchoolTabs schoolId={school.id} showBilling={canViewBilling} />
+      <SchoolTabs schoolId={school.id} showBilling={canViewBilling} isSchoolAdmin={isSchoolAdmin} />
 
       <SchoolStats
         totalUsers={totalUsers}
@@ -95,26 +99,28 @@ export default async function SchoolPage({
           {quickActions}
         </h2>
 
-        <div className={`grid gap-4 ${canViewBilling ? "md:grid-cols-3" : "md:grid-cols-1"}`}>
-          <Link
-            href={`/dashboard/schools/${id}/users`}
-            className="flex items-center gap-4 rounded-xl border border-slate-200 p-5 transition hover:border-indigo-300 hover:bg-slate-50"
-          >
-            <Users
-              className="text-indigo-600"
-              size={24}
-            />
+        <div className={`grid gap-4 ${canViewBilling || isSchoolAdmin ? "md:grid-cols-3" : "md:grid-cols-1"}`}>
+          {isSchoolAdmin && (
+            <Link
+              href={`/dashboard/schools/${id}/users`}
+              className="flex items-center gap-4 rounded-xl border border-slate-200 p-5 transition hover:border-indigo-300 hover:bg-slate-50"
+            >
+              <Users
+                className="text-indigo-600"
+                size={24}
+              />
 
-            <div>
-              <p className="font-semibold">
-                {schoolUsers}
-              </p>
+              <div>
+                <p className="font-semibold">
+                  {schoolUsers}
+                </p>
 
-              <p className="text-sm text-slate-500">
-                {manageUsers}
-              </p>
-            </div>
-          </Link>
+                <p className="text-sm text-slate-500">
+                  {manageUsers}
+                </p>
+              </div>
+            </Link>
+          )}
 
           {canViewBilling && (
             <>

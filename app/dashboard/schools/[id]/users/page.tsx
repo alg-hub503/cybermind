@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import { Eye, Pencil, Trash2, Users } from "lucide-react";
 import Link from "next/link";
 
+import { requireSchoolAdmin } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
-import { requireCurrentUser } from "@/lib/require-current-user";
 import { getSchool } from "@/lib/features/schools/school-actions";
 import { getUsersBySchool } from "@/lib/features/users/user-actions";
 import { t } from "@/lib/i18n/server";
@@ -21,12 +21,10 @@ interface UsersPageProps {
 export default async function UsersPage({ params }: UsersPageProps) {
   const { id } = await params;
 
-  const { user } = await requireCurrentUser();
+  const { user } = await requireSchoolAdmin(id).catch(() => { notFound(); return { user: null }; });
+  if (!user) return null;
+
   const isAdmin = user.role === ADMIN_ROLE;
-  
-  if (!isAdmin && user.schoolId !== id) {
-    notFound();
-  }
 
   const [school, users] = await Promise.all([
     getSchool(id),
@@ -62,7 +60,7 @@ export default async function UsersPage({ params }: UsersPageProps) {
         description={description}
       />
 
-      {isAdmin && (
+      {(
         <div className="flex justify-end">
           <Link
             href={`/dashboard/schools/${id}/users/new`}
