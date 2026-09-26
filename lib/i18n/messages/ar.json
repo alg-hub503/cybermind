@@ -24,7 +24,7 @@
   "register.success": "تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.",
   "register.error": "حدث خطأ. الرجاء المحاولة مرة أخرى.",
   "register.hasAccount": "لديك حساب بالفعل؟",
-    "register.login": "تسجيل الدخول",
+  "register.login": "تسجيل الدخول",
   "forgot.title": "نسيت كلمة المرور",
   "forgot.subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين كلمة المرور",
   "forgot.email": "البريد الإلكتروني",
@@ -824,5 +824,8 @@
   "accountSuspended.title": "تم تعليق حسابك",
   "accountSuspended.description": "يبدو أن حسابك لم يعد نشطًا. يرجى الترقية لإعادة تنشيط حسابك.",
   "accountSuspended.upgradeNow": "ترقية الآن",
-  "accountSuspended.contactSupport": "للمزيد من المعلومات تواصل مع فريق الدعم."
+  "accountSuspended.contactSupport": "للمزيد من المعلومات تواصل مع فريق الدعم.",
+  "schoolUsers.noRole": "بلا دور",
+  "schoolUsers.roleChangeConfirm": "سيفقد هذا المستخدم القدرة على إدارة المستخدمين والإعدادات والفوترة لهذه المدرسة. متابعة؟",
+  "schoolUsers.roleChangeFailed": "تعذّر تغيير الدور. حاول مرة أخرى."
 }

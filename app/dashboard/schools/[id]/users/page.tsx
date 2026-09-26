@@ -5,12 +5,14 @@ import Link from "next/link";
 import { requireSchoolAdmin } from "@/lib/authorization";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getSchool } from "@/lib/features/schools/school-actions";
-import { getUsersBySchool } from "@/lib/features/users/user-actions";
+import { getUsersBySchoolWithRoles } from "@/lib/features/users/user-actions";
+import { getRolesBySchoolId } from "@/lib/features/roles/role-actions";
 import { t } from "@/lib/i18n/server";
 
 import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-table";
 import EmptyState from "@/components/ui/empty-state";
 import PageTitle from "@/components/ui/page-title";
+import UserRoleSelect from "@/components/dashboard/schools/user-role-select";
 
 interface UsersPageProps {
   params: Promise<{
@@ -21,15 +23,22 @@ interface UsersPageProps {
 export default async function UsersPage({ params }: UsersPageProps) {
   const { id } = await params;
 
-  const { user } = await requireSchoolAdmin(id).catch(() => { notFound(); return { user: null }; });
-  if (!user) return null;
+  const { user: viewer } = await requireSchoolAdmin(id).catch(() => { notFound(); return { user: null }; });
+  if (!viewer) return null;
 
-  const isAdmin = user.role === ADMIN_ROLE;
+  const isAdmin = viewer.role === ADMIN_ROLE;
 
-  const [school, users] = await Promise.all([
+  const [school, users, roles] = await Promise.all([
     getSchool(id),
-    getUsersBySchool(id),
+    getUsersBySchoolWithRoles(id),
+    getRolesBySchoolId(id),
   ]);
+
+  const roleOptions = roles.map((role) => ({
+    id: role.id,
+    name: role.name,
+    systemKey: role.systemKey,
+  }));
 
   const title = await t("schoolUsers.title");
   const description = await t("schoolUsers.description");
@@ -60,7 +69,7 @@ export default async function UsersPage({ params }: UsersPageProps) {
         description={description}
       />
 
-      {(
+      {isAdmin && (
         <div className="flex justify-end">
           <Link
             href={`/dashboard/schools/${id}/users/new`}
@@ -113,15 +122,25 @@ export default async function UsersPage({ params }: UsersPageProps) {
                 </DataTableCell>
                 <DataTableCell className="text-slate-600">{user.email}</DataTableCell>
                 <DataTableCell>
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                      user.role === ADMIN_ROLE
-                        ? "bg-indigo-100 text-indigo-700"
-                        : "bg-slate-100 text-slate-700"
-                    }`}
-                  >
-                    {user.role}
-                  </span>
+                  {user.id === viewer.id ? (
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                        user.role === ADMIN_ROLE
+                          ? "bg-indigo-100 text-indigo-700"
+                          : "bg-slate-100 text-slate-700"
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  ) : (
+                    <UserRoleSelect
+                      schoolId={id}
+                      userId={user.id}
+                      currentRoleId={user.userRoles[0]?.roleId ?? null}
+                      currentRoleSystemKey={user.userRoles[0]?.role.systemKey ?? null}
+                      roles={roleOptions}
+                    />
+                  )}
                 </DataTableCell>
                 <DataTableCell>
                   <span

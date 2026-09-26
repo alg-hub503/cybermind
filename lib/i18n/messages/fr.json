@@ -828,5 +828,8 @@
   "accountSuspended.title": "Votre compte a été suspendu",
   "accountSuspended.description": "Il semble que votre compte ne soit plus actif. Veuillez passer à la version supérieure pour réactiver votre compte.",
   "accountSuspended.upgradeNow": "Passer à la version supérieure",
-  "accountSuspended.contactSupport": "Pour plus d'informations, contactez notre équipe de support."
+  "accountSuspended.contactSupport": "Pour plus d'informations, contactez notre équipe de support.",
+  "schoolUsers.noRole": "Aucun rôle",
+  "schoolUsers.roleChangeConfirm": "Cet utilisateur perdra la possibilité de gérer les utilisateurs, les paramètres et la facturation de cette école. Continuer ?",
+  "schoolUsers.roleChangeFailed": "Impossible de modifier le rôle. Veuillez réessayer."
 }

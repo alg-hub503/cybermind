@@ -7,6 +7,10 @@ export class UserService {
     return this.repository.findBySchool(schoolId);
   }
 
+  getBySchoolWithRoles(schoolId: string) {
+    return this.repository.findBySchoolWithRoles(schoolId);
+  }
+
   getById(id: string) {
     return this.repository.findById(id);
   }

@@ -524,6 +524,112 @@ async function runSuite() {
   const legacyTokens = await prisma!.passwordResetToken.count({ where: { userId: legacy.id } });
   assert(legacyTokens === 1, "forgot-password finds the legacy mixed-case row (1 reset token created)");
 
+  // ── 10. School role assignment ─────────────────────────────
+  heading("10. School role assignment (PUT/DELETE .../users/[userId]/role)");
+
+  const ownerA = await prisma!.user.findUniqueOrThrow({ where: { email: emailA } });
+  const ownerB = await prisma!.user.findUniqueOrThrow({ where: { email: emailB } });
+  const memberUser = await prisma!.user.findUniqueOrThrow({ where: { email: memberEmail } });
+
+  const roleA_admin = await prisma!.role.findFirstOrThrow({ where: { schoolId: sidA, systemKey: "SCHOOL_ADMIN" } });
+  const roleA_teacher = await prisma!.role.findFirstOrThrow({ where: { schoolId: sidA, systemKey: "TEACHER" } });
+  const roleA_staff = await prisma!.role.findFirstOrThrow({ where: { schoolId: sidA, systemKey: "STAFF" } });
+  const roleB_teacher = await prisma!.role.findFirstOrThrow({ where: { schoolId: sidB, systemKey: "TEACHER" } });
+
+  const roleRoute = (schoolId: string, userId: string) => `/api/schools/${schoolId}/users/${userId}/role`;
+
+  subheading("3. Baseline: newly-created member has no role");
+  assert(
+    (await prisma!.userRole.count({ where: { userId: memberUser.id, schoolId: sidA } })) === 0,
+    "member created in section 8 starts with zero UserRole rows"
+  );
+
+  subheading("1. Assign a role within the same school (school admin -> own member)");
+  r = await authed(roleRoute(sidA, memberUser.id), { method: "PUT", body: JSON.stringify({ roleId: roleA_teacher.id }) }, cookieA);
+  result(roleRoute(sidA, memberUser.id), "PUT", r.status, "owner assigns TEACHER to their own school's member", 200);
+  assert(
+    (await prisma!.userRole.findFirst({ where: { userId: memberUser.id, schoolId: sidA } }))?.roleId === roleA_teacher.id,
+    "member now holds the TEACHER role in school A"
+  );
+
+  subheading("8. Platform-ADMIN boundary: User.role is never touched by this feature");
+  assert(
+    (await prisma!.user.findUniqueOrThrow({ where: { id: memberUser.id } })).role === "TEACHER",
+    "member's platform User.role is unchanged (still the flat string \"TEACHER\", untouched by the assignment)"
+  );
+
+  subheading("Re-assign: moving to a different role replaces the old one (no duplicate rows)");
+  r = await authed(roleRoute(sidA, memberUser.id), { method: "PUT", body: JSON.stringify({ roleId: roleA_staff.id }) }, cookieA);
+  result(roleRoute(sidA, memberUser.id), "PUT", r.status, "owner moves member from TEACHER to STAFF", 200);
+  assert(
+    (await prisma!.userRole.count({ where: { userId: memberUser.id, schoolId: sidA } })) === 1,
+    "member holds exactly one UserRole row after being moved to a different role"
+  );
+
+  subheading("2. Remove a role");
+  r = await authed(roleRoute(sidA, memberUser.id), { method: "DELETE" }, cookieA);
+  result(roleRoute(sidA, memberUser.id), "DELETE", r.status, "owner removes member's role", 200);
+  assert(
+    (await prisma!.userRole.count({ where: { userId: memberUser.id, schoolId: sidA } })) === 0,
+    "member has zero UserRole rows after removal"
+  );
+
+  subheading("4. Cross-school USER rejection (right school in the URL, wrong user)");
+  r = await authed(roleRoute(sidA, ownerB.id), { method: "PUT", body: JSON.stringify({ roleId: roleA_teacher.id }) }, cookieA);
+  result(roleRoute(sidA, ownerB.id), "PUT", r.status, "school A admin targets school B's owner", 403);
+  assert(
+    (await prisma!.userRole.count({ where: { userId: ownerB.id, schoolId: sidA } })) === 0,
+    "school B's owner was not given a UserRole in school A"
+  );
+
+  subheading("5. Cross-school ROLE rejection (right school+user, wrong role)");
+  r = await authed(roleRoute(sidA, memberUser.id), { method: "PUT", body: JSON.stringify({ roleId: roleB_teacher.id }) }, cookieA);
+  result(roleRoute(sidA, memberUser.id), "PUT", r.status, "school A admin assigns a role that belongs to school B", 403);
+  assert(
+    (await prisma!.userRole.count({ where: { userId: memberUser.id, schoolId: sidA } })) === 0,
+    "member was not given school B's role"
+  );
+
+  subheading("9. Tenant isolation: caller has no authority over this schoolId at all");
+  r = await authed(roleRoute(sidA, memberUser.id), { method: "PUT", body: JSON.stringify({ roleId: roleA_teacher.id }) }, cookieB);
+  result(roleRoute(sidA, memberUser.id), "PUT", r.status, "school B's owner is not an admin of school A", 403);
+
+  subheading("6. Self-modification rejection");
+  r = await authed(roleRoute(sidA, ownerA.id), { method: "PUT", body: JSON.stringify({ roleId: roleA_teacher.id }) }, cookieA);
+  result(roleRoute(sidA, ownerA.id), "PUT", r.status, "owner tries to change their own role", 400);
+  r = await authed(roleRoute(sidA, ownerA.id), { method: "DELETE" }, cookieA);
+  result(roleRoute(sidA, ownerA.id), "DELETE", r.status, "owner tries to remove their own role", 400);
+
+  subheading("7. Last SCHOOL_ADMIN protection");
+  // Give the school a second admin directly (setup, not the feature under test),
+  // so the next two calls exercise "not last" vs "last" without tripping the
+  // self-modification guard above.
+  await prisma!.userRole.create({ data: { userId: memberUser.id, roleId: roleA_admin.id, schoolId: sidA } });
+  r = await authed(roleRoute(sidA, memberUser.id), { method: "DELETE" }, cookieA);
+  result(roleRoute(sidA, memberUser.id), "DELETE", r.status, "removing one of TWO admins succeeds", 200);
+  // Now only ownerA holds SCHOOL_ADMIN. A platform ADMIN (who bypasses
+  // requireSchoolAdmin entirely) still cannot strip the school's only admin.
+  r = await authed(roleRoute(sidA, ownerA.id), { method: "DELETE" }, cookieAdmin);
+  result(roleRoute(sidA, ownerA.id), "DELETE", r.status, "platform ADMIN blocked from removing the LAST SCHOOL_ADMIN", 409);
+  assert(
+    (await prisma!.userRole.count({ where: { userId: ownerA.id, roleId: roleA_admin.id, schoolId: sidA } })) === 1,
+    "school A's owner still holds SCHOOL_ADMIN after the blocked attempt"
+  );
+
+  subheading("10. Race/concurrency: two simultaneous assigns for the same user resolve to exactly one role");
+  const [raceR1, raceR2] = await Promise.all([
+    authed(roleRoute(sidA, memberUser.id), { method: "PUT", body: JSON.stringify({ roleId: roleA_teacher.id }) }, cookieA),
+    authed(roleRoute(sidA, memberUser.id), { method: "PUT", body: JSON.stringify({ roleId: roleA_staff.id }) }, cookieA),
+  ]);
+  assert(
+    [raceR1.status, raceR2.status].every((s) => s === 200 || s === 500),
+    `both concurrent assigns resolved to a definite response (got ${raceR1.status}, ${raceR2.status})`
+  );
+  assert(
+    (await prisma!.userRole.count({ where: { userId: memberUser.id, schoolId: sidA } })) === 1,
+    "exactly one UserRole row exists for the member after two concurrent, conflicting assigns (SERIALIZABLE + retry held)"
+  );
+
   // ── Cleanup ───────────────────────────────────────────────
   heading("Cleanup");
   // Every account this run created has the run id in its email (any casing).

@@ -828,5 +828,8 @@
   "accountSuspended.title": "Your account has been suspended",
   "accountSuspended.description": "It looks like your account is no longer active. Please upgrade to reactivate your account.",
   "accountSuspended.upgradeNow": "Upgrade Now",
-  "accountSuspended.contactSupport": "For more information, contact our support team."
+  "accountSuspended.contactSupport": "For more information, contact our support team.",
+  "schoolUsers.noRole": "No role",
+  "schoolUsers.roleChangeConfirm": "This user will lose the ability to manage users, settings, and billing for this school. Continue?",
+  "schoolUsers.roleChangeFailed": "Could not change the role. Please try again."
 }
