@@ -13,6 +13,7 @@ import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-tab
 import EmptyState from "@/components/ui/empty-state";
 import PageTitle from "@/components/ui/page-title";
 import UserRoleSelect from "@/components/dashboard/schools/user-role-select";
+import SchoolTabs from "@/components/dashboard/schools/school-tabs";
 
 interface UsersPageProps {
   params: Promise<{
@@ -69,6 +70,8 @@ export default async function UsersPage({ params }: UsersPageProps) {
         description={description}
       />
 
+      <SchoolTabs schoolId={id} />
+
       {isAdmin && (
         <div className="flex justify-end">
           <Link
@@ -87,19 +90,9 @@ export default async function UsersPage({ params }: UsersPageProps) {
         />
       ) : (
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">{heading}</h2>
-              <p className="mt-1 text-sm text-slate-500">{totalUsers}</p>
-            </div>
-            {isAdmin && (
-              <Link
-                href={`/dashboard/schools/${id}/users/new`}
-                className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
-              >
-                {addUser}
-              </Link>
-            )}
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">{heading}</h2>
+            <p className="mt-1 text-sm text-slate-500">{totalUsers}</p>
           </div>
 
           <DataTable columns={columns}>
