@@ -827,5 +827,7 @@
   "accountSuspended.contactSupport": "للمزيد من المعلومات تواصل مع فريق الدعم.",
   "schoolUsers.noRole": "بلا دور",
   "schoolUsers.roleChangeConfirm": "سيفقد هذا المستخدم القدرة على إدارة المستخدمين والإعدادات والفوترة لهذه المدرسة. متابعة؟",
-  "schoolUsers.roleChangeFailed": "تعذّر تغيير الدور. حاول مرة أخرى."
+  "schoolUsers.roleChangeFailed": "تعذّر تغيير الدور. حاول مرة أخرى.",
+  "schoolUsers.deleteConfirm": "حذف {name}؟ سيُحذف حسابه وكل السجلات المرتبطة به نهائيًا.",
+  "schoolUsers.deleteFailed": "تعذّر حذف المستخدم. حاول مرة أخرى."
 }

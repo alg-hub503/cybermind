@@ -630,6 +630,79 @@ async function runSuite() {
     "exactly one UserRole row exists for the member after two concurrent, conflicting assigns (SERIALIZABLE + retry held)"
   );
 
+  // ── 11. School user deletion ───────────────────────────────
+  heading("11. School user deletion (DELETE /api/schools/[id]/users/[userId])");
+
+  const userRoute = (schoolId: string, userId: string) => `/api/schools/${schoolId}/users/${userId}`;
+
+  subheading("Self-deletion rejection");
+  r = await authed(userRoute(sidA, ownerA.id), { method: "DELETE" }, cookieA);
+  result(userRoute(sidA, ownerA.id), "DELETE", r.status, "owner tries to delete themselves", 400);
+  assert(
+    (await prisma!.user.findUnique({ where: { id: ownerA.id } })) !== null,
+    "owner A still exists after the blocked self-delete"
+  );
+
+  subheading("Cross-school rejection");
+  const memberForDelete = await prisma!.user.create({
+    data: { email: `del-target-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "TEACHER", schoolId: sidA },
+  });
+  r = await authed(userRoute(sidA, ownerB.id), { method: "DELETE" }, cookieA);
+  result(userRoute(sidA, ownerB.id), "DELETE", r.status, "school A admin targets school B's owner", 403);
+  assert(
+    (await prisma!.user.findUnique({ where: { id: ownerB.id } })) !== null,
+    "school B's owner was not deleted"
+  );
+
+  subheading("Tenant isolation: caller has no authority over this schoolId");
+  r = await authed(userRoute(sidA, memberForDelete.id), { method: "DELETE" }, cookieB);
+  result(userRoute(sidA, memberForDelete.id), "DELETE", r.status, "school B's owner is not an admin of school A", 403);
+
+  subheading("Platform ADMIN accounts cannot be deleted from a school's user list");
+  const strayPlatformAdmin = await prisma!.user.create({
+    data: { email: `stray-admin-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "ADMIN", schoolId: sidA },
+  });
+  r = await authed(userRoute(sidA, strayPlatformAdmin.id), { method: "DELETE" }, cookieA);
+  result(userRoute(sidA, strayPlatformAdmin.id), "DELETE", r.status, "a schoolId-bearing platform ADMIN cannot be deleted here", 403);
+  await prisma!.user.delete({ where: { id: strayPlatformAdmin.id } }); // cleanup (not via the route under test)
+
+  subheading("Last SCHOOL_ADMIN protection on delete");
+  await prisma!.userRole.create({ data: { userId: memberForDelete.id, roleId: roleA_admin.id, schoolId: sidA } });
+  r = await authed(userRoute(sidA, memberForDelete.id), { method: "DELETE" }, cookieAdmin);
+  result(userRoute(sidA, memberForDelete.id), "DELETE", r.status, "deleting one of TWO admins succeeds", 200);
+  const secondAdminForDelete = await prisma!.user.create({
+    data: { email: `del-admin2-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "TEACHER", schoolId: sidA },
+  });
+  await prisma!.userRole.create({ data: { userId: secondAdminForDelete.id, roleId: roleA_admin.id, schoolId: sidA } });
+  r = await authed(userRoute(sidA, secondAdminForDelete.id), { method: "DELETE" }, cookieA);
+  result(userRoute(sidA, secondAdminForDelete.id), "DELETE", r.status, "removing one of TWO admins succeeds", 200);
+  r = await authed(userRoute(sidA, ownerA.id), { method: "DELETE" }, cookieAdmin);
+  result(userRoute(sidA, ownerA.id), "DELETE", r.status, "platform ADMIN blocked from deleting the LAST SCHOOL_ADMIN", 409);
+  assert(
+    (await prisma!.user.findUnique({ where: { id: ownerA.id } })) !== null,
+    "school A's owner still exists after the blocked attempt"
+  );
+
+  subheading("Successful delete cascades cleanly");
+  // A dedicated user for this check — memberForDelete and secondAdminForDelete
+  // were both already deleted above (that was the point of those steps).
+  const cascadeTestUser = await prisma!.user.create({
+    data: { email: `del-cascade-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "TEACHER", schoolId: sidA },
+  });
+  await prisma!.passwordResetToken.create({
+    data: { userId: cascadeTestUser.id, tokenHash: `test-hash-${uid}`, expiresAt: new Date(Date.now() + 3600_000) },
+  });
+  r = await authed(userRoute(sidA, cascadeTestUser.id), { method: "DELETE" }, cookieA);
+  result(userRoute(sidA, cascadeTestUser.id), "DELETE", r.status, "owner deletes a plain member with an existing reset token", 200);
+  assert(
+    (await prisma!.user.findUnique({ where: { id: cascadeTestUser.id } })) === null,
+    "the user row is gone"
+  );
+  assert(
+    (await prisma!.passwordResetToken.count({ where: { userId: cascadeTestUser.id } })) === 0,
+    "the cascade removed their password reset token too (no orphan row)"
+  );
+
   // ── Cleanup ───────────────────────────────────────────────
   heading("Cleanup");
   // Every account this run created has the run id in its email (any casing).

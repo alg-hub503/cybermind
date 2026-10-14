@@ -24,3 +24,20 @@ export function logRoleChange(event: RoleChangeEvent): void {
     })
   );
 }
+
+type UserDeletedEvent = {
+  actorId: string;
+  targetUserId: string;
+  targetEmail: string;
+  schoolId: string;
+};
+
+export function logUserDeleted(event: UserDeletedEvent): void {
+  console.log(
+    JSON.stringify({
+      type: "USER_DELETED",
+      timestamp: new Date().toISOString(),
+      ...event,
+    })
+  );
+}

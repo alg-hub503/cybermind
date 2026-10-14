@@ -831,5 +831,7 @@
   "accountSuspended.contactSupport": "Pour plus d'informations, contactez notre équipe de support.",
   "schoolUsers.noRole": "Aucun rôle",
   "schoolUsers.roleChangeConfirm": "Cet utilisateur perdra la possibilité de gérer les utilisateurs, les paramètres et la facturation de cette école. Continuer ?",
-  "schoolUsers.roleChangeFailed": "Impossible de modifier le rôle. Veuillez réessayer."
+  "schoolUsers.roleChangeFailed": "Impossible de modifier le rôle. Veuillez réessayer.",
+  "schoolUsers.deleteConfirm": "Supprimer {name} ? Son compte et tous les enregistrements associés seront définitivement supprimés.",
+  "schoolUsers.deleteFailed": "Impossible de supprimer l'utilisateur. Veuillez réessayer."
 }

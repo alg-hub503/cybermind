@@ -25,7 +25,7 @@ const MAX_RETRIES = 1;
  * systemKey "SCHOOL_ADMIN" (enforced by the @@unique([schoolId, systemKey])
  * constraint on Role), so this only ever has to check one role id.
  */
-async function assertNotLastSchoolAdmin(
+export async function assertNotLastSchoolAdmin(
   tx: Prisma.TransactionClient,
   schoolId: string,
   userId: string

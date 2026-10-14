@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Eye, Pencil, Trash2, Users } from "lucide-react";
+import { Eye, Pencil, Users } from "lucide-react";
 import Link from "next/link";
 
 import { requireSchoolAdmin } from "@/lib/authorization";
@@ -13,6 +13,7 @@ import DataTable, { DataTableRow, DataTableCell } from "@/components/ui/data-tab
 import EmptyState from "@/components/ui/empty-state";
 import PageTitle from "@/components/ui/page-title";
 import UserRoleSelect from "@/components/dashboard/schools/user-role-select";
+import DeleteUserButton from "@/components/dashboard/schools/delete-user-button";
 import SchoolTabs from "@/components/dashboard/schools/school-tabs";
 
 interface UsersPageProps {
@@ -166,14 +167,15 @@ export default async function UsersPage({ params }: UsersPageProps) {
                           <Pencil size={16} />
                         </Link>
 
-                        <button
-                          title="Delete"
-                          type="button"
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-red-600 text-white transition hover:bg-red-700"
-                        >
-                          <Trash2 size={16} />
-                        </button>
                       </>
+                    )}
+
+                    {user.id !== viewer.id && user.role !== ADMIN_ROLE && (
+                      <DeleteUserButton
+                        schoolId={id}
+                        userId={user.id}
+                        userLabel={user.name ?? user.email}
+                      />
                     )}
                   </div>
                 </DataTableCell>
