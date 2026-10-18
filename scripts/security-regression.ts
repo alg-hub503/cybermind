@@ -5,6 +5,7 @@
 
 import { spawn, type ChildProcess } from "node:child_process";
 import { PrismaClient } from "@prisma/client";
+import { killProcessTree } from "./lib/kill-process-tree";
 
 const BASE = "http://localhost:3000";
 const TEST_EMAIL_DOMAIN = "test.local";
@@ -703,6 +704,45 @@ async function runSuite() {
     "the cascade removed their password reset token too (no orphan row)"
   );
 
+  // ── 12. School user rename ─────────────────────────────────
+  heading("12. School user rename (PATCH /api/schools/[id]/users/[userId])");
+
+  // Fresh users only — every account section 11 created above was already
+  // deleted as part of what it was testing. Reusing one of those was
+  // exactly the bug a previous version of this file had; new ones here.
+  const renameTarget = await prisma!.user.create({
+    data: { email: `rename-target-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), name: "Original Name", role: "TEACHER", schoolId: sidA },
+  });
+  const renameStrayAdmin = await prisma!.user.create({
+    data: { email: `rename-stray-admin-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "ADMIN", schoolId: sidA },
+  });
+
+  subheading("Owner renames their own school's member");
+  r = await authed(userRoute(sidA, renameTarget.id), { method: "PATCH", body: JSON.stringify({ name: "Updated Name" }) }, cookieA);
+  result(userRoute(sidA, renameTarget.id), "PATCH", r.status, "owner renames member", 200);
+  assert(
+    (await prisma!.user.findUniqueOrThrow({ where: { id: renameTarget.id } })).name === "Updated Name",
+    "name was actually updated in the database"
+  );
+
+  subheading("Validation: whitespace-only name rejected");
+  r = await authed(userRoute(sidA, renameTarget.id), { method: "PATCH", body: JSON.stringify({ name: "   " }) }, cookieA);
+  result(userRoute(sidA, renameTarget.id), "PATCH", r.status, "whitespace-only name rejected", 400);
+
+  subheading("Cross-school rejection");
+  r = await authed(userRoute(sidA, renameTarget.id), { method: "PATCH", body: JSON.stringify({ name: "Hacked" }) }, cookieB);
+  result(userRoute(sidA, renameTarget.id), "PATCH", r.status, "school B's owner is not an admin of school A", 403);
+
+  subheading("Platform ADMIN accounts cannot be renamed from a school's user list");
+  r = await authed(userRoute(sidA, renameStrayAdmin.id), { method: "PATCH", body: JSON.stringify({ name: "Hacked" }) }, cookieA);
+  result(userRoute(sidA, renameStrayAdmin.id), "PATCH", r.status, "a schoolId-bearing platform ADMIN cannot be renamed here", 403);
+
+  subheading("User.role is never touched by a rename");
+  assert(
+    (await prisma!.user.findUniqueOrThrow({ where: { id: renameTarget.id } })).role === "TEACHER",
+    "member's platform User.role is unchanged after rename"
+  );
+
   // ── Cleanup ───────────────────────────────────────────────
   heading("Cleanup");
   // Every account this run created has the run id in its email (any casing).
@@ -775,7 +815,7 @@ async function main() {
     }
   }
 
-  server?.kill();
+  killProcessTree(server?.pid);
   await prisma.$disconnect();
 
   log.push(`\n${"=".repeat(70)}`);
@@ -791,6 +831,6 @@ async function main() {
 
 main().catch((e) => {
   console.error("Fatal:", e);
-  server?.kill();
+  killProcessTree(server?.pid);
   process.exit(1);
 });

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Eye, Pencil, Users } from "lucide-react";
+import { Eye, Users } from "lucide-react";
 import Link from "next/link";
 
 import { requireSchoolAdmin } from "@/lib/authorization";
@@ -14,6 +14,7 @@ import EmptyState from "@/components/ui/empty-state";
 import PageTitle from "@/components/ui/page-title";
 import UserRoleSelect from "@/components/dashboard/schools/user-role-select";
 import DeleteUserButton from "@/components/dashboard/schools/delete-user-button";
+import EditUserNameButton from "@/components/dashboard/schools/edit-user-name-button";
 import SchoolTabs from "@/components/dashboard/schools/school-tabs";
 
 interface UsersPageProps {
@@ -157,17 +158,12 @@ export default async function UsersPage({ params }: UsersPageProps) {
                       <Eye size={16} />
                     </Link>
 
-                    {isAdmin && (
-                      <>
-                        <Link
-                          href={`/dashboard/users/${user.id}/edit`}
-                          title="Edit"
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-500 text-white transition hover:bg-yellow-600"
-                        >
-                          <Pencil size={16} />
-                        </Link>
-
-                      </>
+                    {user.role !== ADMIN_ROLE && (
+                      <EditUserNameButton
+                        schoolId={id}
+                        userId={user.id}
+                        currentName={user.name ?? ""}
+                      />
                     )}
 
                     {user.id !== viewer.id && user.role !== ADMIN_ROLE && (

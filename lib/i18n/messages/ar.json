@@ -829,5 +829,7 @@
   "schoolUsers.roleChangeConfirm": "سيفقد هذا المستخدم القدرة على إدارة المستخدمين والإعدادات والفوترة لهذه المدرسة. متابعة؟",
   "schoolUsers.roleChangeFailed": "تعذّر تغيير الدور. حاول مرة أخرى.",
   "schoolUsers.deleteConfirm": "حذف {name}؟ سيُحذف حسابه وكل السجلات المرتبطة به نهائيًا.",
-  "schoolUsers.deleteFailed": "تعذّر حذف المستخدم. حاول مرة أخرى."
+  "schoolUsers.deleteFailed": "تعذّر حذف المستخدم. حاول مرة أخرى.",
+  "schoolUsers.editNamePrompt": "الاسم الجديد",
+  "schoolUsers.editNameFailed": "تعذّر تحديث الاسم. حاول مرة أخرى."
 }
