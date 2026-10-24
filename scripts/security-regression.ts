@@ -743,6 +743,43 @@ async function runSuite() {
     "member's platform User.role is unchanged after rename"
   );
 
+  // ── 13. Platform role toggle (ADMIN/USER schoolId invariant) ─
+  heading("13. Platform role toggle (PATCH /api/users/[id]/role)");
+
+  // Fresh entities only — same lesson as section 12.
+  const platformRoleRoute = (userId: string) => `/api/users/${userId}/role`;
+  const prlStrayAdmin = await prisma!.user.create({
+    data: { email: `prl-stray-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "ADMIN", schoolId: sidA },
+  });
+  const prlCleanAdmin = await prisma!.user.create({
+    data: { email: `prl-clean-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "ADMIN", schoolId: null },
+  });
+  const prlPlainUser = await prisma!.user.create({
+    data: { email: `prl-plain-${uid}@${TEST_EMAIL_DOMAIN}`, password: await bcryptjs.hash(password, 12), role: "USER", schoolId: sidA },
+  });
+
+  subheading("Promote: USER with a schoolId -> ADMIN clears schoolId");
+  r = await authed(platformRoleRoute(prlPlainUser.id), { method: "PATCH" }, cookieAdmin);
+  result(platformRoleRoute(prlPlainUser.id), "PATCH", r.status, "platform admin promotes a school user", 200);
+  const prlPromoted = await prisma!.user.findUniqueOrThrow({ where: { id: prlPlainUser.id } });
+  assert(prlPromoted.role === "ADMIN", "role is now ADMIN");
+  assert(prlPromoted.schoolId === null, "schoolId was cleared on promotion");
+
+  subheading("Demote: a 'stray' ADMIN with a schoolId resolves back to a normal USER");
+  r = await authed(platformRoleRoute(prlStrayAdmin.id), { method: "PATCH" }, cookieAdmin);
+  result(platformRoleRoute(prlStrayAdmin.id), "PATCH", r.status, "platform admin demotes the stray admin", 200);
+  const prlResolved = await prisma!.user.findUniqueOrThrow({ where: { id: prlStrayAdmin.id } });
+  assert(prlResolved.role === "USER", "role is now USER");
+  assert(prlResolved.schoolId === sidA, "schoolId preserved (stray state resolved, not relocated)");
+
+  subheading("Demote: a 'clean' ADMIN (no schoolId) is blocked");
+  r = await authed(platformRoleRoute(prlCleanAdmin.id), { method: "PATCH" }, cookieAdmin);
+  result(platformRoleRoute(prlCleanAdmin.id), "PATCH", r.status, "platform admin tries to demote a clean admin", 400);
+  assert(
+    (await prisma!.user.findUniqueOrThrow({ where: { id: prlCleanAdmin.id } })).role === "ADMIN",
+    "clean admin is still ADMIN (blocked, not left invalid)"
+  );
+
   // ── Cleanup ───────────────────────────────────────────────
   heading("Cleanup");
   // Every account this run created has the run id in its email (any casing).

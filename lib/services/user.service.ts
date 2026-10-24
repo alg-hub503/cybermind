@@ -52,7 +52,8 @@ export async function getUserById(id: string) {
 
 export async function updateUserRole(
   id: string,
-  role: string
+  role: string,
+  schoolId: string | null
 ) {
   return prisma.user.update({
     where: {
@@ -60,6 +61,7 @@ export async function updateUserRole(
     },
     data: {
       role,
+      schoolId,
     },
   });
 }
