@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/authorization";
 import { getUsers } from "@/lib/services/user.service";
 import { getAdminStats } from "@/lib/services/stats.service";
@@ -8,7 +9,13 @@ import StatCard from "@/components/ui/stat-card";
 import AdminUsersTable from "./AdminUsersTable";
 
 export default async function AdminPage() {
-  await requireAdmin();
+  // requireAdmin() THROWS for anyone who is not a platform admin; uncaught,
+  // that is a 500 on a page a school owner can reach from a link. Same
+  // handling as app/dashboard/platform-settings/page.tsx.
+  const access = await requireAdmin().catch(() => null);
+  if (!access) {
+    redirect("/dashboard");
+  }
 
   const [users, stats] = await Promise.all([getUsers(), getAdminStats()]);
 

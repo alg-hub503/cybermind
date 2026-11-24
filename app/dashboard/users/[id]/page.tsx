@@ -6,6 +6,7 @@ import { requireCurrentUser } from "@/lib/require-current-user";
 import { ADMIN_ROLE } from "@/lib/constants";
 import { getUserById } from "@/lib/features/users/user-actions";
 import { t } from "@/lib/i18n/server";
+import { usersHomePath } from "@/lib/users-home-path";
 
 interface UserDetailPageProps {
   params: Promise<{
@@ -41,7 +42,7 @@ export default async function UserDetailPage({
     <main className="p-6">
       <div className="mb-6">
         <Link
-          href="/dashboard/admin"
+          href={usersHomePath(currentUser)}
           className="inline-flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900"
         >
           <ArrowLeft size={16} />
