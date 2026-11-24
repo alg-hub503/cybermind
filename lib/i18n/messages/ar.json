@@ -831,5 +831,9 @@
   "schoolUsers.deleteConfirm": "حذف {name}؟ سيُحذف حسابه وكل السجلات المرتبطة به نهائيًا.",
   "schoolUsers.deleteFailed": "تعذّر حذف المستخدم. حاول مرة أخرى.",
   "schoolUsers.editNamePrompt": "الاسم الجديد",
-  "schoolUsers.editNameFailed": "تعذّر تحديث الاسم. حاول مرة أخرى."
+  "schoolUsers.editNameFailed": "تعذّر تحديث الاسم. حاول مرة أخرى.",
+  "invoices.form.billClient": "فاتورة لعميل",
+  "invoices.form.billStudent": "فاتورة لطالب",
+  "invoices.form.selectStudent": "اختر الطالب",
+  "invoices.form.selectStudentError": "يرجى اختيار طالب"
 }
